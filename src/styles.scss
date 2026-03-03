@@ -1,15 +1,22 @@
 /* GLOBAL STYLES */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss"; 
 
-// Define your Government Theme once
-:root {
-  --gov-blue: #1e3a8a;
-  --gov-red: #dc2626;
+@theme {
+  --color-gov-blue: #1e3a8a;
+  --color-gov-red: #dc2626;
 }
 
-// Global fix for all containers
+/* Fix: The parent selector '&' must be inside a class block */
+.hover-lift {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+/* Global fix for the main container */
 main {
-  @apply transition-all duration-300 ease-in-out;
+  display: block;
+  min-height: 100vh;
 }

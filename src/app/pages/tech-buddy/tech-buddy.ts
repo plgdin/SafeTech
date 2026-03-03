@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-tech-buddy',
-  imports: [],
   templateUrl: './tech-buddy.html',
   styleUrl: './tech-buddy.scss',
+  standalone: false
 })
-export class TechBuddy {}
+export class TechBuddyComponent {}

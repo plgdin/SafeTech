@@ -1,17 +1,15 @@
+/* GLOBAL STYLES */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+// Define your Government Theme once
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%; /* Professional Blue */
-  --primary-foreground: 210 40% 98%;
-  /* ... add the rest of your variables from your old index.css here */
+  --gov-blue: #1e3a8a;
+  --gov-red: #dc2626;
 }
 
-@layer base {
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
+// Global fix for all containers
+main {
+  @apply transition-all duration-300 ease-in-out;
 }

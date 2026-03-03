@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-// Import your 8 Workflow Pages
+// Imports
 import { HomeComponent } from './pages/home/home';
 import { ContactComponent } from './pages/contact/contact';
 import { ResourcesComponent } from './pages/resources/resources';
@@ -12,8 +12,9 @@ import { ScamAwarenessComponent } from './pages/scam-awareness/scam-awareness';
 import { TrainingComponent } from './pages/training/training';
 import { AboutComponent } from './pages/about/about';
 
-const routes: Routes = [
-  { path: '', component: HomeComponent }, // Default Landing Page
+// ADD 'export' HERE
+export const routes: Routes = [
+  { path: '', component: HomeComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'resources', component: ResourcesComponent },
   { path: 'reporting', component: AuditingComponent },
@@ -22,8 +23,6 @@ const routes: Routes = [
   { path: 'scams', component: ScamAwarenessComponent },
   { path: 'training', component: TrainingComponent },
   { path: 'about', component: AboutComponent },
-  
-  // Wildcard route (404 Page) - Redirects back home if URL is wrong
   { path: '**', redirectTo: '' }
 ];
 

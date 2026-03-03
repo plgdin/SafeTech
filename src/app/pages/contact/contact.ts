@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-contact',
-  imports: [],
   templateUrl: './contact.html',
   styleUrl: './contact.scss',
+  standalone: false // No 'imports: []' allowed when using AppModule
 })
-export class Contact {}
+export class ContactComponent {}

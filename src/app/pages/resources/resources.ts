@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-resources',
-  imports: [],
   templateUrl: './resources.html',
   styleUrl: './resources.scss',
+  standalone: false
 })
-export class Resources {}
+export class ResourcesComponent {}

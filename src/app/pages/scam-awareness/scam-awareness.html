@@ -59,10 +59,10 @@
     <section style="background-color: #f4f4f4; border-radius: 50px; padding: 60px; margin-bottom: 100px;">
       <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 40px; letter-spacing: -0.02em;">DIRECTORY (A-Z)</h2>
       
-      <div style="display: grid; grid-cols: 1; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px;">
         <div *ngFor="let item of scams" 
-             style="background-color: #ffffff; padding: 25px 40px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer;"
-             onmouseover="this.style.border='1px solid #1e6aff'" onmouseout="this.style.border='1px solid transparent'">
+             style="background-color: #ffffff; padding: 25px 40px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; border: 1px solid transparent;"
+             onmouseover="this.style.borderColor='#1e6aff'" onmouseout="this.style.borderColor='transparent'">
           <div style="display: flex; align-items: center; gap: 25px;">
             <div style="width: 60px; height: 60px; background-color: #1e6aff; color: #ffffff; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900;">
               {{item.title.charAt(0)}}

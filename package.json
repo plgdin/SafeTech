@@ -21,13 +21,14 @@
     "@supabase/supabase-js": "^2.98.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "^0.16.1"
+    "zone.js": "~0.16.0"
   },
   "devDependencies": {
     "@angular/build": "^21.2.0",
     "@angular/cli": "^21.2.0",
     "@angular/compiler-cli": "^21.2.0",
     "@tailwindcss/postcss": "^4.2.1",
+    "@types/node": "^22.0.0",
     "autoprefixer": "^10.4.27",
     "jsdom": "^28.0.0",
     "postcss": "^8.5.8",

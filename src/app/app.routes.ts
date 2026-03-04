@@ -11,16 +11,24 @@ import { ScamAwarenessComponent } from './pages/scam-awareness/scam-awareness';
 import { TrainingComponent } from './pages/training/training';
 import { AboutComponent } from './pages/about/about';
 
-// Exporting only the routes array for Standalone bootstrap
+// Standalone Routes Configuration
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'home', redirectTo: '', pathMatch: 'full' },
   { path: 'contact', component: ContactComponent },
   { path: 'resources', component: ResourcesComponent },
-  { path: 'reporting', component: AuditingComponent }, // Matches Cybery 'Get Started'
-  { path: 'tech-buddy', component: TechBuddyComponent },
-  { path: 'phishing-checker', component: PhishingComponent },
-  { path: 'scams', component: ScamAwarenessComponent },
-  { path: 'training', component: TrainingComponent },
+  { path: 'reporting', component: AuditingComponent }, // Standardizing Flow 03
+  { path: 'tech-buddy', component: TechBuddyComponent }, // Standardizing Flow 04
+  
+  // FIX: Path now matches the 'Phishing' folder and home.html link
+  { path: 'phishing-checker', component: PhishingComponent }, 
+  
+  // FIX: Path now matches the 'Scam-Awareness' folder
+  { path: 'scams', component: ScamAwarenessComponent }, 
+  
+  { path: 'training', component: TrainingComponent }, // Standardizing Flow 07
   { path: 'about', component: AboutComponent },
+  
+  // Catch-all for 404s to keep the demo smooth
   { path: '**', redirectTo: '' }
 ];

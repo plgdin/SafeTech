@@ -1,22 +1,32 @@
-/* GLOBAL STYLES */
-@import "tailwindcss"; 
-
-@theme {
-  --color-gov-blue: #1e3a8a;
-  --color-gov-red: #dc2626;
+/* Standard CSS variables work in every editor */
+:root {
+  --cyber-blue: #1e6aff;
+  --cyber-black: #020202;
+  --cyber-gray: #666666;
+  --cyber-white: #ffffff;
+  --font-poppins: 'Poppins', sans-serif;
 }
 
-/* Fix: The parent selector '&' must be inside a class block */
-.hover-lift {
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-  }
+body {
+  background-color: var(--cyber-white);
+  color: var(--cyber-black);
+  font-family: var(--font-poppins);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Global fix for the main container */
-main {
-  display: block;
-  min-height: 100vh;
+/* Strategic card style rebuilt without @apply */
+.strategic-card {
+  background-color: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 32px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.strategic-card:hover {
+  border-color: var(--cyber-blue);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }

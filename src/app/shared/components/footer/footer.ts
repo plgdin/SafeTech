@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-footer',
+  standalone: true, // MUST BE ADDED
+  imports: [CommonModule],
   templateUrl: './footer.html',
-  styleUrl: './footer.scss', // <--- Add this comma
-  standalone: false
+  styleUrl: './footer.scss'
 })
-export class FooterComponent {
-  year = new Date().getFullYear();
-}
+export class FooterComponent { }

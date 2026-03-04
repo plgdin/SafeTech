@@ -1,61 +1,124 @@
-<div class="space-y-12 py-6">
-  <section class="text-center py-12 bg-gradient-to-b from-blue-50 to-white rounded-3xl border border-blue-100">
-    <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight">
-      Stay Safe in the <span class="text-blue-700">Digital World</span>
-    </h1>
-    <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto px-4">
-      The official Safe Tech Campaign portal for verifying websites, reporting scams, and learning cyber-defense.
-    </p>
-    <div class="mt-8 flex flex-wrap justify-center gap-4">
-      <button routerLink="/reporting" class="bg-red-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-red-700 transition">
-        🚨 Report a Scam Now
-      </button>
-      <button routerLink="/tech-buddy" class="bg-slate-900 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-slate-800 transition">
-        🤖 Talk to Tech Buddy
-      </button>
+<div
+  style="background-color: #ffffff; min-height: 100vh; color: #020202; font-family: 'Poppins', sans-serif; overflow-x: hidden; box-sizing: border-box;">
+
+  <section style="position: relative; padding: 120px 24px 80px; text-align: center;">
+    <div
+      style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; height: 600px; background: radial-gradient(circle, rgba(30,106,255,0.05) 0%, rgba(255,255,255,0) 70%); pointer-events: none;">
+    </div>
+
+    <div style="position: relative; z-index: 10; max-width: 1100px; margin: 0 auto;">
+      <span
+        style="display: inline-block; padding: 6px 16px; margin-bottom: 32px; border-radius: 100px; background-color: #f0f5ff; color: #1e6aff; border: 1px solid #dbeafe; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em;">
+        . Shielding Your Digital Future
+      </span>
+
+      <h1
+        style="font-size: clamp(48px, 8vw, 100px); font-weight: 700; line-height: 1.1; letter-spacing: -0.04em; margin-bottom: 40px; color: #020202;">
+        Cybersecurity <br>
+        <span style="color: #1e6aff;">Strategies</span> Tailored
+      </h1>
+
+      <p style="font-size: 20px; color: #666666; max-width: 700px; margin: 0 auto 48px; line-height: 1.6;">
+        SafeTech is a trusted security firm specializing in providing comprehensive protection against evolving digital threats.
+      </p>
+
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px;">
+        <button routerLink="/reporting"
+          style="background-color: #1e6aff; color: #ffffff; padding: 20px 40px; border-radius: 12px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; border: none; cursor: pointer; box-shadow: 0 20px 40px rgba(30, 106, 255, 0.2);">
+          Get Started
+        </button>
+        <button routerLink="/tech-buddy"
+          style="background-color: #020202; color: #ffffff; padding: 20px 40px; border-radius: 12px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; border: none; cursor: pointer;">
+          Talk to Buddy
+        </button>
+      </div>
     </div>
   </section>
 
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    
-    <div routerLink="/phishing-checker" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-blue-500 hover:shadow-xl transition cursor-pointer">
-      <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center text-2xl mb-4">🔍</div>
-      <h3 class="font-bold text-lg">URL Checker</h3>
-      <p class="text-sm text-slate-500 mt-2">Scan suspicious links before you click them.</p>
+  <section style="max-width: 1300px; margin: 0 auto; padding: 80px 24px;">
+    <div
+      style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; gap: 32px;">
+      <div style="max-width: 600px;">
+        <span
+          style="color: #1e6aff; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em;">. Our Expertise</span>
+        <h2 style="font-size: 48px; font-weight: 700; color: #020202; margin-top: 16px; letter-spacing: -0.02em;">
+          Comprehensive cybersecurity solutions</h2>
+      </div>
+      <a routerLink="/service"
+        style="color: #020202; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; text-decoration: none; border-bottom: 2px solid #1e6aff; padding-bottom: 4px; cursor: pointer;">More Services</a>
     </div>
 
-    <div routerLink="/scams" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-orange-500 hover:shadow-xl transition cursor-pointer">
-      <div class="w-12 h-12 bg-orange-100 text-orange-700 rounded-lg flex items-center justify-center text-2xl mb-4">⚠️</div>
-      <h3 class="font-bold text-lg">Scam Alerts</h3>
-      <p class="text-sm text-slate-500 mt-2">Real-time database of active frauds and A-Z lists.</p>
-    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+      
+      <div routerLink="/phishing-checker"
+        style="background-color: #ffffff; padding: 48px; border-radius: 32px; border: 1px solid #ebebeb; cursor: pointer; transition: all 0.3s ease-in-out;"
+        onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'"
+        onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
+        <div
+          style="width: 64px; height: 64px; background-color: #f0f5ff; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 32px;">
+          🔍</div>
+        <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 16px;">URL Checker</h3>
+        <p style="color: #666666; font-size: 14px; line-height: 1.6; margin-bottom: 32px;">Secure unauthorized access, malware, and other cyber threats.</p>
+        <span style="font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;">Read More</span>
+      </div>
 
-    <div routerLink="/training" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-green-500 hover:shadow-xl transition cursor-pointer">
-      <div class="w-12 h-12 bg-green-100 text-green-700 rounded-lg flex items-center justify-center text-2xl mb-4">🎓</div>
-      <h3 class="font-bold text-lg">Training</h3>
-      <p class="text-sm text-slate-500 mt-2">Workshops, slides, and master trainer certifications.</p>
-    </div>
+      <div routerLink="/scams"
+        style="background-color: #ffffff; padding: 48px; border-radius: 32px; border: 1px solid #ebebeb; cursor: pointer; transition: all 0.3s ease-in-out;"
+        onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'"
+        onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
+        <div
+          style="width: 64px; height: 64px; background-color: #f0f5ff; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 32px;">
+          ⚠️</div>
+        <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 16px;">Scam Alerts</h3>
+        <p style="color: #666666; font-size: 14px; line-height: 1.6; margin-bottom: 32px;">Real-time database of active frauds and A-Z threat lists.</p>
+        <span style="font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;">Read More</span>
+      </div>
 
-    <div routerLink="/resources" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-xl transition cursor-pointer">
-      <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-lg flex items-center justify-center text-2xl mb-4">📚</div>
-      <h3 class="font-bold text-lg">Resources</h3>
-      <p class="text-sm text-slate-500 mt-2">Access FAQs, safety tips, and helpline numbers.</p>
-    </div>
+      <div routerLink="/training"
+        style="background-color: #ffffff; padding: 48px; border-radius: 32px; border: 1px solid #ebebeb; cursor: pointer; transition: all 0.3s ease-in-out;"
+        onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'"
+        onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
+        <div
+          style="width: 64px; height: 64px; background-color: #f0f5ff; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 32px;">
+          🎓</div>
+        <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 16px;">Training</h3>
+        <p style="color: #666666; font-size: 14px; line-height: 1.6; margin-bottom: 32px;">Workshops, slides, and master trainer certifications.</p>
+        <span style="font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;">Read More</span>
+      </div>
 
+      <div routerLink="/resources"
+        style="background-color: #ffffff; padding: 48px; border-radius: 32px; border: 1px solid #ebebeb; cursor: pointer; transition: all 0.3s ease-in-out;"
+        onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'"
+        onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
+        <div
+          style="width: 64px; height: 64px; background-color: #f0f5ff; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 32px;">
+          📚</div>
+        <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 16px;">Resources</h3>
+        <p style="color: #666666; font-size: 14px; line-height: 1.6; margin-bottom: 32px;">Access FAQs, safety tips, and helpline numbers.</p>
+        <span style="font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;">Read More</span>
+      </div>
+
+    </div>
   </section>
 
-  <section class="bg-blue-900 rounded-3xl p-10 text-white flex flex-wrap justify-around gap-8 text-center">
+  <section
+    style="max-width: 1300px; margin: 48px auto 120px; background-color: #1e6aff; border-radius: 56px; padding: 80px 48px; display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; color: #ffffff; text-align: center; gap: 48px; box-shadow: 0 40px 80px rgba(30, 106, 255, 0.2);">
     <div>
-      <p class="text-4xl font-black">50k+</p>
-      <p class="text-blue-300 text-sm uppercase tracking-widest mt-2">Scams Blocked</p>
+      <h4 style="font-size: 80px; font-weight: 700; margin: 0; letter-spacing: -0.04em;">50k+</h4>
+      <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); margin-top: 16px;">
+        Scams Blocked</p>
     </div>
+    <div style="width: 1px; height: 100px; background-color: rgba(255,255,255,0.2);"></div>
     <div>
-      <p class="text-4xl font-black">100%</p>
-      <p class="text-blue-300 text-sm uppercase tracking-widest mt-2">Secure Reporting</p>
+      <h4 style="font-size: 80px; font-weight: 700; margin: 0; letter-spacing: -0.04em;">100%</h4>
+      <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); margin-top: 16px;">
+        Secure Reporting</p>
     </div>
+    <div style="width: 1px; height: 100px; background-color: rgba(255,255,255,0.2);"></div>
     <div>
-      <p class="text-4xl font-black">24/7</p>
-      <p class="text-blue-300 text-sm uppercase tracking-widest mt-2">AI Support</p>
+      <h4 style="font-size: 80px; font-weight: 700; margin: 0; letter-spacing: -0.04em;">24/7</h4>
+      <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); margin-top: 16px;">
+        AI Support</p>
     </div>
   </section>
 </div>

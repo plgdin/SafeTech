@@ -1,5 +1,7 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app/app.module';
+import 'zone.js'; // MUST BE THE FIRST LINE
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch((err: any) => console.error(err)); // Added (err: any) to satisfy TypeScript
+bootstrapApplication(AppComponent, appConfig)
+  .catch((err) => console.error(err));

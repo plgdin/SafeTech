@@ -1,37 +1,60 @@
-<section style="padding: 120px 24px; text-align: center; background: #fff; min-height: 80vh;">
-  <h1 style="font-size: 48px; font-weight: 800; color: #020202; margin-bottom: 16px;">URL <span style="color: #1e6aff;">SAFEGUARD</span></h1>
-  <p style="color: #666666; margin-bottom: 48px;">Advanced heuristic analysis and real-time threat detection.</p>
+<section style="padding: 120px 24px; text-align: center; background: #fff; min-height: 80vh; font-family: 'Inter', sans-serif;">
+  <h1 style="font-size: 48px; font-weight: 800; color: #020202; margin-bottom: 16px; letter-spacing: -1px;">
+    URL <span style="color: #1e6aff;">SAFEGUARD</span>
+  </h1>
+  <p style="color: #666666; margin-bottom: 48px; font-size: 18px;">Advanced heuristic analysis for the SafeTech ecosystem.</p>
 
   <div style="max-width: 700px; margin: 0 auto; display: flex; gap: 12px;">
-    <input type="text" [(ngModel)]="targetUrl" placeholder="Enter URL to scan..." 
-           style="flex: 1; padding: 18px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 16px;">
-    <button (click)='onCheck()' [disabled]="loading"
-            style="background: #1e6aff; color: #fff; border: none; padding: 0 40px; border-radius: 12px; font-weight: 700; cursor: pointer;">
-      {{ loading ? 'ANALYZING...' : 'CHECK URL' }}
+    <input type="text" [(ngModel)]="targetUrl" (keyup.enter)="onCheck()" placeholder="Paste URL to analyze..." 
+           style="flex: 1; padding: 18px; border: 2px solid #eef2f6; border-radius: 14px; font-size: 16px; outline: none;">
+    <button (click)='onCheck()' [disabled]="loading" [style.opacity]="loading ? '0.7' : '1'"
+            style="background: #1e6aff; color: #fff; border: none; padding: 0 40px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s ease;">
+      {{ loading ? 'ANALYZING...' : 'SCAN URL' }}
     </button>
   </div>
 
-  <div *ngIf="result" style="max-width: 700px; margin: 40px auto; padding: 32px; border-radius: 20px; border: 1px solid #f0f0f0; background: #fafafa; text-align: left;">
+  <div *ngIf="result" style="max-width: 700px; margin: 40px auto; padding: 32px; border-radius: 24px; border: 1px solid #f0f0f0; background: #fafafa; text-align: left; animation: slideUp 0.5s ease-out;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-      <h3 style="margin: 0; font-size: 20px; color: #020202;">Scan Results</h3>
-      <span [style.color]="result.score > 50 ? '#be123c' : '#059669'" style="font-weight: 800; font-size: 24px;">
-        {{ result.score }}% Risk
-      </span>
+      <h3 style="margin: 0; font-size: 20px; color: #020202; font-weight: 700;">Security Analysis</h3>
+      <div style="text-align: right;">
+        <span [style.color]="result.score > 70 ? '#be123c' : result.score > 30 ? '#f59e0b' : '#059669'" style="font-weight: 800; font-size: 28px; display: block; line-height: 1;">
+          {{ result.score }}%
+        </span>
+        <span style="font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Risk Score</span>
+      </div>
     </div>
 
-    <div style="width: 100%; height: 12px; background: #e0e0e0; border-radius: 6px; margin-bottom: 24px; overflow: hidden;">
+    <div style="width: 100%; height: 10px; background: #e2e8f0; border-radius: 5px; margin-bottom: 32px; overflow: hidden;">
       <div [style.width.%]="result.score" 
            [style.background]="result.score > 70 ? '#be123c' : result.score > 30 ? '#f59e0b' : '#10b981'"
-           style="height: 100%; transition: width 1s ease-in-out;"></div>
+           style="height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);"></div>
     </div>
 
-    <div [style.background]="result.isSafe ? '#ecfdf5' : '#fff1f2'" 
-         style="padding: 20px; border-radius: 12px; border: 1px solid;"
-         [style.borderColor]="result.isSafe ? '#10b981' : '#be123c'">
-      <p style="margin: 0; font-weight: 600;" [style.color]="result.isSafe ? '#065f46' : '#9f1239'">
-        {{ result.isSafe ? 'No immediate threats confirmed.' : 'High probability of phishing detected.' }}
-      </p>
-      <p style="margin: 8px 0 0; font-size: 14px; color: #444;">{{ result.details }}</p>
+    <div [style.background]="result.isSafe ? '#f0fdf4' : '#fef2f2'" style="padding: 24px; border-radius: 16px; border: 1px solid; margin-bottom: 24px;" [style.borderColor]="result.isSafe ? '#bbf7d0' : '#fecaca'">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+        <div [style.background]="result.isSafe ? '#22c55e' : '#ef4444'" style="width: 12px; height: 12px; border-radius: 50%;"></div>
+        <p style="margin: 0; font-weight: 800; font-size: 16px;" [style.color]="result.isSafe ? '#166534' : '#991b1b'">
+          {{ result.isSafe ? 'Threat Level: Low' : 'Threat Level: Critical' }}
+        </p>
+      </div>
+      <p style="margin: 0; font-size: 15px; color: #4b5563;">{{ result.details }}</p>
+    </div>
+
+    <div style="background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px;">
+      <h4 style="margin: 0 0 12px; font-size: 15px; color: #020202;">💡 Identification Tips</h4>
+      <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #64748b; line-height: 1.6;">
+        <li *ngIf="result.score > 30">Check for <b>Typosquatting</b>: Subtly misspelled domains like 'g0ogle.com'.</li>
+        <li>Inspect <b>SSL Certificates</b>: Click the padlock in your URL bar to verify the site owner.</li>
+        <li>Be wary of <b>Sense of Urgency</b>: Phishing sites often threaten account suspension to force a click.</li>
+      </ul>
+    </div>
+
+    <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center;">
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">Wrong result? Report it to the SafeTech community.</p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button (click)="reportUrl('phishing')" style="background: #fff; color: #be123c; border: 1px solid #be123c; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;">🚩 Report Scam</button>
+        <button (click)="reportUrl('safe')" style="background: #fff; color: #059669; border: 1px solid #059669; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;">✅ Mark Safe</button>
+      </div>
     </div>
   </div>
 </section>

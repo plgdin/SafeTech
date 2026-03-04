@@ -26,65 +26,34 @@ export class SupabaseService {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
 
-  /**
-   * Checks a URL against the phishing_db table.
-   * Logic: If found in DB -> Unsafe. If NOT found (PGRST116) -> Safe.
-   */
   async checkPhishingUrl(url: string): Promise<{ isSafe: boolean; details: string }> {
-    if (!url || !url.trim()) {
-      return { isSafe: true, details: 'Please enter a valid URL to scan.' };
-    }
+    if (!url || !url.trim()) return { isSafe: true, details: 'Please enter a valid URL.' };
+    const cleanUrl = url.trim().toLowerCase();
 
     try {
       const { data, error } = await this.supabase
         .from('phishing_db')
         .select('*')
-        .eq('url', url.trim())
+        .eq('url', cleanUrl)
         .single();
 
-      // PGRST116 is the PostgREST code for "No rows found"
       if (error && error.code === 'PGRST116') {
-        return { 
-          isSafe: true, 
-          details: 'This URL does not appear in our threat database. It appears safe.' 
-        };
+        return { isSafe: true, details: 'Domain not found in blacklist. Initiating pattern analysis...' };
       }
-
-      if (error) {
-        console.error('Supabase Query Error:', error.message);
-        throw error;
-      }
-
       if (data) {
-        return { 
-          isSafe: false, 
-          details: 'Warning: This URL is flagged as a known phishing site in our database.' 
-        };
+        return { isSafe: false, details: 'CRITICAL: Confirmed match in global phishing database.' };
       }
-
-      return { isSafe: true, details: 'No immediate threats detected.' };
+      return { isSafe: true, details: 'No immediate database matches found.' };
     } catch (err) {
-      console.error('Service Error:', err);
-      return { 
-        isSafe: true, 
-        details: 'Scan completed. No confirmed threats found, but always remain cautious.' 
-      };
+      return { isSafe: true, details: 'Local scan active. Database lookup bypassed.' };
     }
   }
 
-  async getScams() {
-    const { data, error } = await this.supabase
-      .from('scams')
-      .select('*')
-      .order('created_at', { ascending: false });
-    return { data: data as Scam[], error };
+  async submitReport(report: UserReport) {
+    return await this.supabase.from('reports').insert([report]).select();
   }
 
-  async submitReport(report: UserReport) {
-    const { data, error } = await this.supabase
-      .from('reports')
-      .insert([report])
-      .select();
-    return { data, error };
+  async getScams() {
+    return await this.supabase.from('scams').select('*').order('created_at', { ascending: false });
   }
 }

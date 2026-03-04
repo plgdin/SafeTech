@@ -1,42 +1,107 @@
-<div class="space-y-10">
-  <section>
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-slate-900">Latest Scam Alerts</h2>
-      <span class="flex h-3 w-3 relative">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-      </span>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="group relative bg-white border-l-4 border-red-500 p-5 shadow-sm hover:shadow-md transition">
-        <h3 class="font-bold text-lg group-hover:text-red-600">Urgent: WhatsApp OTP Fraud</h3>
-        <p class="text-sm text-slate-500 mt-2">Scammers are requesting OTPs by pretending to be family members. Do not share!</p>
-        <div class="mt-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Posted 2 hours ago</div>
+<div style="min-height: 100vh; background-color: #ffffff; font-family: 'Inter', sans-serif; color: #020202; padding-top: 100px;">
+  
+  <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
+    
+    <header style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #ebebeb; padding-bottom: 60px; margin-bottom: 80px;">
+      <div style="max-width: 800px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+          <span style="width: 8px; height: 8px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 10px #1e6aff;"></span>
+          <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; font-size: 11px;">.Latest Intelligence</span>
+        </div>
+        <h1 style="font-size: 80px; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; margin: 0; text-transform: uppercase;">
+          SCAM <br> <span style="color: #1e6aff;">AWARENESS</span>
+        </h1>
+        <p style="color: #666; font-size: 20px; font-weight: 500; margin-top: 30px; line-height: 1.6;">
+          Strategically designed to present real-time security alerts and safeguard your digital future.
+        </p>
       </div>
+
+      <button routerLink="/reporting" style="background-color: #020202; color: #ffffff; border: none; padding: 20px 40px; border-radius: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s;" 
+              onmouseover="this.style.backgroundColor='#1e6aff'" onmouseout="this.style.backgroundColor='#020202'">
+        Report a Scam →
+      </button>
+    </header>
+
+    <section style="margin-bottom: 100px;">
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 40px;">
+        <div style="position: relative; width: 12px; height: 12px;">
+          <div style="position: absolute; width: 100%; height: 100%; background-color: #ef4444; border-radius: 50%; opacity: 0.5; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+          <div style="position: relative; width: 100%; height: 100%; background-color: #ef4444; border-radius: 50%;"></div>
+        </div>
+        <h2 style="font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em;">Urgent Threats</h2>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 30px;">
+        <ng-container *ngFor="let scam of scams">
+          <div *ngIf="scam.severity !== 'Low'" 
+               [style.border-left-color]="scam.severity === 'High' ? '#ef4444' : '#f59e0b'"
+               style="background-color: #ffffff; border: 1px solid #ebebeb; border-left-width: 8px; border-radius: 30px; padding: 40px; transition: 0.4s; cursor: pointer;"
+               onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.05)'"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+              <div style="width: 50px; height: 50px; background-color: #f4f4f4; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px;">!</div>
+              <span style="font-size: 10px; font-weight: 900; letter-spacing: 0.1em; color: #666; border: 1px solid #ebebeb; padding: 5px 15px; border-radius: 20px;">{{scam.severity}} RISK</span>
+            </div>
+
+            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 15px;">{{scam.title}}</h3>
+            <p style="color: #666; font-size: 15px; line-height: 1.7; margin-bottom: 30px;">{{scam.description}}</p>
+            
+            <div style="padding-top: 20px; border-top: 1px solid #ebebeb; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #a0a0a0; text-transform: uppercase;">{{scam.created_at | date:'MMM d, y'}}</span>
+              <a [routerLink]="['/guide', scam.id]" style="color: #1e6aff; text-decoration: none; font-weight: 800; font-size: 12px; letter-spacing: 0.1em;">ANALYSIS →</a>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </section>
+
+    <section style="background-color: #f4f4f4; border-radius: 50px; padding: 60px; margin-bottom: 100px;">
+      <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 40px; letter-spacing: -0.02em;">DIRECTORY (A-Z)</h2>
       
+      <div style="display: grid; grid-cols: 1; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px;">
+        <div *ngFor="let item of scams" 
+             style="background-color: #ffffff; padding: 25px 40px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer;"
+             onmouseover="this.style.border='1px solid #1e6aff'" onmouseout="this.style.border='1px solid transparent'">
+          <div style="display: flex; align-items: center; gap: 25px;">
+            <div style="width: 60px; height: 60px; background-color: #1e6aff; color: #ffffff; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900;">
+              {{item.title.charAt(0)}}
+            </div>
+            <div>
+              <div style="font-weight: 800; font-size: 18px; color: #020202;">{{item.title}}</div>
+              <div style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;">{{item.type}}</div>
+            </div>
+          </div>
+          <div style="color: #1e6aff; font-weight: 900; font-size: 12px;">GUIDE →</div>
+        </div>
       </div>
-  </section>
+    </section>
 
-  <section class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-    <div class="p-6 border-b border-slate-200 bg-slate-50">
-      <h2 class="text-xl font-bold text-slate-900">Scam Directory (A-Z)</h2>
-    </div>
-    <div class="p-0">
-      <ul class="divide-y divide-slate-100">
-        <li class="p-4 hover:bg-slate-50 cursor-pointer flex justify-between items-center">
-          <span class="font-medium text-slate-700">Bank KYC Update Scam</span>
-          <span class="text-blue-600 text-sm">View Guide →</span>
-        </li>
-        <li class="p-4 hover:bg-slate-50 cursor-pointer flex justify-between items-center">
-          <span class="font-medium text-slate-700">Job Offer Fraud (Work from Home)</span>
-          <span class="text-blue-600 text-sm">View Guide →</span>
-        </li>
-        <li class="p-4 hover:bg-slate-50 cursor-pointer flex justify-between items-center">
-          <span class="font-medium text-slate-700">Lottery & Tax Rebate Scams</span>
-          <span class="text-blue-600 text-sm">View Guide →</span>
-        </li>
-      </ul>
-    </div>
-  </section>
+    <section style="background-color: #020202; border-radius: 60px; padding: 80px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.2);">
+      <div style="position: relative; z-index: 2;">
+        <h2 style="color: #ffffff; font-size: 60px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 20px;">
+          NEW THREAT <br> <span style="color: #1e6aff;">DETECTED?</span>
+        </h2>
+        <p style="color: #a0a0a0; font-size: 20px; font-weight: 500; max-width: 600px; margin: 0 auto 40px;">
+          Build community trust by reporting new scams. Our auditing team will verify and add them to the repository.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+          <button routerLink="/reporting" style="background-color: #1e6aff; color: #ffffff; border: none; padding: 20px 50px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 15px 30px rgba(30, 106, 255, 0.3);">
+            SUBMIT EVIDENCE
+          </button>
+          <button routerLink="/tech-buddy" style="background-color: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.1); padding: 20px 50px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; backdrop-filter: blur(10px);">
+            TECH BUDDY AI
+          </button>
+        </div>
+      </div>
+      <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background-color: #1e6aff; filter: blur(100px); opacity: 0.15; border-radius: 50%;"></div>
+    </section>
+
+  </div>
 </div>
+
+<style>
+  @keyframes ping {
+    75%, 100% { transform: scale(2); opacity: 0; }
+  }
+</style>

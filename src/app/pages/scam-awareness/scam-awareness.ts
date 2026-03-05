@@ -16,8 +16,19 @@ export class ScamAwarenessComponent implements OnInit {
   constructor(private supabase: SupabaseService) {}
 
   async ngOnInit() {
-    const { data } = await this.supabase.getScams();
-    this.scams = data || [];
+    const { data, error } = await this.supabase.getScams();
+    
+    if (data) {
+      // Map the database columns to match the HTML template properties
+      this.scams = data.map((item: any) => ({
+        ...item,
+        type: item.category || item.type || 'General',
+        severity: item.risk_level || item.severity || 'Medium'
+      }));
+    } else {
+      console.error('Error fetching scams:', error);
+      this.scams = [];
+    }
   }
 
   /**

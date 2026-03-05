@@ -76,22 +76,22 @@ export class PhishingComponent {
     this.scanProgress = 0;
     this.scanStatus = 'Initializing Multi-Vector Audit...';
     
-    // Force immediate UI update to trigger the scanning state
     this.cdr.detectChanges();
 
+    // Start background analysis against Supabase
     const dbTask = this.supabaseService.checkPhishingUrl(input).catch(() => null);
     const heuristic = this.calculateRiskScore(input);
 
-    // Asynchronous Progress Engine (Replaces setInterval)
+    // Simulation Engine: Deep Packet Inspection Simulation
     while (this.scanProgress < 100) {
-      await this.delay(50); // Speed of the scan
+      await this.delay(50);
       this.scanProgress += 5;
       
       if (this.scanProgress === 20) this.scanStatus = 'Auditing SSL Certificates...';
       if (this.scanProgress === 50) this.scanStatus = 'Consulting Global Threat Intelligence...';
       if (this.scanProgress === 85) this.scanStatus = 'Executing Heuristic Logic...';
       
-      this.cdr.detectChanges();
+      this.cdr.detectChanges(); 
     }
 
     await this.finalizeScan(input, heuristic, dbTask);
@@ -110,6 +110,16 @@ export class PhishingComponent {
           reasons: heuristic.reasons
         };
       }
+
+      // AUTOMATIC AUDIT LOGGING: Silently push result to Supabase for the KSITM audit trail
+      this.supabaseService.logPhishingAudit(
+        input, 
+        this.result.score, 
+        this.result.details, 
+        this.result.reasons, 
+        this.result.isSafe
+      ).catch(err => console.error('Audit log failed to sync:', err));
+
     } catch (error) {
       this.result = { isSafe: heuristic.score < 70, details: 'Offline Mode: Local heuristic fallback active.', score: heuristic.score, reasons: heuristic.reasons };
     } finally {
@@ -134,11 +144,24 @@ export class PhishingComponent {
 
   async reportUrl(type: 'phishing' | 'safe') {
     if (!this.targetUrl || !this.result) return;
+    
+    this.scanStatus = 'Syncing with KSITM Secure Server...';
+    this.cdr.detectChanges();
+
     const { error } = await this.supabaseService.submitReport({
-      report_type: type === 'phishing' ? 'Phishing Site' : 'False Positive',
-      content: `URL: ${this.targetUrl} | Risk Score: ${this.result.score}%`,
+      report_type: type === 'phishing' ? 'Phishing URL' : 'False Positive',
+      content: `URL: ${this.targetUrl} | Risk Score: ${this.result.score}% | Markers: ${this.result.reasons.join(', ')}`,
       status: 'pending'
     });
-    if (!error) alert('Intelligence synced with SafeTech Database.');
+ 
+    if (error) {
+      console.error('Database sync failed', error);
+      alert('Failed to connect to KSITM secure server.');
+      this.scanStatus = 'Sync Failed';
+    } else {
+      alert('Threat Intelligence synced with SafeTech Database.');
+      this.scanStatus = 'Intelligence Synced';
+    }
+    this.cdr.detectChanges();
   }
 }

@@ -1,19 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ScamAwarenessComponent } from './scam-awareness';
+import { SupabaseService } from '../../core/services/supabase';
 
-import { ScamAwareness } from './scam-awareness';
-
-describe('ScamAwareness', () => {
-  let component: ScamAwareness;
-  let fixture: ComponentFixture<ScamAwareness>;
+describe('ScamAwarenessComponent', () => {
+  let component: ScamAwarenessComponent;
+  let fixture: ComponentFixture<ScamAwarenessComponent>;
+  let mockSupabaseService: any;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ScamAwareness],
-    }).compileComponents();
+    // Replaced the Jasmine spy with a standard JS Promise. 
+    // This compiles everywhere and prevents DB writes during tests.
+    mockSupabaseService = {
+      getScams: () => Promise.resolve({ data: [], error: null })
+    };
 
-    fixture = TestBed.createComponent(ScamAwareness);
+    await TestBed.configureTestingModule({
+      imports: [ScamAwarenessComponent], 
+      providers: [
+        { provide: SupabaseService, useValue: mockSupabaseService }
+      ]
+    })
+    .compileComponents();
+    
+    fixture = TestBed.createComponent(ScamAwarenessComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

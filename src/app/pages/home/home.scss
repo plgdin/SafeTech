@@ -1,9 +1,59 @@
-// Custom styles for the home dashboard
-.hero-gradient {
-  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+/* --- HERO BUTTON ANIMATIONS --- */
+.cta-group {
+  display: flex;
+  gap: 24px;
+
+  button {
+    padding: 22px 48px;
+    border-radius: 15px;
+    font-weight: 900;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    cursor: pointer;
+    /* Spring-like transition for lift effect */
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform, box-shadow;
+    
+    /* Shrinks slightly when clicked */
+    &:active {
+      transform: scale(0.96) !important;
+      transition: transform 0.1s ease;
+    }
+  }
+
+  .btn-primary {
+    background-color: #1e6aff;
+    color: #ffffff;
+    box-shadow: 0 20px 40px rgba(30, 106, 255, 0.25);
+
+    &:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 25px 45px rgba(30, 106, 255, 0.4);
+      background-color: #185ce0; 
+    }
+  }
+
+  .btn-secondary {
+    background-color: #020202;
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.25);
+      background-color: #1a1a1a; 
+    }
+  }
 }
 
-// Ensure cards have a nice lift effect
+// Custom styles for the home dashboard
+.hero-gradient {
+  background: linear-gradient(135deg, #f0f9ff 0%, #FAF9F6 100%);
+}
+
+// Existing lift effect
 .group:hover {
   transform: translateY(-5px);
   transition: all 0.3s ease;

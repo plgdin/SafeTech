@@ -18,8 +18,13 @@ export class PhishingComponent {
 
   constructor(
     private supabaseService: SupabaseService,
-    private cdr: ChangeDetectorRef // Forces UI updates during async tasks
+    private cdr: ChangeDetectorRef 
   ) { }
+
+  // Async delay helper for smoother, Angular-safe animations
+  private delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   private calculateRiskScore(url: string): { score: number; reasons: string[] } {
     let score = 0;
@@ -70,24 +75,26 @@ export class PhishingComponent {
     this.result = null;
     this.scanProgress = 0;
     this.scanStatus = 'Initializing Multi-Vector Audit...';
+    
+    // Force immediate UI update to trigger the scanning state
+    this.cdr.detectChanges();
 
-    // Start background analysis immediately
     const dbTask = this.supabaseService.checkPhishingUrl(input).catch(() => null);
     const heuristic = this.calculateRiskScore(input);
 
-    // Simulation Engine: Deep Packet Inspection Simulation
-    const interval = setInterval(async () => {
+    // Asynchronous Progress Engine (Replaces setInterval)
+    while (this.scanProgress < 100) {
+      await this.delay(50); // Speed of the scan
       this.scanProgress += 5;
+      
       if (this.scanProgress === 20) this.scanStatus = 'Auditing SSL Certificates...';
       if (this.scanProgress === 50) this.scanStatus = 'Consulting Global Threat Intelligence...';
       if (this.scanProgress === 85) this.scanStatus = 'Executing Heuristic Logic...';
       
-      if (this.scanProgress >= 100) {
-        clearInterval(interval);
-        await this.finalizeScan(input, heuristic, dbTask);
-      }
-      this.cdr.detectChanges(); // Ensure the UI renders every progress update
-    }, 50);
+      this.cdr.detectChanges();
+    }
+
+    await this.finalizeScan(input, heuristic, dbTask);
   }
 
   private async finalizeScan(input: string, heuristic: any, dbTask: Promise<any>) {
@@ -115,6 +122,8 @@ export class PhishingComponent {
   generateForensicReport() {
     if (!this.result) return;
     this.scanStatus = 'Logging Forensic Evidence...';
+    this.cdr.detectChanges();
+    
     setTimeout(() => {
       const auditID = `SF-${Math.floor(100000 + Math.random() * 900000)}`;
       alert(`Forensic Audit ${auditID} generated. Digital evidence logged for Law Enforcement.`);

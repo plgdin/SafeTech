@@ -1,0 +1,65 @@
+@property --bg-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.axis-btn {
+  position: relative;
+  display: inline-flex;
+  padding: 1px; 
+  border-radius: 12px;
+  background: #282828; 
+  border: none;
+  cursor: pointer;
+  outline: none;
+  min-width: 160px;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    &::before, &::after {
+      opacity: 1;
+      animation: spin-bg 2s linear infinite;
+    }
+    .axis-content { background: var(--hover-bg, #0a0a0a); }
+  }
+}
+
+.axis-btn::before, .axis-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(from var(--bg-angle), transparent 70%, var(--glow-color, #00e5ff) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.axis-btn::before { filter: blur(12px); inset: -2px; }
+
+@keyframes spin-bg {
+  0% { --bg-angle: 0deg; }
+  100% { --bg-angle: 360deg; }
+}
+
+.axis-content {
+  position: relative;
+  z-index: 1;
+  margin: 1.5px;
+  background: var(--button-bg, #1e6aff); 
+  border-radius: 10.5px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background 0.3s ease;
+}

@@ -6,9 +6,9 @@ export interface UserReport {
   report_type: string;
   content: string;
   status: string;
+  reference_id?: string; // Production Tracking ID
 }
 
-// FIXED: Added type and severity to bridge the gap between the DB and your HTML
 export interface Scam {
   id?: string;
   title: string;
@@ -28,7 +28,6 @@ export class SupabaseService {
   private supabase: SupabaseClient;
 
   constructor() {
-    // Initialize Supabase client. Ensure you have these in your environment.ts
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
 
@@ -62,35 +61,32 @@ export class SupabaseService {
   }
 
   /* =========================================
-     2. FAKE NEWS / DEEPFAKE BACKEND
-     ========================================= */
-     
-  async logFakeNewsAnalysis(snippet: string, score: number, keywords: string[]) {
-    return await this.supabase.from('fake_news_logs').insert([
-      {
-        content_snippet: snippet,
-        ai_confidence_score: score,
-        flagged_keywords: keywords
-      }
-    ]);
-  }
-
-  /* =========================================
-     3. CITIZEN REPORTING (To KSITM)
+     2. CITIZEN REPORTING (Production Ready)
      ========================================= */
      
   async submitReport(report: UserReport) {
+    // Maps forensic payload to the citizen_reports table
     return await this.supabase.from('citizen_reports').insert([
       {
         report_type: report.report_type,
         evidence_payload: report.content,
-        status: report.status
+        status: report.status,
+        reference_id: report.reference_id // Production ID storage
       }
     ]);
   }
 
+  // Production-ready lookup for the Tracking Panel
+  async getReportStatus(refId: string) {
+    return await this.supabase
+      .from('citizen_reports')
+      .select('status, created_at')
+      .eq('reference_id', refId)
+      .single();
+  }
+
   /* =========================================
-     4. SCAM AWARENESS BACKEND
+     3. SCAM AWARENESS BACKEND
      ========================================= */
      
   async getScams() {

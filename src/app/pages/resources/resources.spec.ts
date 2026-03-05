@@ -1,19 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ResourcesComponent } from './resources'; // Changed from Resources
+import { SupabaseService } from '../../core/services/supabase';
 
-import { Resources } from './resources';
-
-describe('Resources', () => {
-  let component: Resources;
-  let fixture: ComponentFixture<Resources>;
+describe('ResourcesComponent', () => {
+  let component: ResourcesComponent;
+  let fixture: ComponentFixture<ResourcesComponent>;
 
   beforeEach(async () => {
+    // Creating a basic mock for Supabase so the test doesn't crash
+    const mockSupabaseService = {
+      getScams: () => Promise.resolve({ data: [], error: null })
+    };
+
     await TestBed.configureTestingModule({
-      imports: [Resources],
+      imports: [ResourcesComponent],
+      providers: [
+        { provide: SupabaseService, useValue: mockSupabaseService }
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Resources);
+    fixture = TestBed.createComponent(ResourcesComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

@@ -1,13 +1,13 @@
-<div style="min-height: 100vh; background-color: #ffffff; font-family: 'Inter', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 120px;">
+<div style="min-height: 100vh; background-color: #ffffff; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 120px;">
   
   <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
     
     <header style="border-bottom: 1px solid #ebebeb; padding-bottom: 70px; margin-bottom: 90px;">
       <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
         <span style="width: 8px; height: 8px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 12px #1e6aff;"></span>
-        <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-size: 11px;">.Flow 03 / Auditing & Reporting</span>
+        <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-size: 11px;">.Audit / Forensic Intake</span>
       </div>
-      <h1 style="font-size: 80px; font-weight: 900; line-height: 0.85; letter-spacing: -0.04em; margin: 0; text-transform: uppercase; font-family: 'Poppins', sans-serif;">
+      <h1 style="font-size: 80px; font-weight: 900; line-height: 0.85; letter-spacing: -0.04em; margin: 0; text-transform: uppercase;">
         SECURE <br> <span style="color: #1e6aff;">REPORTING</span>
       </h1>
       <p style="color: #666; font-size: 20px; font-weight: 500; margin-top: 35px; line-height: 1.6; max-width: 750px;">
@@ -17,13 +17,14 @@
 
     <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 80px; align-items: start;">
       
-      <section style="background-color: #f4f4f4; border-radius: 50px; padding: 60px;">
+      <section style="background-color: #ffffff; border: 1px solid #ebebeb; border-radius: 50px; padding: 60px; box-shadow: 0 40px 100px rgba(0,0,0,0.03);">
         <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 45px; text-transform: uppercase; letter-spacing: -0.02em;">Report a Scam</h2>
         
-        <form style="display: grid; gap: 30px;">
+        <div style="display: grid; gap: 30px;">
           <div style="display: grid; gap: 12px;">
-            <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #020202;">Scam Category</label>
-            <select style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: white; font-weight: 700; outline: none; appearance: none; cursor: pointer;">
+            <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #1e6aff;">Scam Category</label>
+            <select [(ngModel)]="reportData.incidentType" 
+                    style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-weight: 700; outline: none; appearance: none; cursor: pointer;">
               <option>Phishing Website</option>
               <option>OTP / WhatsApp Fraud</option>
               <option>Lottery Scam</option>
@@ -32,36 +33,67 @@
           </div>
 
           <div style="display: grid; gap: 12px;">
-            <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #020202;">Detailed Evidence</label>
-            <textarea rows="5" placeholder="Paste URLs, phone numbers, or message content..." style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: white; font-weight: 500; outline: none; resize: none; font-size: 15px;"></textarea>
+            <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #1e6aff;">Detailed Evidence</label>
+            <textarea rows="5" [(ngModel)]="reportData.evidence" 
+                      placeholder="Paste URLs, phone numbers, or message content..." 
+                      style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-weight: 500; outline: none; resize: none; font-size: 15px; min-height: 200px;"></textarea>
           </div>
 
-          <button style="background-color: #1e6aff; color: #ffffff; border: none; padding: 24px; border-radius: 18px; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 0.25em; cursor: pointer; transition: 0.4s; margin-top: 20px; box-shadow: 0 15px 40px rgba(30, 106, 255, 0.3);"
-                  onmouseover="this.style.transform='translateY(-3px)'; this.style.backgroundColor='#020202'" 
-                  onmouseout="this.style.transform='translateY(0)'; this.style.backgroundColor='#1e6aff'">
-            SUBMIT TO AUDITORS
-          </button>
-        </form>
+          <div *ngIf="generatedRefId" style="background: #f0f7ff; border: 1px solid #1e6aff; border-radius: 20px; padding: 25px; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.4s ease-out;">
+            <div>
+              <p style="margin: 0; font-size: 10px; font-weight: 800; color: #1e6aff; text-transform: uppercase; letter-spacing: 0.1em;">Reference ID Secured</p>
+              <p style="margin: 0; font-size: 24px; font-weight: 900; color: #020202;">{{ generatedRefId }}</p>
+            </div>
+            <button (click)="copyToClipboard(generatedRefId)" 
+                    style="background: #020202; color: white; border: none; padding: 12px 22px; border-radius: 12px; font-weight: 800; font-size: 11px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+              {{ copySuccess ? '✓ COPIED!' : 'COPY ID' }}
+            </button>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+            <button class="axis-btn" (click)="submitForensicAudit()" [disabled]="isSubmitting" 
+                    style="--button-bg: #1e6aff; --hover-bg: #020202; --glow-color: #00e5ff;">
+              <div class="axis-content">
+                {{ isSubmitting ? 'TRANSMITTING...' : 'SUBMIT TO AUDITORS' }}
+              </div>
+            </button>
+          </div>
+        </div>
       </section>
 
       <aside style="display: grid; gap: 50px;">
-        
         <div style="border: 1px solid #ebebeb; border-radius: 40px; padding: 50px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
           <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.1em;">Track Status</h3>
           <p style="color: #666; font-size: 15px; margin-bottom: 30px; font-weight: 500;">Enter your Reference ID to see investigation progress.</p>
+          
           <div style="display: flex; gap: 12px; margin-bottom: 40px;">
-            <input type="text" placeholder="REF-XXXX" style="flex: 1; padding: 20px; border-radius: 12px; border: 1px solid #ebebeb; outline: none; font-weight: 700; background: #f9f9f9;">
-            <button style="background: #020202; color: white; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer;">GO</button>
+            <input type="text" [(ngModel)]="searchRefId" placeholder="SF-XXXX" 
+                   style="flex: 1; padding: 20px; border-radius: 12px; border: 1px solid #ebebeb; outline: none; font-weight: 700; background: #f9f9f9;">
+            <button (click)="trackReport()" [disabled]="isTracking"
+                    style="background: #020202; color: white; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; min-width: 80px;">
+              {{ isTracking ? '...' : 'GO' }}
+            </button>
+          </div>
+
+          <div *ngIf="currentStep > 0" style="margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 12px; border-left: 4px solid #1e6aff; animation: fadeIn 0.3s ease-out;">
+            <p style="margin: 0; font-size: 11px; font-weight: 800; color: #1e6aff; text-transform: uppercase; letter-spacing: 0.1em;">Current Investigation Status</p>
+            <h4 style="margin: 5px 0 0 0; font-size: 18px; font-weight: 900; color: #020202; text-transform: uppercase;">
+              {{ currentStatus === 'pending' ? 'Evidence Submitted' : 'Under Forensic Audit' }}
+            </h4>
           </div>
 
           <div style="display: grid; gap: 20px;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-              <div style="width: 32px; height: 32px; background: #1e6aff; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900;">1</div>
+            <div style="display: flex; align-items: center; gap: 15px;" [style.opacity]="currentStep >= 1 ? '1' : '0.3'">
+              <div style="width: 32px; height: 32px; background: #1e6aff; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; box-shadow: 0 0 15px rgba(30, 106, 255, 0.4);">1</div>
               <span style="font-weight: 800; font-size: 13px; text-transform: uppercase; color: #020202;">Evidence Submitted</span>
             </div>
+
             <div style="width: 2px; height: 20px; background: #ebebeb; margin-left: 15px;"></div>
-            <div style="display: flex; align-items: center; gap: 15px; opacity: 0.3;">
-              <div style="width: 32px; height: 32px; background: #ebebeb; color: #666; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900;">2</div>
+
+            <div style="display: flex; align-items: center; gap: 15px;" [style.opacity]="currentStep >= 2 ? '1' : '0.3'">
+              <div [style.background]="currentStep >= 2 ? '#1e6aff' : '#ebebeb'" 
+                   [style.color]="currentStep >= 2 ? 'white' : '#666'"
+                   style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; transition: 0.5s;">2</div>
               <span style="font-weight: 800; font-size: 13px; text-transform: uppercase;">Under Audit</span>
             </div>
           </div>
@@ -69,9 +101,9 @@
 
         <div style="background-color: #020202; border-radius: 40px; padding: 50px; color: white; position: relative; overflow: hidden;">
           <div style="position: relative; z-index: 2;">
-            <h3 style="font-size: 24px; font-weight: 900; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">Cyber Help?</h3>
-            <p style="color: #a0a0a0; font-size: 16px; margin-bottom: 35px; line-height: 1.6;">Access government helplines and safety tips through our AI assistant.</p>
-            <button routerLink="/tech-buddy" style="background: #1e6aff; color: #ffffff; border: none; padding: 20px 40px; border-radius: 15px; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer;">
+            <h3 style="font-size: 24px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -0.02em;">Need Assistance?</h3>
+            <p style="color: #a0a0a0; font-size: 16px; margin-bottom: 35px; line-height: 1.6; font-weight: 500;">Access government helplines and safety tips through our AI assistant.</p>
+            <button routerLink="/tech-buddy" style="background: #1e6aff; color: #ffffff; border: none; padding: 20px 40px; border-radius: 15px; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: 0.3s;">
               Launch Tech Buddy
             </button>
           </div>

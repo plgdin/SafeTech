@@ -1,21 +1,30 @@
 const fs = require('fs');
 const path = require('path');
 
-// 1. Ensure the environments folder exists
 const envDir = path.join(__dirname, 'src', 'environments');
 if (!fs.existsSync(envDir)) {
   fs.mkdirSync(envDir, { recursive: true });
 }
 
-// 2. Build the environment string using Vercel's secure variables
+// Ensure the variables aren't strictly undefined
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_KEY || '';
+const geminiKey = process.env.GEMINI_API_KEY || '';
+const scriptUrl = process.env.SCRIPT_URL || '';
+
 const envConfigFile = `export const environment = {
   production: true,
-  supabaseUrl: '${process.env.SUPABASE_URL || ''}',
-  supabaseKey: '${process.env.SUPABASE_KEY || ''}',
-  geminiApiKey: '${process.env.GEMINI_API_KEY || ''}',
-  googleScriptUrl: '${process.env.SCRIPT_URL || ''}'
+  supabaseUrl: '${supabaseUrl}',
+  supabaseKey: '${supabaseKey}',
+  geminiApiKey: '${geminiKey}',
+  googleScriptUrl: '${scriptUrl}'
 };`;
 
-// 3. Write the file safely before Angular boots up
+// Write to BOTH files to bypass Angular's file replacement rules
 fs.writeFileSync(path.join(envDir, 'environment.ts'), envConfigFile);
-console.log('✅ Vercel Environment file generated successfully!');
+fs.writeFileSync(path.join(envDir, 'environment.development.ts'), envConfigFile);
+
+console.log('✅ Vercel Environment files generated successfully!');
+if (!supabaseUrl) {
+  console.warn('⚠️ WARNING: SUPABASE_URL was empty during the build!');
+}

@@ -12,8 +12,34 @@
   font-family: 'Poppins', sans-serif;
 }
 
+/* Image 3: Intro Guardian - Tilted and sliding behind the button */
+.intro-image-behind {
+  position: absolute;
+  height: 80px; 
+  bottom: 41px; 
+  right: -200px; 
+  z-index: -1;
+  pointer-events: none;
+  transform: rotate(-45deg); 
+  animation: slideInBehind 1.5s ease-out forwards;
+}
+
+/* Image 2: Emergent Guardian - Adjusted to emerge FROM the button */
+.intro-image-emerge {
+  position: absolute;
+  height: 100px;
+  /* Starting position centered within the axis-btn footprint */
+  bottom: -65px;
+  right: 60px;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  animation: emergeFromButton 1s ease-out 1.5s forwards;
+}
+
 .axis-btn {
   position: relative;
+  z-index: 1;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -67,7 +93,6 @@
     max-width: 260px; 
     line-height: 1.5;
 
-    /* Markdown Element Styling */
     ::ng-deep p { margin: 0 0 10px 0; &:last-child { margin: 0; } }
     ::ng-deep strong { font-weight: 800; }
     ::ng-deep ul, ::ng-deep ol { margin: 10px 0; padding-left: 20px; }
@@ -76,7 +101,6 @@
   }
 }
 
-/* Typing Indicator Wave Animation */
 .typing-indicator {
   display: flex;
   align-items: center;
@@ -107,6 +131,37 @@
   button { 
     color: #1e6aff; background: none; border: none; font-weight: 800; cursor: pointer;
     &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+}
+
+/* --- Animations --- */
+
+@keyframes slideInBehind {
+  0% {
+    right: -200px;
+    transform: translateX(100%) translateY(45px) rotate(-45deg);
+  }
+  100% {
+    right: 40px; 
+    transform: translateX(0) translateY(45px) rotate(-45deg);
+  }
+}
+
+/* KEY CHANGE: Emerge FROM the button center */
+@keyframes emergeFromButton {
+  0% {
+    /* Offset the bottom: -70px and right: 60px so it starts inside the button */
+    transform: translate(120px, -20px) scale(0);
+    opacity: 0;
+  }
+  40% {
+    /* Rapidly become visible as it pops out */
+    opacity: 1;
+  }
+  100% {
+    /* Move to the final "peek" position */
+    transform: translate(-20px, -60px) scale(1);
+    opacity: 1;
   }
 }
 

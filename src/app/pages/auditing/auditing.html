@@ -21,22 +21,66 @@
         <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 45px; text-transform: uppercase; letter-spacing: -0.02em;">Report a Scam</h2>
         
         <div style="display: grid; gap: 30px;">
-          <div style="display: grid; gap: 12px;">
+
+          <div style="display: grid; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid #ebebeb;">
+            <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #1e6aff;">Reporter Identity (OTP Required)</label>
+            
+            <div style="display: flex; gap: 10px;" *ngIf="!isPhoneVerified">
+              <input type="tel" [ngModel]="phoneNumber" (ngModelChange)="onPhoneInput($event)" placeholder="+91 98765 43210" [disabled]="otpSent || isVerifying"
+                     style="flex: 1; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; outline: none; transition: 0.3s;"
+                     onfocus="this.style.borderColor='#1e6aff'" onblur="this.style.borderColor='#ebebeb'">
+      
+              <button *ngIf="!otpSent" (click)="requestOTP()" [disabled]="!phoneNumber || isVerifying"
+                      style="background: #020202; color: white; border: none; padding: 0 30px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s;"
+                      [style.opacity]="!phoneNumber || isVerifying ? '0.5' : '1'">
+                {{ isVerifying ? '...' : 'SEND OTP' }}
+              </button>
+            </div>
+      
+            <div *ngIf="otpSent && !isPhoneVerified" style="display: flex; gap: 10px; margin-top: 5px; animation: fadeIn 0.3s ease-out;">
+              <input type="text" [(ngModel)]="otpCode" placeholder="Enter 6-digit code" [disabled]="isVerifying"
+                     style="flex: 1; padding: 22px; border-radius: 15px; border: 1px solid #1e6aff; background: #f0f7ff; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; outline: none;">
+      
+              <button (click)="confirmOTP()" [disabled]="!otpCode || isVerifying"
+                      style="background: #1e6aff; color: white; border: none; padding: 0 30px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s;"
+                      [style.opacity]="!otpCode || isVerifying ? '0.5' : '1'">
+                {{ isVerifying ? '...' : 'VERIFY' }}
+              </button>
+            </div>
+      
+            <div *ngIf="isPhoneVerified" style="display: flex; align-items: center; justify-content: space-between; padding: 20px 25px; border-radius: 15px; border: 1px solid #00d26a; background: #f0fff6; animation: fadeIn 0.4s ease-out;">
+              <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="width: 30px; height: 30px; background: #00d26a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px;">✓</div>
+                <div>
+                  <p style="margin: 0; font-size: 11px; font-weight: 800; color: #00d26a; text-transform: uppercase; letter-spacing: 0.1em;">Verified Citizen</p>
+                  <p style="margin: 0; font-size: 16px; font-weight: 800; color: #020202;">{{ phoneNumber }}</p>
+                </div>
+              </div>
+              <button (click)="resetPhone()" style="background: transparent; border: none; color: #666; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: underline;">Change</button>
+            </div>
+          </div>
+          
+          <div style="display: grid; gap: 12px; position: relative;" [style.opacity]="!isPhoneVerified ? '0.5' : '1'" [style.pointer-events]="!isPhoneVerified ? 'none' : 'auto'">
             <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #1e6aff;">Scam Category</label>
-            <select [(ngModel)]="reportData.incidentType" 
-                    style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-weight: 700; outline: none; appearance: none; cursor: pointer;">
-              <option>Phishing Website</option>
-              <option>OTP / WhatsApp Fraud</option>
-              <option>Lottery Scam</option>
-              <option>Investment Fraud</option>
-            </select>
+            <div *ngIf="isDropdownOpen" (click)="isDropdownOpen = false" style="position: fixed; inset: 0; z-index: 99;"></div>
+            <div (click)="isDropdownOpen = !isDropdownOpen" class="dropdown-trigger" [class.active]="isDropdownOpen">
+              <span [style.color]="reportData.incidentType ? '#020202' : '#888'">{{ getSelectedCategoryLabel() }}</span>
+              <svg width="14" height="8" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg" style="transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);" [style.transform]="isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'">
+                <path d="M2 2L8 8L14 2" stroke="#1e6aff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div *ngIf="isDropdownOpen" class="dropdown-list">
+              <div *ngFor="let cat of categories" (click)="selectCategory(cat.id)" class="custom-option" [class.selected]="reportData.incidentType === cat.id">
+                {{ cat.label }}
+              </div>
+            </div>
           </div>
 
-          <div style="display: grid; gap: 12px;">
+          <div style="display: grid; gap: 12px;" [style.opacity]="!isPhoneVerified ? '0.5' : '1'" [style.pointer-events]="!isPhoneVerified ? 'none' : 'auto'">
             <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #1e6aff;">Detailed Evidence</label>
-            <textarea rows="5" [(ngModel)]="reportData.evidence" 
-                      placeholder="Paste URLs, phone numbers, or message content..." 
-                      style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-weight: 500; outline: none; resize: none; font-size: 15px; min-height: 200px;"></textarea>
+            <textarea rows="5" [(ngModel)]="reportData.evidence" placeholder="Paste URLs, phone numbers, or message content..." 
+                      style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-weight: 500; outline: none; resize: none; font-size: 15px; min-height: 200px; font-family: 'Poppins', sans-serif; transition: all 0.3s ease;"
+                      onfocus="this.style.borderColor='#1e6aff'; this.style.boxShadow='0 0 0 4px rgba(30, 106, 255, 0.1)'" onblur="this.style.borderColor='#ebebeb'; this.style.boxShadow='none'"></textarea>
           </div>
 
           <div *ngIf="generatedRefId" style="background: #f0f7ff; border: 1px solid #1e6aff; border-radius: 20px; padding: 25px; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.4s ease-out;">
@@ -44,17 +88,16 @@
               <p style="margin: 0; font-size: 10px; font-weight: 800; color: #1e6aff; text-transform: uppercase; letter-spacing: 0.1em;">Reference ID Secured</p>
               <p style="margin: 0; font-size: 24px; font-weight: 900; color: #020202;">{{ generatedRefId }}</p>
             </div>
-            <button (click)="copyToClipboard(generatedRefId)" 
-                    style="background: #020202; color: white; border: none; padding: 12px 22px; border-radius: 12px; font-weight: 800; font-size: 11px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
+            <button (click)="copyToClipboard(generatedRefId)" style="background: #020202; color: white; border: none; padding: 12px 22px; border-radius: 12px; font-weight: 800; font-size: 11px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;">
               {{ copySuccess ? '✓ COPIED!' : 'COPY ID' }}
             </button>
           </div>
 
           <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
-            <button class="axis-btn" (click)="submitForensicAudit()" [disabled]="isSubmitting" 
+            <button class="axis-btn" (click)="submitForensicAudit()" [disabled]="isSubmitting || !isPhoneVerified" 
                     style="--button-bg: #1e6aff; --hover-bg: #020202; --glow-color: #00e5ff;">
               <div class="axis-content">
-                {{ isSubmitting ? 'TRANSMITTING...' : 'SUBMIT TO AUDITORS' }}
+                {{ !isPhoneVerified ? 'VERIFY PHONE TO SUBMIT' : (isSubmitting ? 'TRANSMITTING...' : 'SUBMIT TO AUDITORS') }}
               </div>
             </button>
           </div>
@@ -69,9 +112,9 @@
           
           <div style="display: flex; gap: 12px; margin-bottom: 40px;">
             <input type="text" [(ngModel)]="searchRefId" placeholder="SF-XXXX" 
-                   style="flex: 1; padding: 20px; border-radius: 12px; border: 1px solid #ebebeb; outline: none; font-weight: 700; background: #f9f9f9;">
-            <button (click)="trackReport()" [disabled]="isTracking"
-                    style="background: #020202; color: white; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; min-width: 80px;">
+                   style="flex: 1; padding: 20px; border-radius: 12px; border: 1px solid #ebebeb; outline: none; font-weight: 700; background: #f9f9f9; font-family: 'Poppins', sans-serif; transition: all 0.3s ease;"
+                   onfocus="this.style.borderColor='#1e6aff'; this.style.boxShadow='0 0 0 4px rgba(30, 106, 255, 0.1)'" onblur="this.style.borderColor='#ebebeb'; this.style.boxShadow='none'">
+            <button (click)="trackReport()" [disabled]="isTracking" style="background: #020202; color: white; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; min-width: 80px;">
               {{ isTracking ? '...' : 'GO' }}
             </button>
           </div>
@@ -88,13 +131,9 @@
               <div style="width: 32px; height: 32px; background: #1e6aff; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; box-shadow: 0 0 15px rgba(30, 106, 255, 0.4);">1</div>
               <span style="font-weight: 800; font-size: 13px; text-transform: uppercase; color: #020202;">Evidence Submitted</span>
             </div>
-
             <div style="width: 2px; height: 20px; background: #ebebeb; margin-left: 15px;"></div>
-
             <div style="display: flex; align-items: center; gap: 15px;" [style.opacity]="currentStep >= 2 ? '1' : '0.3'">
-              <div [style.background]="currentStep >= 2 ? '#1e6aff' : '#ebebeb'" 
-                   [style.color]="currentStep >= 2 ? 'white' : '#666'"
-                   style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; transition: 0.5s;">2</div>
+              <div [style.background]="currentStep >= 2 ? '#1e6aff' : '#ebebeb'" [style.color]="currentStep >= 2 ? 'white' : '#666'" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; transition: 0.5s;">2</div>
               <span style="font-weight: 800; font-size: 13px; text-transform: uppercase;">Under Audit</span>
             </div>
           </div>

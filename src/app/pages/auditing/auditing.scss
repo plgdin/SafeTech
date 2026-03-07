@@ -1,3 +1,137 @@
+/* =========================================
+   1. GLOBAL ANIMATIONS
+   ========================================= */
+
+@keyframes fadeIn {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-5px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* =========================================
+   2. CUSTOM DROPDOWN STYLES
+   ========================================= */
+
+/* The Trigger Box (The part you click) */
+.dropdown-trigger {
+  width: 100%;
+  padding: 22px;
+  border-radius: 15px;
+  border: 1px solid #ebebeb;
+  background-color: #f9f9f9;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 100;
+
+  &:hover {
+    border-color: #d0d0d0;
+  }
+
+  &.active {
+    border-color: #1e6aff;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(30, 106, 255, 0.1);
+  }
+}
+
+/* The Floating Menu Container */
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 12px;
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  z-index: 101;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 8px; 
+  
+  /* The bouncy entry animation */
+  animation: drop-in 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  transform-origin: top center;
+}
+
+@keyframes drop-in {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-15px) scale(0.98); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+/* The Individual Selectable Options */
+.custom-option {
+  padding: 14px 20px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444444;
+  cursor: pointer;
+  border-radius: 10px; 
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  background: transparent;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Smooth slide right on hover */
+  &:hover:not(.selected) {
+    background: #f4f9ff;
+    color: #1e6aff;
+    transform: translateX(6px); 
+  }
+
+  /* Distinct visual style when selected */
+  &.selected {
+    background: #1e6aff;
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(30, 106, 255, 0.3);
+  }
+}
+
+/* Custom Sleek Scrollbar */
+.dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+.dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 10px 0;
+}
+.dropdown-list::-webkit-scrollbar-thumb {
+  background: #dcdcdc;
+  border-radius: 10px;
+}
+.dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: #1e6aff;
+}
+
+
+/* =========================================
+   3. AXIS BUTTON STYLES (Submit Button)
+   ========================================= */
+
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;
@@ -14,52 +148,94 @@
   cursor: pointer;
   outline: none;
   min-width: 160px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), filter 0.2s ease, opacity 0.3s ease;
+  user-select: none; 
+  will-change: transform; 
 
-  &:hover {
+  /* HOVER & KEYBOARD FOCUS STATES */
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
     transform: translateY(-2px);
-    &::before, &::after {
-      opacity: 1;
-      animation: spin-bg 2s linear infinite;
+    
+    &::before, &::after { 
+      opacity: 1; 
+      animation: spin-bg 2s linear infinite; 
     }
-    .axis-content { background: var(--hover-bg, #0a0a0a); }
+    
+    .axis-content { 
+      background: var(--hover-bg, #0a0a0a); 
+    }
+  }
+
+  /* ACTIVE (CLICK) STATE */
+  &:active:not(:disabled) { 
+    transform: translateY(0); 
+  }
+
+  /* DISABLED STATE - Crucial for the OTP Lockout */
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    transform: translateY(0);
+    
+    .axis-content { 
+      background: #444444; 
+      color: #aaaaaa; 
+    }
+    
+    &::before, &::after { 
+      display: none; 
+    }
+  }
+
+  /* THE SPINNING BORDER LAYERS */
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--bg-angle), 
+      transparent 50%, 
+      var(--glow-color, #00e5ff) 85%, 
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+    pointer-events: none; 
+  }
+
+  &::before { 
+    filter: blur(12px); 
+    inset: -2px; 
+  }
+
+  /* INNER BUTTON CONTENT */
+  .axis-content {
+    position: relative;
+    z-index: 1;
+    margin: 1.5px;
+    background: var(--button-bg, #1e6aff); 
+    border-radius: 10.5px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background 0.3s ease, color 0.3s ease;
+    width: 100%; 
+    box-sizing: border-box;
   }
 }
-
-.axis-btn::before, .axis-btn::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: conic-gradient(from var(--bg-angle), transparent 70%, var(--glow-color, #00e5ff) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 0;
-}
-
-.axis-btn::before { filter: blur(12px); inset: -2px; }
 
 @keyframes spin-bg {
   0% { --bg-angle: 0deg; }
   100% { --bg-angle: 360deg; }
-}
-
-.axis-content {
-  position: relative;
-  z-index: 1;
-  margin: 1.5px;
-  background: var(--button-bg, #1e6aff); 
-  border-radius: 10.5px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 28px;
-  color: white;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transition: background 0.3s ease;
 }

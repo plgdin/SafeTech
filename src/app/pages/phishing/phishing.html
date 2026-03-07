@@ -1,4 +1,4 @@
-<div style="min-height: 100vh; background-color: #ffffff; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 80px;">
+<div style="min-height: 100vh; background-color: #FAF9F6; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 80px;">
   <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
     
     <header style="border-bottom: 1px solid #ebebeb; padding-bottom: 60px; margin-bottom: 80px;">
@@ -16,7 +16,7 @@
 
     <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start;">
       
-      <section style="background-color: #f8f9fb; border-radius: 50px; padding: 50px; text-align: center; border: 1px solid #eee;">
+      <section style="background-color: #ffffff; border-radius: 50px; padding: 50px; text-align: center; border: 1px solid #ebebeb; box-shadow: 0 20px 40px rgba(0,0,0,0.02);">
         <img src="/assets/images/tech-buddy.png" alt="Mascot" 
              [style.filter]="loading ? 'hue-rotate(180deg) brightness(1.2)' : 'none'"
              style="width: 100%; max-width: 300px; filter: drop-shadow(0 20px 40px rgba(30,106,255,0.15)); transition: 0.8s;">
@@ -79,11 +79,11 @@
               <div class="axis-content">📄 PDF</div>
             </button>
 
-            <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #1a0505; --hover-bg: #1a0505; --glow-color: #ef4444; width: 100%;">
+            <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #1a0505; --hover-bg: #3a0000; --glow-color: #ef4444; width: 100%;">
               <div class="axis-content" style="color: #ff8a8a;">🚩 Report</div>
             </button>
 
-            <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #021a0f; --hover-bg: #021a0f; --glow-color: #10b981; width: 100%;">
+            <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #021a0f; --hover-bg: #003a20; --glow-color: #10b981; width: 100%;">
               <div class="axis-content" style="color: #6ee7b7;">✅ Safe</div>
             </button>
 
@@ -97,17 +97,17 @@
         How to spot <span style="color: #1e6aff;">Risky URLs</span>
       </h2>
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;">
-        <div style="background: #f8f9fb; padding: 40px; border-radius: 30px;">
+        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 40px; border-radius: 30px;">
           <div style="font-size: 32px; margin-bottom: 20px;">🧐</div>
           <h3 style="font-weight: 900; font-size: 18px; margin-bottom: 15px; text-transform: uppercase;">Domain Spoofing</h3>
           <p style="color: #666; font-size: 14px; line-height: 1.7; font-weight: 500;">Attackers use misspellings like 'paypa1.com' to mislead you. SafeTech's engine detects these character manipulations.</p>
         </div>
-        <div style="background: #f8f9fb; padding: 40px; border-radius: 30px;">
+        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 40px; border-radius: 30px;">
           <div style="font-size: 32px; margin-bottom: 20px;">🔒</div>
           <h3 style="font-weight: 900; font-size: 18px; margin-bottom: 15px; text-transform: uppercase;">Protocol check</h3>
           <p style="color: #666; font-size: 14px; line-height: 1.7; font-weight: 500;">Sensitive portals without HTTPS are extreme risks. SafeTech flags any insecure protocol on financial domains.</p>
         </div>
-        <div style="background: #f8f9fb; padding: 40px; border-radius: 30px;">
+        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 40px; border-radius: 30px;">
           <div style="font-size: 32px; margin-bottom: 20px;">🌍</div>
           <h3 style="font-weight: 900; font-size: 18px; margin-bottom: 15px; text-transform: uppercase;">Risky Extensions</h3>
           <p style="color: #666; font-size: 14px; line-height: 1.7; font-weight: 500;">Be wary of .zip or .tk extensions. These are often used to hide malware payloads from basic filters.</p>

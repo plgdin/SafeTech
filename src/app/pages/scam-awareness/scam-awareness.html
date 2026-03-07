@@ -16,8 +16,10 @@
         </p>
       </div>
 
-      <button routerLink="/reporting" class="btn-dark">
-        Report a Scam →
+      <button routerLink="/reporting" class="axis-btn" style="--button-bg: #020202; --hover-bg: #1e6aff; --glow-color: #00e5ff;">
+        <div class="axis-content">
+          Report a Scam →
+        </div>
       </button>
     </header>
 
@@ -96,8 +98,19 @@
         <h2>NEW THREAT <br> <span>DETECTED?</span></h2>
         <p>Build community trust by reporting new scams. Our auditing team will verify and add them to the repository.</p>
         <div class="btn-group">
-          <button routerLink="/reporting" class="btn-primary">SUBMIT EVIDENCE</button>
-          <button routerLink="/tech-buddy" class="btn-outline">TECH BUDDY AI</button>
+          
+          <button routerLink="/reporting" class="axis-btn" style="--button-bg: #1e6aff; --hover-bg: #ffffff; --glow-color: #00e5ff;">
+            <div class="axis-content" style="color: inherit;" onmouseover="this.style.color='#020202'" onmouseout="this.style.color='#ffffff'">
+              SUBMIT EVIDENCE
+            </div>
+          </button>
+          
+          <button routerLink="/tech-buddy" class="axis-btn" style="--button-bg: #111111; --hover-bg: #1e6aff; --glow-color: #00e5ff;">
+            <div class="axis-content" style="border: 1px solid rgba(255,255,255,0.1);">
+              TECH BUDDY AI
+            </div>
+          </button>
+
         </div>
       </div>
       <div class="bg-blur"></div>

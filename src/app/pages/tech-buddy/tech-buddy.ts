@@ -19,6 +19,9 @@ export class TechBuddyComponent {
   isOpen = false;
   userInput = '';
   
+  // FIXED: Added isLoading state for the UI compiler and typing indicator
+  isLoading = false; 
+  
   // State management for the complaint form
   currentFlow: 'chat' | 'name' | 'contact' | 'complaint' = 'chat';
   tempComplaintData = { name: '', contact: '', details: '' };
@@ -42,11 +45,18 @@ export class TechBuddyComponent {
     this.messages.push({ text: userText, sender: 'user', time: new Date() });
     this.userInput = '';
 
+    // Turn on the typing indicator
+    this.isLoading = true;
+
+    // Simulate network delay for the bot
     setTimeout(() => this.processInput(userText), 600);
   }
 
   processInput(input: string) {
     const text = input.toLowerCase();
+
+    // Turn off the typing indicator before the bot replies
+    this.isLoading = false;
 
     // 1. Handle Complaint Registration Flow
     if (this.currentFlow === 'name') {

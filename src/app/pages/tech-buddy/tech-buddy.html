@@ -1,57 +1,46 @@
-<div style="min-height: 100vh; background-color: #ffffff; font-family: 'Inter', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 80px;">
-  <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
-    
-    <header style="border-bottom: 1px solid #ebebeb; padding-bottom: 60px; margin-bottom: 80px;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
-        <span style="width: 8px; height: 8px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 12px #1e6aff;"></span>
-        <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-size: 11px;">.Flow 04 / AI Help Assistant</span>
-      </div>
-      <h1 style="font-size: 80px; font-weight: 900; line-height: 0.85; letter-spacing: -0.04em; margin: 0; text-transform: uppercase; font-family: 'Poppins', sans-serif;">
-        TECH <br> <span style="color: #1e6aff;">BUDDY AI</span>
-      </h1>
-      <p style="color: #666; font-size: 20px; font-weight: 500; margin-top: 35px; line-height: 1.6; max-width: 750px;">
-        Meet your digital guardian. Tech Buddy provides real-time safety tips and helps you verify threats.
-      </p>
-    </header>
+<div class="bot-container">
+  <img src="assets/images/image-removebg-preview (3).png" class="intro-image-behind" alt="Guardian Intro">
+  
+  <img src="assets/images/image-removebg-preview (2).png" class="intro-image-emerge" alt="Guardian Emerge">
 
-    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: center;">
+  <button class="axis-btn" (click)="toggleChat()" style="--button-bg: #020202; --hover-bg: #1e6aff; --glow-color: #00e5ff;">
+    <div class="axis-content">
+      <span *ngIf="!isOpen">🛡️ HELP</span>
+      <span *ngIf="isOpen">✕ CLOSE</span>
+    </div>
+  </button>
+
+  <div class="chat-box" *ngIf="isOpen">
+    <div class="chat-header">
+      <div class="brand">SAFE<span>TECH</span> Guardian</div>
+      <a href="tel:1930" style="background: #1e6aff; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; text-decoration: none;">📞 1930</a>
+    </div>
+
+    <div class="chat-messages" #scrollContainer>
       
-      <section style="position: relative; text-align: center;">
-        <div style="background-color: #f4f4f4; border-radius: 50px; padding: 60px; position: relative; overflow: hidden;">
-          <img src="/assets/images/tech-buddy.png" 
-               alt="Tech Buddy Mascot" 
-               style="width: 100%; max-width: 400px; filter: drop-shadow(0 30px 50px rgba(30, 106, 255, 0.25)); transition: 0.5s;"
-               onmouseover="this.style.transform='scale(1.05)'"
-               onmouseout="this.style.transform='scale(1)'">
-          
-          <div style="margin-top: 40px;">
-            <div style="font-family: 'Poppins'; font-weight: 900; font-size: 26px; color: #020202; text-transform: uppercase; letter-spacing: -0.02em;">Guardian Protocol</div>
-            <p style="color: #1e6aff; font-size: 14px; font-weight: 800; text-transform: uppercase; margin-top: 8px; letter-spacing: 0.1em;">Active System Monitoring</p>
-          </div>
-          
-          <div style="position: absolute; top: -20px; left: -20px; width: 150px; height: 150px; background: #1e6aff; filter: blur(80px); opacity: 0.1;"></div>
-        </div>
-      </section>
+      <div *ngFor="let msg of messages" [ngClass]="msg.sender === 'user' ? 'user' : 'bot'">
+        <div class="msg-bubble" [innerHTML]="msg.text"></div>
+      </div>
 
-      <section style="background-color: #020202; border-radius: 50px; padding: 50px; color: white; box-shadow: 0 40px 100px rgba(0,0,0,0.15); height: 650px; display: flex; flex-direction: column;">
-        <div style="flex: 1; overflow-y: auto; padding-right: 15px; margin-bottom: 30px;">
-          <div style="display: flex; gap: 15px; margin-bottom: 25px;">
-            <div style="width: 40px; height: 40px; background: #1e6aff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🤖</div>
-            <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 25px; border-top-left-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">
-              <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #ebebeb;">
-                Hello! I am your **Tech Buddy**. I'm here to help you identify scams and keep your data safe. What can I verify for you today?
-              </p>
-            </div>
-          </div>
+      <div class="bot" *ngIf="isLoading">
+        <div class="msg-bubble typing-indicator">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
         </div>
+      </div>
 
-        <div style="position: relative;">
-          <input type="text" placeholder="Type your security question..." 
-                 style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 25px 90px 25px 25px; border-radius: 20px; color: white; font-weight: 500; outline: none; font-size: 15px;">
-          <button style="position: absolute; right: 12px; top: 12px; bottom: 12px; background: #1e6aff; color: white; border: none; padding: 0 30px; border-radius: 12px; font-weight: 900; cursor: pointer;">SEND</button>
-        </div>
-      </section>
+    </div>
 
+    <div class="chat-input">
+      <input 
+        type="text" 
+        [(ngModel)]="userInput" 
+        (keyup.enter)="sendMessage()" 
+        placeholder="Ask Guardian Protocol..."
+        [disabled]="isLoading"
+      >
+      <button (click)="sendMessage()" [disabled]="isLoading">➤</button>
     </div>
   </div>
 </div>

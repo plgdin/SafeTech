@@ -1,4 +1,16 @@
 /* ==========================================================================
+   GLOBAL APP STYLES
+   ========================================================================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #FAF9F6;
+  font-family: 'Poppins', sans-serif;
+  color: #020202;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
    GLOBAL RACING BUTTON ANIMATION (.axis-btn)
    ========================================================================== */
 
@@ -18,7 +30,7 @@
   border-radius: 12px;
   cursor: pointer;
   outline: none;
-  min-width: 140px; /* Smaller, controlled width */
+  min-width: 140px; 
   transition: transform 0.2s ease;
 
   &:hover {
@@ -52,7 +64,7 @@
   inset: 0;
   border-radius: inherit;
   background: conic-gradient(from var(--bg-angle), transparent 70%, var(--glow-color, #00e5ff) 100%);
-  opacity: 0; /* Hidden until hover */
+  opacity: 0; 
   transition: opacity 0.3s ease;
   z-index: 0;
 }
@@ -72,7 +84,7 @@
 .axis-content {
   position: relative;
   z-index: 1;
-  margin: 1.5px; /* The track thickness */
+  margin: 1.5px; 
   
   /* Defaults to Blue */
   background: var(--button-bg, #1e6aff); 
@@ -81,7 +93,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 28px; /* SHRUNK: Smaller padding for a tighter button */
+  padding: 14px 28px; 
   color: white;
   font-family: 'Poppins', sans-serif;
   font-weight: 800;
@@ -89,5 +101,5 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
-  transition: background 0.3s ease; /* Smooth fade from Blue to Black */
+  transition: background 0.3s ease; 
 }

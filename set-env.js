@@ -6,25 +6,23 @@ if (!fs.existsSync(envDir)) {
   fs.mkdirSync(envDir, { recursive: true });
 }
 
-// Ensure the variables aren't strictly undefined
+// Safely pull the variables
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || '';
 const geminiKey = process.env.GEMINI_API_KEY || '';
 const scriptUrl = process.env.SCRIPT_URL || '';
 
+// Notice how we removed the single quotes and wrapped the variables in JSON.stringify()
 const envConfigFile = `export const environment = {
   production: true,
-  supabaseUrl: '${supabaseUrl}',
-  supabaseKey: '${supabaseKey}',
-  geminiApiKey: '${geminiKey}',
-  googleScriptUrl: '${scriptUrl}'
+  supabaseUrl: ${JSON.stringify(supabaseUrl)},
+  supabaseKey: ${JSON.stringify(supabaseKey)},
+  geminiApiKey: ${JSON.stringify(geminiKey)},
+  googleScriptUrl: ${JSON.stringify(scriptUrl)}
 };`;
 
-// Write to BOTH files to bypass Angular's file replacement rules
+// Write to BOTH files 
 fs.writeFileSync(path.join(envDir, 'environment.ts'), envConfigFile);
 fs.writeFileSync(path.join(envDir, 'environment.development.ts'), envConfigFile);
 
 console.log('✅ Vercel Environment files generated successfully!');
-if (!supabaseUrl) {
-  console.warn('⚠️ WARNING: SUPABASE_URL was empty during the build!');
-}

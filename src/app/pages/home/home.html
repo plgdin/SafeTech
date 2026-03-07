@@ -1,92 +1,134 @@
-<div style="background-color: #FAF9F6; min-height: 100vh; color: #020202; font-family: 'Poppins', sans-serif; overflow-x: hidden; box-sizing: border-box;">
+<div class="preloader" *ngIf="isLoading" [class.hide]="isHiding">
+  <div class="stripe stripe-1"></div>
+  <div class="stripe stripe-2"></div>
+  <div class="stripe stripe-3"></div>
+  <div class="stripe stripe-4"></div>
+  <div class="stripe stripe-5"></div>
+  
+  <div class="loader-brand" [class.fade-out]="isHiding">
+    <h2 class="title-main">SAFETECH</h2>
+    <h2 class="title-sub">campaign</h2>
+  </div>
+</div>
 
-  <section style="position: relative; padding: 140px 48px 100px; max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 60px; align-items: center;">
-    
-    <div style="position: relative; z-index: 10;">
-      <span style="display: inline-block; padding: 8px 18px; margin-bottom: 32px; border-radius: 100px; background-color: #f0f5ff; color: #1e6aff; border: 1px solid #dbeafe; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em;">
-        . Shielding Your Digital Future
-      </span>
-
-      <h1 style="font-size: clamp(48px, 6vw, 90px); font-weight: 900; line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 40px; color: #020202;">
-        DIGITAL <br>
-        <span style="color: #1e6aff;">STRATEGIES</span> <br>
-        TAILORED
+<div class="main-wrapper">
+  
+  <header class="grid-hero">
+    <div class="hero-left">
+      <p class="eyebrow">Shielding Your Digital Future</p>
+      <h1 class="massive-text">
+        SAFETECH <br>
+        <span class="text-blue">CAMPAIGN</span> <br>
+        KSITM
       </h1>
-
-      <p style="font-size: 20px; color: #666666; max-width: 600px; line-height: 1.7; margin-bottom: 48px;">
-        SafeTech is a trusted security firm providing the **Key to Cyber Safety** through comprehensive protection and AI-driven intelligence.
+      <p class="hero-mini-desc">
+        A cyber awareness program to promote safe digital consumption for the elderly, women, and the general public.
       </p>
-
-      <div class="cta-group">
-        <button class="btn-primary" routerLink="/reporting">Get Started</button>
-        <button class="btn-secondary" routerLink="/tech-buddy">Talk to Buddy</button>
-      </div>
     </div>
 
-    <div style="background: #f8f9fb; border-radius: 60px; padding: 80px; display: flex; align-items: center; justify-content: center; position: relative;">
-      <img src="/assets/images/safetech.png" alt="SafeTech Hero" style="width: 100%; max-width: 500px; filter: drop-shadow(0 30px 60px rgba(0,0,0,0.12));">
-      <div style="position: absolute; top: -40px; right: -40px; width: 250px; height: 250px; background: #1e6aff; filter: blur(100px); opacity: 0.1; border-radius: 50%;"></div>
+    <div class="hero-right">
+      <div class="video-depth-container">
+        <div class="video-inner">
+          <video 
+            #heroVideo
+            id="hero-video" 
+            class="hero-video"
+            autoplay 
+            muted 
+            playsinline 
+            (ended)="heroVideo.currentTime = 4; heroVideo.play()"
+            poster="assets/video-placeholder.jpg">
+            <source src="assets/videos/hero-video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <a routerLink="/reporting" class="btn-large">
+          <span class="btn-text">Get Started</span>
+          <span class="btn-arrow">↘</span>
+          <div class="btn-bg"></div>
+        </a>
+        <a routerLink="/tech-buddy" class="btn-large btn-outline">
+          <span class="btn-text">Talk to Buddy</span>
+          <span class="btn-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span>STAY AHEAD OF THREATS</span><span class="dot-separator"></span>
+        <span>URL CHECKER</span><span class="dot-separator"></span>
+        <span>ACTIVE SCAMS</span><span class="dot-separator"></span>
+        <span>AI TECH BUDDY</span><span class="dot-separator"></span>
+        <span>REPORT CYBERCRIMES NOW</span><span class="dot-separator"></span>
+        <span>SCAM DIRECTORY</span><span class="dot-separator"></span>
+      </div>
+      <div class="marquee-content" aria-hidden="true">
+        <span>STAY AHEAD OF THREATS</span><span class="dot-separator"></span>
+        <span>URL CHECKER</span><span class="dot-separator"></span>
+        <span>ACTIVE SCAMS</span><span class="dot-separator"></span>
+        <span>AI TECH BUDDY</span><span class="dot-separator"></span>
+        <span>REPORT CYBERCRIMES NOW</span><span class="dot-separator"></span>
+        <span>SCAM DIRECTORY</span><span class="dot-separator"></span>
+      </div>
+    </div>
+  </div>
+
+  <section class="grid-stats">
+    <div class="stat-item">
+      <h4 class="stat-num">50k+</h4>
+      <p class="stat-label">Scams Blocked</p>
+    </div>
+    <div class="stat-item">
+      <h4 class="stat-num">100%</h4>
+      <p class="stat-label">Secure Reporting</p>
+    </div>
+    <div class="stat-item">
+      <h4 class="stat-num">24/7</h4>
+      <p class="stat-label">AI Support</p>
     </div>
   </section>
 
-  <section style="max-width: 1300px; margin: 0 auto; padding: 80px 48px;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 64px; gap: 32px;">
-      <div style="max-width: 600px;">
-        <span style="color: #1e6aff; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em;">. Our Expertise</span>
-        <h2 style="font-size: 48px; font-weight: 700; color: #020202; margin-top: 16px; letter-spacing: -0.02em;">Comprehensive cybersecurity solutions</h2>
-      </div>
-      <a routerLink="/reporting" style="color: #020202; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; text-decoration: none; border-bottom: 2px solid #1e6aff; padding-bottom: 4px; cursor: pointer;">All Services</a>
+  <section class="grid-services">
+    <div class="service-header">
+      <p class="eyebrow">. Our Expertise</p>
+      <h2>Core <br> Services</h2>
     </div>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
-      
-      <div routerLink="/phishing-checker"
-        style="background-color: #ffffff; padding: 48px; border-radius: 32px; border: 1px solid #ebebeb; cursor: pointer; transition: 0.3s;"
-        onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'"
-        onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
-        <div style="width: 64px; height: 64px; background-color: #f0f5ff; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 32px;">🔍</div>
-        <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">URL Checker</h3>
-        <p style="color: #666666; font-size: 14px; line-height: 1.6; margin-bottom: 32px;">Verify suspicious links against real-time phishing databases.</p>
-        <span style="font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: #1e6aff;">Launch Audit →</span>
-      </div>
-
-      <div routerLink="/scams"
-        style="background-color: #ffffff; padding: 48px; border-radius: 32px; border: 1px solid #ebebeb; cursor: pointer; transition: 0.3s;"
-        onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'"
-        onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
-        <div style="width: 64px; height: 64px; background-color: #f0f5ff; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 32px;">⚠️</div>
-        <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">Scam Alerts</h3>
-        <p style="color: #666666; font-size: 14px; line-height: 1.6; margin-bottom: 32px;">Real-time intelligence on active digital frauds and vulnerabilities.</p>
-        <span style="font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: #1e6aff;">View Threats →</span>
-      </div>
-
-      <div routerLink="/training"
-        style="background-color: #ffffff; padding: 48px; border-radius: 32px; border: 1px solid #ebebeb; cursor: pointer; transition: 0.3s;"
-        onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'"
-        onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
-        <div style="width: 64px; height: 64px; background-color: #f0f5ff; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 32px;">🎓</div>
-        <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">Training</h3>
-        <p style="color: #666666; font-size: 14px; line-height: 1.6; margin-bottom: 32px;">Certified master trainer workshops and security documentation.</p>
-        <span style="font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: #1e6aff;">Join Class →</span>
-      </div>
+    <div class="service-list">
+      <a routerLink="/phishing-checker" class="service-item">
+        <div class="serv-num">(01)</div>
+        <div class="serv-title">URL Checker</div>
+        <div class="serv-desc">Verify suspicious links against real-time phishing databases.</div>
+        <div class="serv-arrow">↗</div>
+      </a>
+      <a routerLink="/scams" class="service-item">
+        <div class="serv-num">(02)</div>
+        <div class="serv-title">Scam Alerts</div>
+        <div class="serv-desc">Real-time intelligence on active digital frauds and vulnerabilities.</div>
+        <div class="serv-arrow">↗</div>
+      </a>
+      <a routerLink="/training" class="service-item">
+        <div class="serv-num">(03)</div>
+        <div class="serv-title">Training</div>
+        <div class="serv-desc">Certified master trainer workshops and security documentation.</div>
+        <div class="serv-arrow">↗</div>
+      </a>
     </div>
   </section>
 
-  <section style="max-width: 1300px; margin: 48px auto 120px; background-color: #1e6aff; border-radius: 56px; padding: 80px 48px; display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; color: #ffffff; text-align: center; gap: 48px; box-shadow: 0 40px 80px rgba(30, 106, 255, 0.25);">
-    <div>
-      <h4 style="font-size: 80px; font-weight: 900; margin: 0; letter-spacing: -0.04em;">50k+</h4>
-      <p style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); margin-top: 16px;">Scams Blocked</p>
+  <footer class="grid-footer">
+    <a routerLink="/reporting" class="massive-footer-link">
+      <h2>REPORT A THREAT</h2>
+    </a>
+    <div class="footer-bottom">
+      <p>©2026 SafeTech Campaign</p>
+      <p>Made for KSITM</p>
     </div>
-    <div style="width: 1px; height: 100px; background-color: rgba(255,255,255,0.2);"></div>
-    <div>
-      <h4 style="font-size: 80px; font-weight: 900; margin: 0; letter-spacing: -0.04em;">100%</h4>
-      <p style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); margin-top: 16px;">Secure Reporting</p>
-    </div>
-    <div style="width: 1px; height: 100px; background-color: rgba(255,255,255,0.2);"></div>
-    <div>
-      <h4 style="font-size: 80px; font-weight: 900; margin: 0; letter-spacing: -0.04em;">24/7</h4>
-      <p style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); margin-top: 16px;">AI Support</p>
-    </div>
-  </section>
+  </footer>
 
 </div>

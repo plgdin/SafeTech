@@ -1,60 +1,487 @@
-/* --- HERO BUTTON ANIMATIONS --- */
-.cta-group {
+// Import all required fonts: Montserrat & Caveat (Preloader), Oswald & Poppins (Main Site)
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@900&family=Oswald:wght@700&family=Poppins:wght@400;500;700;900&display=swap');
+
+// Variables
+$bg: #F2F2F2; 
+$text: #020202;
+$blue: #1e6aff; 
+$loader-blue: #33a1fd;
+$border: #d1d1d1; 
+
+// ==========================================
+// 1. STAGGERED COLUMN PRELOADER
+// ==========================================
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
   display: flex;
-  gap: 24px;
+  pointer-events: all;
+  background-color: $bg;
 
-  button {
-    padding: 22px 48px;
-    border-radius: 15px;
+  .stripe {
+    flex: 1;
+    background-color: $loader-blue; 
+    transform-origin: top; 
+    transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+  }
+
+  .loader-brand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transition: opacity 0.3s ease;
+
+    .title-main {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(50px, 10vw, 150px);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: #000000;
+      line-height: 0.85;
+      margin: 0;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+
+    .title-sub {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(40px, 8vw, 120px);
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+      margin-top: -0.3em;
+      margin-left: 1.5em;
+      line-height: 0.8;
+      z-index: 2;
+    }
+  }
+
+  &.hide {
+    pointer-events: none;
+    background-color: transparent;
+
+    .stripe { transform: scaleY(0); }
+    .stripe-1 { transition-delay: 0.0s; }
+    .stripe-2 { transition-delay: 0.1s; }
+    .stripe-3 { transition-delay: 0.2s; }
+    .stripe-4 { transition-delay: 0.3s; }
+    .stripe-5 { transition-delay: 0.4s; }
+
+    .fade-out { opacity: 0; }
+  }
+}
+
+// ==========================================
+// 2. MAIN LAYOUT (BRUTALIST GRID)
+// ==========================================
+.main-wrapper {
+  background-color: $bg;
+  color: $text;
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+}
+
+%grid-border-bottom { border-bottom: 1px solid $border; }
+%grid-border-right { border-right: 1px solid $border; }
+
+// ==========================================
+// HERO SECTION
+// ==========================================
+.grid-hero {
+  @extend %grid-border-bottom;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  min-height: 85vh;
+  background-color: $bg; 
+  color: $text;
+
+  .hero-left {
+    @extend %grid-border-right;
+    padding: 80px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: $blue;
+      border: 1px solid $blue;
+      background: rgba($blue, 0.1); 
+      padding: 10px 20px;
+      border-radius: 50px;
+      width: max-content;
+      margin: 0;
+    }
+
+    .massive-text {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(60px, 8vw, 130px);
+      line-height: 0.9;
+      font-weight: 700;
+      margin: 40px 0;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: $text;
+
+      .text-blue { 
+        color: #ffffff; 
+        -webkit-text-stroke: 2px $text;
+        filter: drop-shadow(8px 8px 0px $blue); 
+      } 
+    }
+
+    .hero-mini-desc {
+      font-size: 20px; 
+      font-weight: 600; 
+      color: $text; 
+      max-width: 400px;
+      line-height: 1.4;
+      padding-left: 20px;
+      border-left: 4px solid $blue; 
+      background: rgba($blue, 0.03); 
+      padding-top: 10px;
+      padding-bottom: 10px;
+      margin-top: 20px;
+      animation: slideInLeft 1s ease-out forwards;
+      opacity: 0;
+    }
+  }
+
+  .hero-right {
+    padding: 80px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+
+    .video-depth-container {
+      position: relative;
+      width: 100%;
+      max-width: 320px; 
+      aspect-ratio: 9 / 16; 
+      perspective: 1200px;
+      animation: float 6s ease-in-out infinite;
+
+      .video-inner {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #000;
+        box-shadow: 
+          0 20px 40px rgba(0,0,0,0.3),
+          10px 10px 0px $blue; 
+        transform: rotateY(-10deg) rotateX(5deg);
+        transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+
+        &:hover {
+          transform: rotateY(0deg) rotateX(0deg) scale(1.05);
+        }
+
+        .hero-video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover; 
+          display: block;
+        }
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -10px;
+        border: 2px solid $blue;
+        z-index: -1;
+        transform: translate(15px, 15px);
+        border-radius: 12px;
+        opacity: 0.3;
+      }
+    }
+
+    .btn-group {
+      width: 100%;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .btn-large {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        border: 2px solid $text; 
+        background: #fff; 
+        color: $text;
+        text-decoration: none;
+        overflow: hidden;
+        transition: 0.4s;
+
+        .btn-text { font-size: 16px; font-weight: 800; text-transform: uppercase; z-index: 2; }
+        .btn-arrow { font-size: 20px; z-index: 2; transition: transform 0.4s; }
+        
+        .btn-bg {
+          position: absolute;
+          inset: 0;
+          background: $blue;
+          transform: translateY(100%);
+          transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+          z-index: 1;
+        }
+
+        &:hover {
+          color: #ffffff;
+          border-color: $blue;
+          .btn-bg { transform: translateY(0); }
+          .btn-arrow { transform: rotate(-45deg); }
+        }
+
+        &.btn-outline {
+            background: transparent;
+            border: 2px solid $text;
+            &:hover {
+                background: $text;
+                color: #fff;
+                .btn-bg { display: none; } 
+            }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateY(-10deg); }
+  50% { transform: translateY(-15px) rotateY(-5deg); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+// ==========================================
+// 3. MARQUEE SECTION
+// ==========================================
+.marquee-section {
+  border-bottom: 1px solid $border;
+  padding: 30px 0;
+  overflow: hidden;
+  background: $text;
+  color: white;
+  display: flex;
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: scrollInfinite 40s linear infinite; 
+    will-change: transform;
+  }
+
+  .marquee-content {
+    display: flex;
+    align-items: center;
+    gap: 60px; 
+    padding-right: 60px;
+    white-space: nowrap;
+    font-size: 24px;
     font-weight: 900;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border: none;
-    cursor: pointer;
-    /* Spring-like transition for lift effect */
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    will-change: transform, box-shadow;
+    letter-spacing: 0.05em;
+    font-family: 'Oswald', sans-serif;
+
+    .dot-separator {
+      width: 12px; height: 12px;
+      background: $blue;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+  }
+}
+
+@keyframes scrollInfinite {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } 
+}
+
+// ==========================================
+// 4. STATS SECTION
+// ==========================================
+.grid-stats {
+  border-bottom: 1px solid $border;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: #fff; 
+
+  .stat-item {
+    border-right: 1px solid $border;
+    padding: 60px 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    &:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(50px, 6vw, 90px);
+      font-weight: 700;
+      color: $blue;
+      margin: 0;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #666;
+      margin: 15px 0 0 0;
+    }
+  }
+}
+
+// ==========================================
+// 5. SERVICES GRID
+// ==========================================
+.grid-services {
+  border-bottom: 1px solid $border;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  background-color: $bg;
+
+  .service-header {
+    border-right: 1px solid $border;
+    padding: 80px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     
-    /* Shrinks slightly when clicked */
-    &:active {
-      transform: scale(0.96) !important;
-      transition: transform 0.1s ease;
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: $blue;
+      margin: 0;
+    }
+
+    h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 60px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      margin: 0;
     }
   }
 
-  .btn-primary {
-    background-color: #1e6aff;
-    color: #ffffff;
-    box-shadow: 0 20px 40px rgba(30, 106, 255, 0.25);
+  .service-list {
+    display: flex;
+    flex-direction: column;
 
-    &:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 25px 45px rgba(30, 106, 255, 0.4);
-      background-color: #185ce0; 
-    }
-  }
+    .service-item {
+      border-bottom: 1px solid $border;
+      display: grid;
+      grid-template-columns: 80px 1fr 1.5fr 50px;
+      align-items: center;
+      padding: 40px;
+      text-decoration: none;
+      color: $text;
+      background: #fff; 
+      transition: background 0.3s, color 0.3s;
 
-  .btn-secondary {
-    background-color: #020202;
-    color: #ffffff;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      &:last-child { border-bottom: none; }
+      
+      &:hover { 
+        background: $blue; 
+        color: white;
+        .serv-num, .serv-desc { color: rgba(255,255,255,0.8); }
+        .serv-arrow { transform: rotate(45deg); }
+      }
 
-    &:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.25);
-      background-color: #1a1a1a; 
+      .serv-num { color: #888; font-weight: 700; font-size: 14px; font-family: 'Oswald', sans-serif; }
+      .serv-title { font-size: 32px; font-weight: 800; text-transform: uppercase; font-family: 'Oswald', sans-serif;}
+      .serv-desc { color: #666; font-size: 16px; font-weight: 500; line-height: 1.5; padding-right: 20px;}
+      .serv-arrow { font-size: 24px; font-weight: 800; transition: transform 0.3s; }
     }
   }
 }
 
-// Custom styles for the home dashboard
-.hero-gradient {
-  background: linear-gradient(135deg, #f0f9ff 0%, #FAF9F6 100%);
+// ==========================================
+// 6. FOOTER
+// ==========================================
+.grid-footer {
+  .massive-footer-link {
+    display: block;
+    text-align: center;
+    padding: 120px 20px;
+    text-decoration: none;
+    color: $text;
+    background: #fff;
+    transition: 0.4s;
+    border-bottom: 1px solid $border;
+
+    h2 {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(50px, 10vw, 150px);
+      margin: 0;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    &:hover {
+      background: $blue;
+      color: white;
+    }
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 40px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+  }
 }
 
-// Existing lift effect
-.group:hover {
-  transform: translateY(-5px);
-  transition: all 0.3s ease;
+// ==========================================
+// MOBILE RESPONSIVE
+// ==========================================
+@media (max-width: 1024px) {
+  .grid-hero { 
+    grid-template-columns: 1fr; 
+    .hero-right { order: -1; padding-bottom: 40px; }
+  }
+  .hero-left { border-right: none; }
+}
+
+@media (max-width: 900px) {
+  .grid-services { grid-template-columns: 1fr; }
+  .service-header { border-right: none; border-bottom: 1px solid $border; }
+  .grid-stats { grid-template-columns: 1fr; .stat-item { border-right: none; border-bottom: 1px solid $border; } }
+  .service-list .service-item {
+    grid-template-columns: 50px 1fr 40px; 
+    .serv-desc { grid-column: 1 / -1; padding-top: 10px; }
+  }
 }

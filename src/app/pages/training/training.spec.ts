@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TrainingComponent } from './training'; // Changed from Training
 
-import { Training } from './training';
-
-describe('Training', () => {
-  let component: Training;
-  let fixture: ComponentFixture<Training>;
+describe('TrainingComponent', () => {
+  let component: TrainingComponent;
+  let fixture: ComponentFixture<TrainingComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Training],
+      // Use declarations for non-standalone components
+      declarations: [TrainingComponent], 
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Training);
+    fixture = TestBed.createComponent(TrainingComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

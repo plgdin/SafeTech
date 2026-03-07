@@ -1,0 +1,42 @@
+<div class="bot-container">
+  <button class="axis-btn" (click)="toggleChat()">
+    <div class="axis-content">
+      <span *ngIf="!isOpen">🛡️ HELP</span>
+      <span *ngIf="isOpen">✕ CLOSE</span>
+    </div>
+  </button>
+
+  <div class="chat-box" *ngIf="isOpen">
+    <div class="chat-header">
+      <div class="brand">SAFE<span>TECH</span> Guardian</div>
+      <a href="tel:1930" style="background: #1e6aff; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; text-decoration: none;">📞 1930</a>
+    </div>
+
+    <div class="chat-messages" #scrollContainer>
+      
+      <div *ngFor="let msg of messages" [ngClass]="msg.sender === 'user' ? 'user' : 'bot'">
+        <div class="msg-bubble" [innerHTML]="msg.text"></div>
+      </div>
+
+      <div class="bot" *ngIf="isLoading">
+        <div class="msg-bubble typing-indicator">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chat-input">
+      <input 
+        type="text" 
+        [(ngModel)]="userInput" 
+        (keyup.enter)="sendMessage()" 
+        placeholder="Ask Guardian Protocol..."
+        [disabled]="isLoading"
+      >
+      <button (click)="sendMessage()" [disabled]="isLoading">➤</button>
+    </div>
+  </div>
+</div>

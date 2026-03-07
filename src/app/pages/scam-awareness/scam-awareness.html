@@ -1,107 +1,107 @@
-<div style="min-height: 100vh; background-color: #ffffff; font-family: 'Inter', sans-serif; color: #020202; padding-top: 100px;">
+<div class="awareness-dashboard">
   
-  <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
+  <div class="content-container">
     
-    <header style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #ebebeb; padding-bottom: 60px; margin-bottom: 80px;">
-      <div style="max-width: 800px;">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-          <span style="width: 8px; height: 8px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 10px #1e6aff;"></span>
-          <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; font-size: 11px;">.Latest Intelligence</span>
+    <header class="page-header">
+      <div class="header-text">
+        <div class="badge">
+          <span class="dot"></span>
+          <span class="label">.Latest Intelligence</span>
         </div>
-        <h1 style="font-size: 80px; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; margin: 0; text-transform: uppercase;">
-          SCAM <br> <span style="color: #1e6aff;">AWARENESS</span>
+        <h1 class="main-title">
+          SCAM <br> <span class="highlight">AWARENESS</span>
         </h1>
-        <p style="color: #666; font-size: 20px; font-weight: 500; margin-top: 30px; line-height: 1.6;">
+        <p class="subtitle">
           Strategically designed to present real-time security alerts and safeguard your digital future.
         </p>
       </div>
 
-      <button routerLink="/reporting" style="background-color: #020202; color: #ffffff; border: none; padding: 20px 40px; border-radius: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.3s;" 
-              onmouseover="this.style.backgroundColor='#1e6aff'" onmouseout="this.style.backgroundColor='#020202'">
+      <button routerLink="/reporting" class="btn-dark">
         Report a Scam →
       </button>
     </header>
 
-    <section style="margin-bottom: 100px;">
-      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 40px;">
-        <div style="position: relative; width: 12px; height: 12px;">
-          <div style="position: absolute; width: 100%; height: 100%; background-color: #ef4444; border-radius: 50%; opacity: 0.5; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-          <div style="position: relative; width: 100%; height: 100%; background-color: #ef4444; border-radius: 50%;"></div>
+    <section *ngIf="urgentScams.length > 0" class="urgent-section">
+      <div class="section-title">
+        <div class="pulse-indicator">
+          <div class="pulse-ring"></div>
+          <div class="pulse-core"></div>
         </div>
-        <h2 style="font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em;">Urgent Threats</h2>
+        <h2>Urgent Threats</h2>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 30px;">
-        <ng-container *ngFor="let scam of scams">
-          <div *ngIf="scam.severity !== 'Low'" 
-               [style.border-left-color]="scam.severity === 'High' ? '#ef4444' : '#f59e0b'"
-               style="background-color: #ffffff; border: 1px solid #ebebeb; border-left-width: 8px; border-radius: 30px; padding: 40px; transition: 0.4s; cursor: pointer;"
-               onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.05)'"
-               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-            
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
-              <div style="width: 50px; height: 50px; background-color: #f4f4f4; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px;">!</div>
-              <span style="font-size: 10px; font-weight: 900; letter-spacing: 0.1em; color: #666; border: 1px solid #ebebeb; padding: 5px 15px; border-radius: 20px;">{{scam.severity}} RISK</span>
+      <div class="bento-grid">
+        
+        <ng-container *ngIf="urgentScams[0]">
+          <div class="bento-card feature-card" [routerLink]="['/guide', urgentScams[0].id]">
+            <div class="card-content">
+              <h3>{{urgentScams[0].title}}</h3>
+              <p>{{urgentScams[0].description}}</p>
+              <div class="meta-footer">
+                <span class="severity high">{{urgentScams[0].severity}} RISK</span>
+                <span class="date">{{urgentScams[0].created_at | date:'MMM d, y'}}</span>
+              </div>
             </div>
-
-            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 15px;">{{scam.title}}</h3>
-            <p style="color: #666; font-size: 15px; line-height: 1.7; margin-bottom: 30px;">{{scam.description}}</p>
-            
-            <div style="padding-top: 20px; border-top: 1px solid #ebebeb; display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-size: 11px; font-weight: 700; color: #a0a0a0; text-transform: uppercase;">{{scam.created_at | date:'MMM d, y'}}</span>
-              <a [routerLink]="['/guide', scam.id]" style="color: #1e6aff; text-decoration: none; font-weight: 800; font-size: 12px; letter-spacing: 0.1em;">ANALYSIS →</a>
-            </div>
+            <div class="card-visual visual-horizontal"></div>
           </div>
         </ng-container>
+
+        <ng-container *ngIf="urgentScams[1]">
+          <div class="bento-card tall-card" [routerLink]="['/guide', urgentScams[1].id]">
+            <div class="card-content">
+              <h3>{{urgentScams[1].title}}</h3>
+              <p>{{urgentScams[1].description}}</p>
+              <div class="meta-footer">
+                <span class="severity medium">{{urgentScams[1].severity}} RISK</span>
+              </div>
+            </div>
+            <div class="card-visual visual-vertical"></div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngFor="let scam of urgentScams | slice:2:5">
+           <div class="bento-card standard-card" [routerLink]="['/guide', scam.id]">
+             <div class="card-content center-align">
+               <h3>{{scam.title}}</h3>
+               <p class="small-text">{{scam.description}}</p>
+               <span class="severity" [ngClass]="scam.severity === 'High' ? 'high' : 'medium'">
+                 {{scam.severity}} RISK
+               </span>
+             </div>
+           </div>
+        </ng-container>
+
       </div>
     </section>
 
-    <section style="background-color: #f4f4f4; border-radius: 50px; padding: 60px; margin-bottom: 100px;">
-      <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 40px; letter-spacing: -0.02em;">DIRECTORY (A-Z)</h2>
+    <section class="directory-section">
+      <h2 class="directory-title">DIRECTORY (A-Z)</h2>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px;">
-        <div *ngFor="let item of scams" 
-             style="background-color: #ffffff; padding: 25px 40px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; cursor: pointer; border: 1px solid transparent;"
-             onmouseover="this.style.borderColor='#1e6aff'" onmouseout="this.style.borderColor='transparent'">
-          <div style="display: flex; align-items: center; gap: 25px;">
-            <div style="width: 60px; height: 60px; background-color: #1e6aff; color: #ffffff; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900;">
-              {{item.title.charAt(0)}}
-            </div>
-            <div>
-              <div style="font-weight: 800; font-size: 18px; color: #020202;">{{item.title}}</div>
-              <div style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;">{{item.type}}</div>
+      <div class="directory-grid">
+        <div *ngFor="let item of scams" [routerLink]="['/guide', item.id]" class="directory-item">
+          <div class="item-info">
+            <div class="initial-box">{{item.title.charAt(0)}}</div>
+            <div class="text-info">
+              <div class="item-name">{{item.title}}</div>
+              <div class="item-type">{{item.type}}</div>
             </div>
           </div>
-          <div style="color: #1e6aff; font-weight: 900; font-size: 12px;">GUIDE →</div>
+          <div class="action-link">GUIDE →</div>
         </div>
       </div>
     </section>
 
-    <section style="background-color: #020202; border-radius: 60px; padding: 80px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.2);">
-      <div style="position: relative; z-index: 2;">
-        <h2 style="color: #ffffff; font-size: 60px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 20px;">
-          NEW THREAT <br> <span style="color: #1e6aff;">DETECTED?</span>
-        </h2>
-        <p style="color: #a0a0a0; font-size: 20px; font-weight: 500; max-width: 600px; margin: 0 auto 40px;">
-          Build community trust by reporting new scams. Our auditing team will verify and add them to the repository.
-        </p>
-        <div style="display: flex; justify-content: center; gap: 20px;">
-          <button routerLink="/reporting" style="background-color: #1e6aff; color: #ffffff; border: none; padding: 20px 50px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 15px 30px rgba(30, 106, 255, 0.3);">
-            SUBMIT EVIDENCE
-          </button>
-          <button routerLink="/tech-buddy" style="background-color: rgba(255,255,255,0.05); color: #ffffff; border: 1px solid rgba(255,255,255,0.1); padding: 20px 50px; border-radius: 15px; font-weight: 900; font-size: 16px; cursor: pointer; backdrop-filter: blur(10px);">
-            TECH BUDDY AI
-          </button>
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>NEW THREAT <br> <span>DETECTED?</span></h2>
+        <p>Build community trust by reporting new scams. Our auditing team will verify and add them to the repository.</p>
+        <div class="btn-group">
+          <button routerLink="/reporting" class="btn-primary">SUBMIT EVIDENCE</button>
+          <button routerLink="/tech-buddy" class="btn-outline">TECH BUDDY AI</button>
         </div>
       </div>
-      <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background-color: #1e6aff; filter: blur(100px); opacity: 0.15; border-radius: 50%;"></div>
+      <div class="bg-blur"></div>
     </section>
 
   </div>
 </div>
-
-<style>
-  @keyframes ping {
-    75%, 100% { transform: scale(2); opacity: 0; }
-  }
-</style>

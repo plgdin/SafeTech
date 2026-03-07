@@ -1,0 +1,99 @@
+<div class="preloader" *ngIf="isLoading" [class.hide]="isHiding">
+  <div class="stripe stripe-1"></div>
+  <div class="stripe stripe-2"></div>
+  <div class="stripe stripe-3"></div>
+  <div class="stripe stripe-4"></div>
+  <div class="stripe stripe-5"></div>
+  
+  <div class="loader-brand" [class.fade-out]="isHiding">
+    <span class="dot"></span>
+    <h2>SAFETECH</h2>
+  </div>
+</div>
+
+<div class="main-wrapper">
+  
+  <nav class="grid-nav">
+    <div class="nav-left">
+      <div class="logo">
+        <span class="dot"></span> SAFETECH
+      </div>
+    </div>
+    <div class="nav-right">
+      <a routerLink="/auditing" class="nav-link">Report Scam</a>
+      <a routerLink="/tech-buddy" class="nav-link">Tech Buddy</a>
+      <a routerLink="/login" class="btn-primary">Portal Login</a>
+    </div>
+  </nav>
+
+  <header class="grid-hero">
+    <div class="hero-left">
+      <p class="eyebrow">Available for Audits (GMT+5:30)</p>
+      <h1 class="massive-text">
+        SECURE <br>
+        <span class="text-blue">DIGITAL</span> <br>
+        AGENCY.
+      </h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc">
+        An advanced cybersecurity and forensic auditing platform. We protect communities by verifying threats, tracking scams, and educating citizens.
+      </p>
+      <a routerLink="/auditing" class="btn-large">
+        <div class="btn-bg"></div>
+        <span class="btn-text">Start Audit</span>
+        <span class="btn-arrow">↘</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="marquee-section">
+    <div class="marquee-content">
+      <span>STAY AHEAD OF THREATS</span>
+      <span class="dot-separator"></span>
+      <span>FORENSIC AUDITING</span>
+      <span class="dot-separator"></span>
+      <span>CYBER SECURITY</span>
+      <span class="dot-separator"></span>
+      <span>STAY AHEAD OF THREATS</span>
+    </div>
+  </div>
+
+  <section class="grid-services">
+    <div class="service-header">
+      <h2>Core <br> Services</h2>
+    </div>
+    <div class="service-list">
+      
+      <div class="service-item">
+        <div class="serv-num">(01)</div>
+        <div class="serv-title">Forensic Auditing</div>
+        <div class="serv-desc">Deep-dive analysis of malicious links, APKs, and WhatsApp scams to trace origins.</div>
+      </div>
+
+      <div class="service-item">
+        <div class="serv-num">(02)</div>
+        <div class="serv-title">Tech Buddy AI</div>
+        <div class="serv-desc">Real-time 24/7 AI companion to verify if a message or email is a phishing attempt.</div>
+      </div>
+
+      <div class="service-item">
+        <div class="serv-num">(03)</div>
+        <div class="serv-title">Public Directory</div>
+        <div class="serv-desc">An open-source, verified database of active scammers and fraudulent phone numbers.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="grid-footer">
+    <a routerLink="/auditing" class="massive-footer-link">
+      <h2>REPORT A THREAT</h2>
+    </a>
+    <div class="footer-bottom">
+      <p>©2026 SafeTech Guardian</p>
+      <p>Made for India</p>
+    </div>
+  </footer>
+
+</div>

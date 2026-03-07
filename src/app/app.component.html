@@ -1,4 +1,23 @@
-<app-navbar></app-navbar>
+<nav style="padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ebebeb; font-family: 'Poppins', sans-serif; position: sticky; top: 0; z-index: 100; background-color: #FAF9F6;">
+  <a routerLink="/" style="display: flex; align-items: center; text-decoration: none;">
+    <h3 style="font-weight: 900; font-size: 26px; margin: 0; color: #020202; letter-spacing: -0.04em;">
+      SAFE<span style="color: #1e6aff;">TECH</span>
+    </h3>
+  </a>
+
+  <div style="display: flex; gap: 32px; align-items: center;">
+    <a routerLink="/scams" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Awareness</a>
+    <a routerLink="/phishing-checker" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">URL Checker</a>
+    <a routerLink="/training" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Training</a>
+    <a routerLink="/reporting" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Reporting</a>
+    
+    <button routerLink="/tech-buddy" class="axis-btn" style="--button-bg: #1e6aff; --hover-bg: #020202; --glow-color: #00e5ff; margin-left: 16px;">
+      <div class="axis-content">
+        Tech Buddy AI
+      </div>
+    </button>
+  </div>
+</nav>
 
 <main style="min-height: 100vh;">
   <router-outlet></router-outlet>

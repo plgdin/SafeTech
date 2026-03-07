@@ -103,24 +103,3 @@ html, body {
   width: calc(100% - 3px);
   box-sizing: border-box;
 }
-/* Global Pill Shape for Toasts */
-.ngx-toastr {
-  border-radius: 50px !important; /* High value for pill shape */
-  padding: 15px 30px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Optional: Adjust container if needed */
-#toast-container > div {
-  opacity: 1 !important;
-}
-/* Global Pill Shape for Snackbars */
-.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  border-radius: 50px !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-}
-/* For older versions of Angular Material */
-.mat-snack-bar-container {
-  border-radius: 50px !important;
-}

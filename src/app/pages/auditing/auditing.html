@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-<div style="min-height: 100vh; background-color: #ffffff; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 120px;">
-=======
 <div style="min-height: 100vh; background-color: #FAF9F6; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 120px;">
   
->>>>>>> 1fbee66d9e7d60a42c66a16e769a2e7f22f36543
   <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
     
     <header style="border-bottom: 1px solid #ebebeb; padding-bottom: 70px; margin-bottom: 90px;">
@@ -30,7 +26,7 @@
             <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #1e6aff;">Reporter Identity (OTP Required)</label>
             
             <div style="display: flex; gap: 10px;" *ngIf="!isPhoneVerified">
-              <input type="tel" [(ngModel)]="phoneNumber" placeholder="+91 98765 43210" [disabled]="otpSent || isVerifying"
+              <input type="tel" [ngModel]="phoneNumber" (ngModelChange)="onPhoneInput($event)" placeholder="+91 98765 43210" [disabled]="otpSent || isVerifying"
                      style="flex: 1; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; outline: none; transition: 0.3s;"
                      onfocus="this.style.borderColor='#1e6aff'" onblur="this.style.borderColor='#ebebeb'">
       
@@ -42,7 +38,7 @@
             </div>
       
             <div *ngIf="otpSent && !isPhoneVerified" style="display: flex; gap: 10px; margin-top: 5px; animation: fadeIn 0.3s ease-out;">
-              <input type="text" [(ngModel)]="otpCode" placeholder="Enter 6-digit code (Use 123456)" [disabled]="isVerifying"
+              <input type="text" [(ngModel)]="otpCode" placeholder="Enter 6-digit code" [disabled]="isVerifying"
                      style="flex: 1; padding: 22px; border-radius: 15px; border: 1px solid #1e6aff; background: #f0f7ff; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; outline: none;">
       
               <button (click)="confirmOTP()" [disabled]="!otpCode || isVerifying"

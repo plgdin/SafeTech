@@ -28,7 +28,7 @@ export class AuditingComponent {
   // =========================================
   phoneNumber: string = '';
   otpCode: string = '';
-  generatedOtp: string = ''; // Stores the real random OTP
+  generatedOtp: string = ''; 
   otpSent: boolean = false;
   isVerifying: boolean = false;
   isPhoneVerified: boolean = false;
@@ -58,47 +58,70 @@ export class AuditingComponent {
     private zone: NgZone
   ) {}
 
-  // --- WATI WhatsApp OTP Logic ---
+  // --- Real-time Phone Auto-Formatter ---
+  onPhoneInput(value: string) {
+    if (!value) {
+      this.phoneNumber = '';
+      return;
+    }
+    let cleaned = value.replace(/\D/g, '');
+    
+    // Auto-adds 91 if exactly 10 digits are entered
+    if (cleaned.length === 10 && !cleaned.startsWith('91')) {
+      cleaned = '91' + cleaned;
+    }
+    
+    cleaned = cleaned.substring(0, 12);
+    
+    let formatted = '';
+    if (cleaned.length > 0) formatted = '+' + cleaned.substring(0, 2);
+    if (cleaned.length > 2) formatted += ' ' + cleaned.substring(2, 7);
+    if (cleaned.length > 7) formatted += ' ' + cleaned.substring(7, 12);
+    
+    this.phoneNumber = formatted;
+  }
+
+  // --- OTP Logic via Secure Proxy (Bypasses CORS) ---
   async requestOTP() {
-    // 1. Clean the phone number (WATI needs numbers only, e.g., 919876543210)
     const cleanPhone = this.phoneNumber.replace(/[^0-9]/g, '');
 
     if (cleanPhone.length < 10) {
-      alert("Please enter a valid WhatsApp number with country code (e.g., 919876543210).");
+      alert("Please enter a valid WhatsApp number.");
       return;
     }
     
     this.isVerifying = true;
     this.cdr.detectChanges();
 
-    // 2. Generate a real 6-digit random code
+    // 1. Generate the 6-digit OTP
     this.generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // 3. Format the WhatsApp Message
-    const message = `🚨 *SafeTech Guardian* 🚨\n\nYour secure reporting verification code is: *${this.generatedOtp}*\n\nPlease enter this code on the website. Do not share it with anyone.`;
+    /**
+     * PROXY URL: Replace this with your Google Apps Script URL 
+     * or your Supabase Edge Function URL.
+     */
+    const proxyUrl = environment.googleScriptUrl;
 
     try {
-      // 4. Send the request to WATI
-      const watiUrl = `${environment.watiEndpoint}/api/v1/sendSessionMessage/${cleanPhone}?messageText=${encodeURIComponent(message)}`;
-      
-      const response = await fetch(watiUrl, {
+      // 2. Call the proxy (which handles the Vonage API call server-side)
+      const response = await fetch(proxyUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${environment.watiToken}`,
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'text/plain', // Use text/plain to avoid preflight CORS issues with some proxies
+        },
+        body: JSON.stringify({
+          phone: cleanPhone,
+          otp: this.generatedOtp
+        })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('WATI Error details:', errorData);
-        throw new Error('Failed to send WhatsApp message via WATI');
-      }
-
+      // 3. Handle success
       this.otpSent = true;
-    } catch (error) {
-      console.error(error);
-      alert("Failed to send WhatsApp message. Ensure the number includes the country code (like 91) and try again.");
+      console.log("OTP Sent Successfully via Proxy!");
+      
+    } catch (error: any) {
+      console.error('OTP Request Failed:', error);
+      alert("Verification system error. Please ensure your proxy is deployed.");
     } finally {
       this.isVerifying = false;
       this.cdr.detectChanges();
@@ -110,17 +133,18 @@ export class AuditingComponent {
     this.isVerifying = true;
     this.cdr.detectChanges();
 
-    // Check if what the user typed matches our generated code
+    // Artificial delay for UX
     setTimeout(() => {
       if (this.otpCode === this.generatedOtp) {
         this.isPhoneVerified = true;
         this.otpSent = false;
+        alert("Phone Verified Successfully.");
       } else {
-        alert("Invalid OTP Code. Please check your WhatsApp and try again.");
+        alert("Invalid OTP Code. Please check your WhatsApp.");
       }
       this.isVerifying = false;
       this.cdr.detectChanges();
-    }, 800); // Small fake delay to make the UI feel secure
+    }, 1000); 
   }
 
   resetPhone() {
@@ -128,6 +152,7 @@ export class AuditingComponent {
     this.otpSent = false;
     this.otpCode = '';
     this.generatedOtp = '';
+    this.phoneNumber = ''; 
     this.cdr.detectChanges();
   }
 
@@ -166,7 +191,7 @@ export class AuditingComponent {
           this.generatedRefId = refId;
           this.reportData.evidence = ''; 
           this.reportData.incidentType = ''; 
-          this.resetPhone(); 
+          // We don't reset phone here automatically in case they need to submit another
           this.cdr.detectChanges();
         });
         alert(`REPORT SECURED.\nReference ID: ${refId}`);

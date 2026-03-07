@@ -3,8 +3,8 @@
   
   <img src="assets/images/image-removebg-preview (2).png" class="intro-image-emerge" alt="Guardian Emerge">
 
-  <button class="axis-btn" (click)="toggleChat()">
-    <div class="axis-content">
+  <button class="axis-btn" (click)="toggleChat()" style="--button-bg: #020202; --hover-bg: #1e6aff; --glow-color: #00e5ff;">
+    <div class="axis-content" style="padding: 14px 20px;">
       <span *ngIf="!isOpen">🛡️ HELP</span>
       <span *ngIf="isOpen">✕ CLOSE</span>
     </div>

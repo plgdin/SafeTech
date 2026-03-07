@@ -14,7 +14,6 @@ html, body {
    GLOBAL RACING BUTTON ANIMATION (.axis-btn)
    ========================================================================== */
 
-/* Define the custom angle property so CSS animates the gradient smoothly */
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;
@@ -30,20 +29,17 @@ html, body {
   border-radius: 12px;
   cursor: pointer;
   outline: none;
-  min-width: 140px; 
+  /* Removed min-width so it hugs the button content perfectly */
   transition: transform 0.2s ease;
 
   &:hover {
     transform: translateY(-2px);
     
-    /* 1. Ignites the racing glow and border on hover */
-    &::before,
-    &::after {
+    &::before, &::after {
       opacity: 1;
       animation: spin-bg 2s linear infinite;
     }
 
-    /* 2. Snaps the button core from Blue to Black */
     .axis-content {
       background: var(--hover-bg, #0a0a0a);
     }
@@ -56,23 +52,29 @@ html, body {
   }
 }
 
-/* Layer 1 & 2: The Border Track AND The Outer Glow */
-.axis-btn::before,
+/* Inner Track Layer */
 .axis-btn::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: inherit;
+  border-radius: 12px;
   background: conic-gradient(from var(--bg-angle), transparent 70%, var(--glow-color, #00e5ff) 100%);
   opacity: 0; 
   transition: opacity 0.3s ease;
   z-index: 0;
 }
 
-/* Make ::before the blurry outer glow */
+/* Outer Glow Layer (Tighter blur to stop protrusion) */
 .axis-btn::before {
-  filter: blur(12px);
-  inset: -2px; 
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 12px;
+  background: conic-gradient(from var(--bg-angle), transparent 70%, var(--glow-color, #00e5ff) 100%);
+  filter: blur(8px); 
+  opacity: 0; 
+  transition: opacity 0.3s ease;
+  z-index: 0;
 }
 
 @keyframes spin-bg {
@@ -80,16 +82,12 @@ html, body {
   100% { --bg-angle: 360deg; }
 }
 
-/* Layer 3: The Button Center */
 .axis-content {
   position: relative;
   z-index: 1;
-  margin: 1.5px; 
-  
-  /* Defaults to Blue */
+  margin: 1.5px; /* Border thickness */
   background: var(--button-bg, #1e6aff); 
-  
-  border-radius: 10.5px; 
+  border-radius: 10.5px; /* Inner radius */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,5 +99,7 @@ html, body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
-  transition: background 0.3s ease; 
+  transition: background 0.3s ease, color 0.3s ease;
+  width: calc(100% - 3px);
+  box-sizing: border-box;
 }

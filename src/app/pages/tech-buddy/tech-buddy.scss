@@ -101,9 +101,18 @@
 
 /* --- Animations --- */
 
+/* FIXED PROTRUSION HERE */
 @keyframes slideInBehind {
-  0% { right: -200px; transform: translateX(100%) translateY(45px) rotate(-45deg); }
-  100% { right: 40px; transform: translateX(0) translateY(45px) rotate(-45deg); }
+  0% { 
+    right: 40px; 
+    transform: translateX(100px) translateY(45px) rotate(-45deg); 
+    opacity: 0; 
+  }
+  100% { 
+    right: 40px; 
+    transform: translateX(0) translateY(45px) rotate(-45deg); 
+    opacity: 1; 
+  }
 }
 
 @keyframes emergeFromButton {

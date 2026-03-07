@@ -1,46 +1,133 @@
-<div class="bot-container">
-  <img src="assets/images/image-removebg-preview (3).png" class="intro-image-behind" alt="Guardian Intro">
+<div style="min-height: 100vh; background-color: #FAF9F6; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 120px; overflow: hidden;">
   
-  <img src="assets/images/image-removebg-preview (2).png" class="intro-image-emerge" alt="Guardian Emerge">
-
-  <button class="axis-btn" (click)="toggleChat()" style="--button-bg: #020202; --hover-bg: #1e6aff; --glow-color: #00e5ff;">
-    <div class="axis-content">
-      <span *ngIf="!isOpen">🛡️ HELP</span>
-      <span *ngIf="isOpen">✕ CLOSE</span>
-    </div>
-  </button>
-
-  <div class="chat-box" *ngIf="isOpen">
-    <div class="chat-header">
-      <div class="brand">SAFE<span>TECH</span> Guardian</div>
-      <a href="tel:1930" style="background: #1e6aff; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; text-decoration: none;">📞 1930</a>
-    </div>
-
-    <div class="chat-messages" #scrollContainer>
+  <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
+    
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; min-height: 70vh;">
       
-      <div *ngFor="let msg of messages" [ngClass]="msg.sender === 'user' ? 'user' : 'bot'">
-        <div class="msg-bubble" [innerHTML]="msg.text"></div>
-      </div>
-
-      <div class="bot" *ngIf="isLoading">
-        <div class="msg-bubble typing-indicator">
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
+      <div style="position: relative; z-index: 2;">
+        
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px; opacity: 0; animation: framerSlideRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+          <span style="width: 8px; height: 8px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 12px #1e6aff; animation: pulse 2s infinite;"></span>
+          <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-size: 12px;">.Artificial Intelligence Core</span>
+        </div>
+        
+        <h1 style="font-size: 85px; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; margin: 0; text-transform: uppercase; opacity: 0; animation: framerSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;">
+          THE CYBER <br> GUARDIAN <br> <span style="color: #1e6aff;">TECHBUDDY</span>
+        </h1>
+        
+        <p style="color: #666; font-size: 20px; font-weight: 500; margin-top: 40px; margin-bottom: 50px; line-height: 1.6; max-width: 550px; opacity: 0; animation: framerSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;">
+          Your personal, AI-driven security expert. Available 24/7 to analyze threats, verify links, and guide you through digital crises in real-time.
+        </p>
+        
+        <div style="display: flex; gap: 20px; align-items: center; opacity: 0; animation: framerSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;">
+          <button class="axis-btn" style="--button-bg: #1e6aff; --hover-bg: #020202; --glow-color: #00e5ff;">
+            <div class="axis-content" style="padding: 18px 40px;">
+              INITIALIZE SESSION
+            </div>
+          </button>
+          
+          <span style="font-size: 12px; font-weight: 800; color: #a0a0a0; text-transform: uppercase; letter-spacing: 0.1em;">
+            System Ready
+          </span>
         </div>
       </div>
 
+      <div style="position: relative; opacity: 0; animation: framerScaleIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;">
+        <div style="background-color: #020202; border-radius: 50px; height: 600px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 1px solid #1a1a1a;">
+           
+           <div style="position: absolute; width: 400px; height: 400px; background: #1e6aff; filter: blur(100px); opacity: 0.25; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: pulse-core 4s infinite alternate;"></div>
+           
+           <img src="assets/images/image-removebg-preview (2).png" alt="TechBuddy AI" 
+                style="width: 100%; max-width: 380px; position: relative; z-index: 2; filter: drop-shadow(0 30px 50px rgba(0,0,0,0.8)); animation: float 6s ease-in-out infinite;">
+           
+           <div style="position: absolute; top: 40px; left: 40px; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 15px; color: white; font-weight: 800; font-size: 11px; letter-spacing: 0.1em; border: 1px solid rgba(255,255,255,0.1); z-index: 3;">
+             STATUS: ONLINE
+           </div>
+           
+           <div style="position: absolute; bottom: 40px; right: 40px; background: rgba(30, 106, 255, 0.1); backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 15px; color: #00e5ff; font-weight: 800; font-size: 11px; letter-spacing: 0.1em; border: 1px solid rgba(0, 229, 255, 0.2); z-index: 3;">
+             DB: SYNCED
+           </div>
+        </div>
+      </div>
+      
     </div>
 
-    <div class="chat-input">
-      <input 
-        type="text" 
-        [(ngModel)]="userInput" 
-        (keyup.enter)="sendMessage()" 
-        placeholder="Ask Guardian Protocol..."
-        [disabled]="isLoading"
-      >
-      <button (click)="sendMessage()" [disabled]="isLoading">➤</button>
+    <div style="margin-top: 150px; padding-top: 100px; border-top: 1px solid #ebebeb;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; opacity: 0; animation: framerSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.4s;">
+        <h2 style="font-size: 42px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; margin: 0;">
+          Core <span style="color: #1e6aff;">Capabilities</span>
+        </h2>
+        <p style="color: #666; font-size: 16px; font-weight: 500; max-width: 400px; margin: 0; text-align: right;">
+          Powered by advanced heuristic analysis, TechBuddy is built to protect, inform, and assist.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+        
+        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 50px 40px; border-radius: 30px; transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; opacity: 0; animation: framerSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.5s;" 
+             onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(30,106,255,0.05)'" 
+             onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="width: 60px; height: 60px; background: #f4f6f8; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 30px;">
+            🔍
+          </div>
+          <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 15px; color: #020202;">Real-Time Analysis</h3>
+          <p style="color: #666; line-height: 1.6; font-size: 15px; margin: 0;">Paste suspicious texts, emails, or scenarios directly into the chat. TechBuddy cross-references live databases to determine risk.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 50px 40px; border-radius: 30px; transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; opacity: 0; animation: framerSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.6s;" 
+             onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(30,106,255,0.05)'" 
+             onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="width: 60px; height: 60px; background: #f4f6f8; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 30px;">
+            🛡️
+          </div>
+          <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 15px; color: #020202;">Incident Reporting</h3>
+          <p style="color: #666; line-height: 1.6; font-size: 15px; margin: 0;">Fallen victim to a scam? TechBuddy will seamlessly guide you through the forensic intake process to generate a Reference ID.</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 50px 40px; border-radius: 30px; transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; opacity: 0; animation: framerSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.7s;" 
+             onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(30,106,255,0.05)'" 
+             onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="width: 60px; height: 60px; background: #f4f6f8; color: #1e6aff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 30px;">
+            📞
+          </div>
+          <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 15px; color: #020202;">Emergency Routing</h3>
+          <p style="color: #666; line-height: 1.6; font-size: 15px; margin: 0;">Direct integration with national cyber crime helplines. Instantly connects you to the 1930 dispatch center in critical situations.</p>
+        </div>
+
+      </div>
     </div>
+
   </div>
 </div>
+
+<style>
+  /* 1. Slide Up & Fade In (For Text & Cards) */
+  @keyframes framerSlideUp {
+    0% { opacity: 0; transform: translateY(60px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 2. Slide Right & Fade In (For small badges/tags) */
+  @keyframes framerSlideRight {
+    0% { opacity: 0; transform: translateX(-40px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+
+  /* 3. Scale Up & Fade In (For large images/cards) */
+  @keyframes framerScaleIn {
+    0% { opacity: 0; transform: scale(0.92); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Looping idle animations for the mascot */
+  @keyframes float {
+    0% { transform: translateY(20px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(20px); }
+  }
+  @keyframes pulse-core {
+    0% { opacity: 0.15; transform: translate(-50%, -50%) scale(0.8); }
+    100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1.1); }
+  }
+</style>

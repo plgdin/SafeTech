@@ -1,25 +1,26 @@
-<nav style="position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid #ebebeb; padding: 12px 48px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
+<nav style="background-color: #FAF9F6; padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ebebeb; font-family: 'Poppins', sans-serif; position: sticky; top: 0; z-index: 100;">
   
-  <div style="cursor: pointer; display: flex; align-items: center;" routerLink="/">
-    <img src="/assets/images/safetech.png" 
-         alt="SafeTech Logo" 
-         style="height: 48px; width: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));">
-  </div>
+  <a routerLink="/" style="display: flex; align-items: center; text-decoration: none;">
+    <img src="assets/images/safetech.png" alt="SafeTech Logo" style="height: 56px; width: auto; border-radius: 8px; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+  </a>
 
   <div style="display: flex; gap: 32px; align-items: center;">
-    <a routerLink="/scams" style="text-decoration: none; color: #020202; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;">Awareness</a>
-    <a routerLink="/phishing-checker" style="text-decoration: none; color: #020202; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;">URL Checker</a>
-    <a routerLink="/training" style="text-decoration: none; color: #020202; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;">Training</a>
-    <a routerLink="/reporting" style="text-decoration: none; color: #020202; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;">Reporting</a>
-    <a routerLink="/resources" style="text-decoration: none; color: #020202; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;">Resources</a>
     
-    <button routerLink="/tech-buddy" 
-            style="background: #1e6aff; color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: 0.4s; box-shadow: 0 10px 20px rgba(30, 106, 255, 0.2);"
-            onmouseover="this.style.background='#020202'; this.style.transform='translateY(-2px)'" 
-            onmouseout="this.style.background='#1e6aff'; this.style.transform='translateY(0)'">
-      Tech Buddy AI
+    <a routerLink="/" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Home</a>
+    
+    <a routerLink="/scams" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Awareness</a>
+    
+    <a routerLink="/phishing-checker" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">URL Checker</a>
+    
+    <a routerLink="/training" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Training</a>
+    
+    <a routerLink="/reporting" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Reporting</a>
+    
+    <button routerLink="/tech-buddy" class="axis-btn" style="--button-bg: #1e6aff; --hover-bg: #020202; --glow-color: #00e5ff; margin-left: 16px;">
+      <div class="axis-content">
+        Tech Buddy AI
+      </div>
     </button>
+
   </div>
 </nav>
-
-<div style="height: 90px;"></div>

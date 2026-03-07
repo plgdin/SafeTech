@@ -1,66 +1,9 @@
-<nav style="padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ebebeb; font-family: 'Poppins', sans-serif; position: sticky; top: 0; z-index: 100; background-color: #FAF9F6;">
-  <a routerLink="/" style="display: flex; align-items: center; text-decoration: none;">
-    <h3 style="font-weight: 900; font-size: 26px; margin: 0; color: #020202; letter-spacing: -0.04em;">
-      SAFE<span style="color: #1e6aff;">TECH</span>
-    </h3>
-  </a>
-
-  <div style="display: flex; gap: 32px; align-items: center;">
-    <a routerLink="/scams" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Awareness</a>
-    <a routerLink="/phishing-checker" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">URL Checker</a>
-    <a routerLink="/training" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Training</a>
-    <a routerLink="/reporting" style="color: #020202; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#020202'">Reporting</a>
-    
-    <button routerLink="/tech-buddy" class="axis-btn" style="--button-bg: #1e6aff; --hover-bg: #020202; --glow-color: #00e5ff; margin-left: 16px;">
-      <div class="axis-content">
-        Tech Buddy AI
-      </div>
-    </button>
-  </div>
-</nav>
+<app-navbar></app-navbar>
 
 <main style="min-height: 100vh;">
   <router-outlet></router-outlet>
 </main>
 
-<footer style="padding: 80px 48px 40px; border-top: 1px solid #ebebeb; font-family: 'Poppins', sans-serif;">
-  <div style="max-width: 1300px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 48px; border-bottom: 1px solid #ebebeb; padding-bottom: 48px; margin-bottom: 40px;">
-    <div style="max-width: 350px;">
-      <h3 style="font-weight: 900; font-size: 28px; margin: 0 0 16px 0; color: #020202; letter-spacing: -0.04em;">
-        SAFE<span style="color: #1e6aff;">TECH</span>
-      </h3>
-      <p style="color: #666666; font-size: 14px; line-height: 1.7; margin: 0;">
-        Providing the Key to Cyber Safety through comprehensive protection, real-time auditing, and AI-driven intelligence.
-      </p>
-    </div>
-
-    <div style="display: flex; gap: 80px; flex-wrap: wrap;">
-      <div>
-        <h4 style="font-weight: 800; font-size: 14px; color: #020202; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0; margin-bottom: 24px;">Platform</h4>
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <a routerLink="/reporting" style="color: #666666; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#666666'">Secure Reporting</a>
-          <a routerLink="/phishing-checker" style="color: #666666; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#666666'">URL Checker</a>
-          <a routerLink="/scams" style="color: #666666; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#666666'">Scam Alerts</a>
-        </div>
-      </div>
-      <div>
-        <h4 style="font-weight: 800; font-size: 14px; color: #020202; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0; margin-bottom: 24px;">Support</h4>
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <a routerLink="/tech-buddy" style="color: #666666; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#666666'">Tech Buddy AI</a>
-          <a routerLink="/training" style="color: #666666; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#666666'">Master Training</a>
-          <a href="#" style="color: #666666; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#666666'">Contact Us</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div style="max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-    <p style="color: #a0a0a0; font-size: 13px; margin: 0; font-weight: 500;">&copy; 2026 SafeTech. All rights reserved.</p>
-    <div style="display: flex; gap: 24px;">
-      <a href="#" style="color: #a0a0a0; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#a0a0a0'">Privacy Policy</a>
-      <a href="#" style="color: #a0a0a0; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.3s;" onmouseover="this.style.color='#1e6aff'" onmouseout="this.style.color='#a0a0a0'">Terms of Service</a>
-    </div>
-  </div>
-</footer>
+<app-footer></app-footer>
 
 <app-tech-buddy-bubble></app-tech-buddy-bubble>

@@ -45,7 +45,7 @@ Thumbs.db
 # Ignore all environment files to protect Supabase & Gemini API Keys
 src/environments/environment.ts
 src/environments/environment.development.ts
-src/environments/environment.*.ts
+src/environments/environment.prod.ts
 
 # Ignore the Python backend virtual environment
 /venv

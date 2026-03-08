@@ -148,3 +148,157 @@
 .delay-300 { animation-delay: 0.3s; }
 .delay-400 { animation-delay: 0.4s; }
 .delay-500 { animation-delay: 0.5s; }
+
+/* =========================================================
+   MOBILE OPTIMIZATION (TechBuddy Hero)
+   Does NOT affect desktop layout
+   ========================================================= */
+
+
+/* =============================
+   TABLET
+============================= */
+
+@media (max-width: 1024px) {
+
+  .main-container {
+    padding: 0 32px;
+  }
+
+  /* stack hero columns */
+  .hero-layout {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 40px;
+    min-height: auto;
+    padding-top: 120px;
+  }
+
+  .side-col.right-align {
+    align-items: center;
+    text-align: center;
+  }
+
+  /* mascot resize */
+  .center-col .mascot-img {
+    width: 110%;
+    max-width: 550px;
+  }
+
+  /* badge circle smaller */
+  .badge-circle {
+    width: 130px;
+    height: 130px;
+  }
+
+}
+
+
+/* =============================
+   MOBILE
+============================= */
+
+@media (max-width: 768px) {
+
+  .main-container {
+    padding: 0 20px;
+  }
+
+  /* remove decorative grid lines */
+  .grid-line-v {
+    display: none;
+  }
+
+  .hero-layout {
+    gap: 32px;
+    padding-top: 100px;
+  }
+
+  .hero-title {
+    font-size: clamp(48px, 12vw, 90px);
+    line-height: 0.9;
+  }
+
+  .hero-desc {
+    max-width: 100%;
+    margin: 24px auto;
+    font-size: 15px;
+  }
+
+  /* mascot scale down */
+  .center-col .mascot-img {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .center-col .mascot-glow {
+    width: 320px;
+    height: 320px;
+  }
+
+  /* button full width */
+  .axis-btn {
+    width: 100%;
+  }
+
+  /* badge circle adjust */
+  .badge-circle {
+    width: 110px;
+    height: 110px;
+    border-width: 8px;
+  }
+
+  .badge-circle .num {
+    font-size: 30px;
+  }
+
+  .badge-circle .lbl {
+    font-size: 9px;
+  }
+
+  /* ticker spacing */
+  .ticker-wrap {
+    margin-bottom: 50px;
+  }
+
+  .ticker-item {
+    padding: 0 30px;
+    font-size: 12px;
+  }
+
+}
+
+
+/* =============================
+   SMALL PHONES
+============================= */
+
+@media (max-width: 480px) {
+
+  .hero-title {
+    font-size: clamp(36px, 14vw, 60px);
+  }
+
+  .hero-desc {
+    font-size: 14px;
+  }
+
+  .center-col .mascot-img {
+    max-width: 320px;
+  }
+
+  .badge-pill {
+    padding: 8px 16px;
+  }
+
+  .badge-text {
+    font-size: 10px;
+  }
+
+  .ticker-item {
+    padding: 0 20px;
+    font-size: 11px;
+  }
+
+}

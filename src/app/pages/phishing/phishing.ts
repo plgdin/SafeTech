@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, UserReport } from '../../core/services/supabase';
+import { showToast } from '../../core/utils/toast';
 
 @Component({
   selector: 'app-phishing',
@@ -137,7 +138,7 @@ export class PhishingComponent {
     
     setTimeout(() => {
       const auditID = `SF-${Math.floor(100000 + Math.random() * 900000)}`;
-      alert(`Forensic Audit ${auditID} generated. Digital evidence logged for Law Enforcement.`);
+      showToast(`Forensic Audit ${auditID} generated. Digital evidence logged for Law Enforcement.`);
       this.scanStatus = 'Audit Logged';
       this.cdr.detectChanges();
     }, 1200);
@@ -157,10 +158,10 @@ export class PhishingComponent {
  
     if (error) {
       console.error('Database sync failed', error);
-      alert('Failed to connect to KSITM secure server.');
+      showToast('Failed to connect to KSITM secure server.');
       this.scanStatus = 'Sync Failed';
     } else {
-      alert('Threat Intelligence synced with SafeTech Database.');
+      showToast('Threat Intelligence synced with SafeTech Database.');
       this.scanStatus = 'Intelligence Synced';
     }
     this.cdr.detectChanges();

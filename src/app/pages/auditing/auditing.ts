@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../core/services/supabase';
 import { environment } from '../../../environments/environment';
+import { showToast } from '../../core/utils/toast';
 
 @Component({
   selector: 'app-auditing',
@@ -86,7 +87,7 @@ export class AuditingComponent {
     const cleanPhone = this.phoneNumber.replace(/[^0-9]/g, '');
 
     if (cleanPhone.length < 10) {
-      alert("Please enter a valid WhatsApp number.");
+      showToast("Please enter a valid WhatsApp number.");
       return;
     }
     
@@ -121,7 +122,7 @@ export class AuditingComponent {
       
     } catch (error: any) {
       console.error('OTP Request Failed:', error);
-      alert("Verification system error. Please ensure your proxy is deployed.");
+      showToast("Verification system error. Please ensure your proxy is deployed.");
     } finally {
       this.isVerifying = false;
       this.cdr.detectChanges();
@@ -138,9 +139,9 @@ export class AuditingComponent {
       if (this.otpCode === this.generatedOtp) {
         this.isPhoneVerified = true;
         this.otpSent = false;
-        alert("Phone Verified Successfully.");
+        showToast("Phone Verified Successfully.");
       } else {
-        alert("Invalid OTP Code. Please check your WhatsApp.");
+        showToast("Invalid OTP Code. Please check your WhatsApp.");
       }
       this.isVerifying = false;
       this.cdr.detectChanges();
@@ -194,10 +195,10 @@ export class AuditingComponent {
           // We don't reset phone here automatically in case they need to submit another
           this.cdr.detectChanges();
         });
-        alert(`REPORT SECURED.\nReference ID: ${refId}`);
+        showToast(`REPORT SECURED.\nReference ID: ${refId}`);
       }
     } catch (err) {
-      alert('SYSTEM ERROR: Handshake failed.');
+      showToast('SYSTEM ERROR: Handshake failed.');
     } finally {
       this.isSubmitting = false;
       this.cdr.detectChanges(); 
@@ -232,12 +233,12 @@ export class AuditingComponent {
           else if (data.status === 'resolved') this.currentStep = 3;
           this.cdr.detectChanges(); 
         } else {
-          alert('No record found for this Reference ID.');
+          showToast('No record found for this Reference ID.');
           this.currentStep = 0;
         }
       });
     } catch (err) {
-      alert('TRACKING FAILED: Unable to reach secure forensic servers.');
+      showToast('TRACKING FAILED: Unable to reach secure forensic servers.');
     } finally {
       this.isTracking = false;
       this.cdr.detectChanges();

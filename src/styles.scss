@@ -8,6 +8,18 @@ html, body {
   font-family: 'Poppins', sans-serif;
   color: #020202;
   min-height: 100vh;
+  
+  /* FIX 1: Prevent horizontal overflow at the root level */
+  overflow-x: hidden; 
+  width: 100%;
+  position: relative;
+  /* FIX 2: Standardize box-sizing for all elements to prevent padding-based width growth */
+  box-sizing: border-box; 
+}
+
+/* Ensure all elements inherit the border-box property */
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 /* ==========================================================================
@@ -29,8 +41,10 @@ html, body {
   border-radius: 12px;
   cursor: pointer;
   outline: none;
-  /* Removed min-width so it hugs the button content perfectly */
   transition: transform 0.2s ease;
+  
+  /* FIX 3: Ensure button never exceeds screen width */
+  max-width: 100%; 
 
   &:hover {
     transform: translateY(-2px);
@@ -64,14 +78,17 @@ html, body {
   z-index: 0;
 }
 
-/* Outer Glow Layer (Tighter blur to stop protrusion) */
+/* Outer Glow Layer */
 .axis-btn::before {
   content: "";
   position: absolute;
   inset: -1px;
   border-radius: 12px;
   background: conic-gradient(from var(--bg-angle), transparent 70%, var(--glow-color, #00e5ff) 100%);
-  filter: blur(8px); 
+  
+  /* FIX 4: Reduced blur slightly for mobile to prevent "shadow bleed" outside the container */
+  filter: blur(6px); 
+  
   opacity: 0; 
   transition: opacity 0.3s ease;
   z-index: 0;
@@ -85,17 +102,25 @@ html, body {
 .axis-content {
   position: relative;
   z-index: 1;
-  margin: 1.5px; /* Border thickness */
+  margin: 1.5px; 
   background: var(--button-bg, #1e6aff); 
-  border-radius: 10.5px; /* Inner radius */
+  border-radius: 10.5px; 
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 28px; 
+  
+  /* FIX 5: Responsive padding and font-size to fit smaller screens (Navbar links) */
+  padding: 10px 18px; 
+  font-size: 11px;
+  
+  @media (min-width: 768px) {
+    padding: 14px 28px; 
+    font-size: 13px;
+  }
+
   color: white;
   font-family: 'Poppins', sans-serif;
   font-weight: 800;
-  font-size: 13px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;

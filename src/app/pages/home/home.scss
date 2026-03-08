@@ -497,12 +497,52 @@ $border: #d1d1d1;
 // MOBILE RESPONSIVE
 // ==========================================
 @media (max-width: 1024px) {
-  .grid-hero { 
-    grid-template-columns: 1fr; 
-    .hero-right { order: -1; padding-bottom: 40px; }
+  .grid-hero {
+    grid-template-columns: 1fr;
+    min-height: auto; // Allows content to dictate height on mobile
   }
-  .hero-left { border-right: none; }
+
+  .hero-left {
+    order: 1;
+    padding: 40px 20px;
+    border-right: none; // Remove desktop vertical border
+    border-bottom: 1px solid $border;
+  }
+  .hero-right {
+    order: 2;
+    padding: 40px 30px 60px;
+  }
+
+
+  .massive-text {
+    font-size: clamp(50px, 15vw, 80px) !important; // Slightly smaller for mobile screens
+    line-height: 0.85; // Keeps the 'CAMPAIGN' text tightly tucked
+    margin: 20px 0;
+    display: block;
+
+    .text-blue {
+      display: inline-block;
+      // Adjusting the shadow offset for mobile so it doesn't "drift" too far
+      filter: drop-shadow(4px 4px 0px $blue) !important; 
+      -webkit-text-stroke: 1.5px $text !important;
+    }
+  }
+
+  .hero-mini-desc {
+    font-size: 16px;
+    max-width: 100%;
+    margin-top: 10px;
+  }
 }
+
+// Extra tweak for very small phones
+@media (max-width: 480px) {
+  .massive-text {
+    font-size: 45px !important;
+    line-height: 0.8;
+  }
+}
+
 
 @media (max-width: 900px) {
   .grid-mission { grid-template-columns: 1fr; }

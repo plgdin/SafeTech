@@ -1,0 +1,109 @@
+.navbar-container {
+  background-color: #FAF9F6;
+  padding: 15px 24px; // Adjusted for mobile
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ebebeb;
+  font-family: 'Poppins', sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  @media (min-width: 1024px) {
+    padding: 20px 48px;
+  }
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  &:hover { transform: scale(1.05); }
+
+  @media (min-width: 1024px) {
+    height: 56px;
+  }
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+
+  // Desktop Links Style
+  a {
+    color: #020202;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.3s;
+    &:hover, &.active { color: #1e6aff; }
+  }
+
+  // Mobile Menu Logic
+  @media (max-width: 1023px) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #FAF9F6;
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 20px;
+    border-bottom: 1px solid #ebebeb;
+    transform: translateY(-10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+
+    &.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+}
+
+// Hamburger Icon
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+
+  span {
+    width: 24px;
+    height: 2px;
+    background: #020202;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
+  }
+
+  @media (max-width: 1023px) {
+    display: flex;
+  }
+
+  &.active {
+    span:first-child { transform: rotate(45deg); }
+    span:nth-child(2) { opacity: 0; }
+    span:last-child { transform: rotate(-45deg); }
+  }
+}
+
+.tech-buddy-btn {
+  @media (min-width: 1024px) {
+    margin-left: 16px;
+  }
+}

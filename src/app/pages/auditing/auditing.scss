@@ -240,3 +240,123 @@
   100% { --bg-angle: 360deg; }
 }
 
+/* =========================================================
+   MOBILE OPTIMIZATION (DOES NOT CHANGE DESKTOP)
+   ========================================================= */
+
+
+/* -----------------------------
+   TABLET
+------------------------------*/
+@media (max-width: 1024px) {
+
+  /* Reduce container padding */
+  div[style*="max-width: 1300px"] {
+    padding: 0 24px !important;
+  }
+
+  /* Stack main layout */
+  div[style*="grid-template-columns: 1.6fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 50px !important;
+  }
+
+  /* Reduce huge heading */
+  h1 {
+    font-size: 56px !important;
+  }
+
+}
+
+
+/* -----------------------------
+   MOBILE
+------------------------------*/
+@media (max-width: 768px) {
+
+  /* Page padding */
+  div[style*="padding-top: 120px"] {
+    padding-top: 90px !important;
+    padding-bottom: 80px !important;
+  }
+
+  div[style*="max-width: 1300px"] {
+    padding: 0 18px !important;
+  }
+
+  /* Heading resize */
+  h1 {
+    font-size: 40px !important;
+    line-height: 1.1 !important;
+  }
+
+  header p {
+    font-size: 16px !important;
+  }
+
+  /* Reduce form padding */
+  section[style*="padding: 60px"] {
+    padding: 32px !important;
+  }
+
+  /* OTP input + button stack */
+  div[style*="display: flex"][style*="gap: 10px"] {
+    flex-direction: column !important;
+  }
+
+  /* Track input row stack */
+  div[style*="display: flex"][style*="gap: 12px"] {
+    flex-direction: column !important;
+  }
+
+  /* Reference ID section stack */
+  div[style*="justify-content: space-between"][style*="align-items: center"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+
+  /* Buttons full width */
+  button {
+    width: 100%;
+  }
+
+  /* Sidebar cards padding */
+  div[style*="padding: 50px"] {
+    padding: 32px !important;
+  }
+
+}
+
+
+/* -----------------------------
+   SMALL PHONES
+------------------------------*/
+@media (max-width: 480px) {
+
+  h1 {
+    font-size: 32px !important;
+  }
+
+  header p {
+    font-size: 15px !important;
+  }
+
+  h2 {
+    font-size: 24px !important;
+  }
+
+  /* Smaller paddings */
+  section[style*="padding: 60px"] {
+    padding: 24px !important;
+  }
+
+  div[style*="padding: 50px"] {
+    padding: 24px !important;
+  }
+
+  textarea {
+    min-height: 150px !important;
+  }
+
+}

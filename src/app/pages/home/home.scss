@@ -8,6 +8,10 @@ $blue: #1e6aff;
 $loader-blue: #33a1fd;
 $border: #d1d1d1; 
 
+// Shared Mixins/Placeholders
+%grid-border-bottom { border-bottom: 1px solid $border; }
+%grid-border-right { border-right: 1px solid $border; }
+
 // ==========================================
 // 1. STAGGERED COLUMN PRELOADER
 // ==========================================
@@ -79,7 +83,7 @@ $border: #d1d1d1;
 }
 
 // ==========================================
-// 2. MAIN LAYOUT (BRUTALIST GRID)
+// 2. MAIN LAYOUT
 // ==========================================
 .main-wrapper {
   background-color: $bg;
@@ -87,9 +91,6 @@ $border: #d1d1d1;
   font-family: 'Poppins', sans-serif;
   min-height: 100vh;
 }
-
-%grid-border-bottom { border-bottom: 1px solid $border; }
-%grid-border-right { border-right: 1px solid $border; }
 
 // ==========================================
 // HERO SECTION
@@ -100,7 +101,6 @@ $border: #d1d1d1;
   grid-template-columns: 1.2fr 1fr;
   min-height: 85vh;
   background-color: $bg; 
-  color: $text;
 
   .hero-left {
     @extend %grid-border-right;
@@ -143,7 +143,6 @@ $border: #d1d1d1;
     .hero-mini-desc {
       font-size: 20px; 
       font-weight: 600; 
-      color: $text; 
       max-width: 400px;
       line-height: 1.4;
       padding-left: 20px;
@@ -180,15 +179,12 @@ $border: #d1d1d1;
         overflow: hidden;
         border-radius: 12px;
         background: #000;
-        box-shadow: 
-          0 20px 40px rgba(0,0,0,0.3),
-          10px 10px 0px $blue; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3), 10px 10px 0px $blue; 
         transform: rotateY(-10deg) rotateX(5deg);
         transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        z-index: 5;
 
-        &:hover {
-          transform: rotateY(0deg) rotateX(0deg) scale(1.05);
-        }
+        &:hover { transform: rotateY(0deg) rotateX(0deg) scale(1.05); }
 
         .hero-video {
           width: 100%;
@@ -203,7 +199,7 @@ $border: #d1d1d1;
         position: absolute;
         inset: -10px;
         border: 2px solid $blue;
-        z-index: -1;
+        z-index: 1;
         transform: translate(15px, 15px);
         border-radius: 12px;
         opacity: 0.3;
@@ -250,35 +246,19 @@ $border: #d1d1d1;
         }
 
         &.btn-outline {
-            background: transparent;
-            border: 2px solid $text;
-            &:hover {
-                background: $text;
-                color: #fff;
-                .btn-bg { display: none; } 
-            }
+          background: transparent;
+          &:hover { background: $text; color: #fff; .btn-bg { display: none; } }
         }
       }
     }
   }
 }
 
-// Animations
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotateY(-10deg); }
-  50% { transform: translateY(-15px) rotateY(-5deg); }
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
 // ==========================================
 // 3. MARQUEE SECTION
 // ==========================================
 .marquee-section {
-  border-bottom: 1px solid $border;
+  @extend %grid-border-bottom;
   padding: 30px 0;
   overflow: hidden;
   background: $text;
@@ -312,16 +292,11 @@ $border: #d1d1d1;
   }
 }
 
-@keyframes scrollInfinite {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } 
-}
-
 // ==========================================
 // 4. STATS SECTION
 // ==========================================
 .grid-stats {
-  border-bottom: 1px solid $border;
+  @extend %grid-border-bottom;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   background-color: #fff; 
@@ -339,7 +314,7 @@ $border: #d1d1d1;
 
     .stat-num {
       font-family: 'Oswald', sans-serif;
-      font-size: clamp(50px, 6vw, 90px);
+      font-size: clamp(40px, 5vw, 70px);
       font-weight: 700;
       color: $blue;
       margin: 0;
@@ -359,68 +334,103 @@ $border: #d1d1d1;
 }
 
 // ==========================================
-// 5. SERVICES GRID
+// 5. MISSION & VISION GRID
 // ==========================================
-.grid-services {
-  border-bottom: 1px solid $border;
+.grid-mission {
+  @extend %grid-border-bottom;
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  background-color: $bg;
+  grid-template-columns: 1fr 1fr;
+  background-color: #fff;
 
-  .service-header {
-    border-right: 1px solid $border;
+  .mission-statement {
+    @extend %grid-border-right;
     padding: 80px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    
+    background-color: $bg;
+
     .eyebrow {
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: $blue;
-      margin: 0;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: $blue;
+        margin-bottom: 20px;
     }
 
-    h2 {
+    .section-title {
       font-family: 'Oswald', sans-serif;
-      font-size: 60px;
-      font-weight: 700;
-      text-transform: uppercase;
+      font-size: clamp(40px, 6vw, 80px);
       line-height: 1;
-      margin: 0;
+      text-transform: uppercase;
+      margin: 0 0 40px;
+    }
+
+    .statement-content {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+
+      .statement-box {
+        h3 {
+          font-family: 'Oswald', sans-serif;
+          font-size: 20px;
+          text-transform: uppercase;
+          color: $blue;
+          margin-bottom: 10px;
+        }
+        p {
+          font-size: 18px;
+          line-height: 1.6;
+          color: #444;
+          font-weight: 500;
+        }
+      }
     }
   }
 
-  .service-list {
+  .impact-pillars {
     display: flex;
     flex-direction: column;
 
-    .service-item {
-      border-bottom: 1px solid $border;
-      display: grid;
-      grid-template-columns: 80px 1fr 1.5fr 50px;
-      align-items: center;
+    .pillar-item {
+      flex: 1;
+      display: flex;
       padding: 40px;
-      text-decoration: none;
-      color: $text;
-      background: #fff; 
-      transition: background 0.3s, color 0.3s;
+      gap: 30px;
+      border-bottom: 1px solid $border;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 
       &:last-child { border-bottom: none; }
       
       &:hover { 
         background: $blue; 
         color: white;
-        .serv-num, .serv-desc { color: rgba(255,255,255,0.8); }
-        .serv-arrow { transform: rotate(45deg); }
+        .pillar-num { color: rgba(255,255,255,0.4); }
+        .pillar-text p { color: rgba(255,255,255,0.9); }
       }
 
-      .serv-num { color: #888; font-weight: 700; font-size: 14px; font-family: 'Oswald', sans-serif; }
-      .serv-title { font-size: 32px; font-weight: 800; text-transform: uppercase; font-family: 'Oswald', sans-serif;}
-      .serv-desc { color: #666; font-size: 16px; font-weight: 500; line-height: 1.5; padding-right: 20px;}
-      .serv-arrow { font-size: 24px; font-weight: 800; transition: transform 0.3s; }
+      .pillar-num {
+        font-family: 'Oswald', sans-serif;
+        font-size: 40px;
+        font-weight: 700;
+        color: $border;
+        line-height: 1;
+        transition: color 0.3s;
+      }
+
+      .pillar-text {
+        h4 {
+          font-family: 'Oswald', sans-serif;
+          font-size: 24px;
+          text-transform: uppercase;
+          margin: 0 0 10px 0;
+        }
+        p {
+          margin: 0;
+          color: #666;
+          line-height: 1.5;
+          transition: color 0.3s;
+        }
+      }
     }
   }
 }
@@ -466,6 +476,24 @@ $border: #d1d1d1;
 }
 
 // ==========================================
+// ANIMATIONS
+// ==========================================
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotateY(-10deg); }
+  50% { transform: translateY(-15px) rotateY(-5deg); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scrollInfinite {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } 
+}
+
+// ==========================================
 // MOBILE RESPONSIVE
 // ==========================================
 @media (max-width: 1024px) {
@@ -477,11 +505,13 @@ $border: #d1d1d1;
 }
 
 @media (max-width: 900px) {
-  .grid-services { grid-template-columns: 1fr; }
-  .service-header { border-right: none; border-bottom: 1px solid $border; }
+  .grid-mission { grid-template-columns: 1fr; }
+  .mission-statement { border-right: none; border-bottom: 1px solid $border; }
   .grid-stats { grid-template-columns: 1fr; .stat-item { border-right: none; border-bottom: 1px solid $border; } }
-  .service-list .service-item {
-    grid-template-columns: 50px 1fr 40px; 
-    .serv-desc { grid-column: 1 / -1; padding-top: 10px; }
+  
+  .impact-pillars .pillar-item {
+    padding: 30px 20px;
+    gap: 15px;
+    .pillar-num { font-size: 30px; }
   }
 }

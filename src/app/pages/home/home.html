@@ -15,14 +15,14 @@
   
   <header class="grid-hero">
     <div class="hero-left">
-      <p class="eyebrow">Shielding Your Digital Future</p>
+      <p class="eyebrow">A Government of Kerala Initiative</p>
       <h1 class="massive-text">
         SAFETECH <br>
         <span class="text-blue">CAMPAIGN</span> <br>
         KSITM
       </h1>
       <p class="hero-mini-desc">
-        A cyber awareness program to promote safe digital consumption for the elderly, women, and the general public.
+        Empowering citizens through digital literacy. A cyber awareness program designed for the elderly, women, and the general public.
       </p>
     </div>
 
@@ -36,7 +36,7 @@
             autoplay 
             muted 
             playsinline 
-            (ended)="heroVideo.currentTime = 4; heroVideo.play()"
+            (ended)="handleVideoEnd()"
             poster="assets/video-placeholder.jpg">
             <source src="assets/videos/hero-video.mp4" type="video/mp4">
             Your browser does not support the video tag.
@@ -46,12 +46,12 @@
 
       <div class="btn-group">
         <a routerLink="/reporting" class="btn-large">
-          <span class="btn-text">Get Started</span>
+          <span class="btn-text">Report a Threat</span>
           <span class="btn-arrow">↘</span>
           <div class="btn-bg"></div>
         </a>
         <a routerLink="/tech-buddy" class="btn-large btn-outline">
-          <span class="btn-text">Talk to Buddy</span>
+          <span class="btn-text">AI Tech Buddy</span>
           <span class="btn-arrow">→</span>
         </a>
       </div>
@@ -62,72 +62,84 @@
     <div class="marquee-track">
       <div class="marquee-content">
         <span>STAY AHEAD OF THREATS</span><span class="dot-separator"></span>
-        <span>URL CHECKER</span><span class="dot-separator"></span>
-        <span>ACTIVE SCAMS</span><span class="dot-separator"></span>
-        <span>AI TECH BUDDY</span><span class="dot-separator"></span>
-        <span>REPORT CYBERCRIMES NOW</span><span class="dot-separator"></span>
-        <span>SCAM DIRECTORY</span><span class="dot-separator"></span>
+        <span>KERALA STATE IT MISSION</span><span class="dot-separator"></span>
+        <span>ACTIVE SCAM ALERTS</span><span class="dot-separator"></span>
+        <span>CYBER SECURITY FOR ALL</span><span class="dot-separator"></span>
+        <span>REPORT FRAUD IMMEDIATELY</span><span class="dot-separator"></span>
       </div>
       <div class="marquee-content" aria-hidden="true">
         <span>STAY AHEAD OF THREATS</span><span class="dot-separator"></span>
-        <span>URL CHECKER</span><span class="dot-separator"></span>
-        <span>ACTIVE SCAMS</span><span class="dot-separator"></span>
-        <span>AI TECH BUDDY</span><span class="dot-separator"></span>
-        <span>REPORT CYBERCRIMES NOW</span><span class="dot-separator"></span>
-        <span>SCAM DIRECTORY</span><span class="dot-separator"></span>
+        <span>KERALA STATE IT MISSION</span><span class="dot-separator"></span>
+        <span>ACTIVE SCAM ALERTS</span><span class="dot-separator"></span>
+        <span>CYBER SECURITY FOR ALL</span><span class="dot-separator"></span>
+        <span>REPORT FRAUD IMMEDIATELY</span><span class="dot-separator"></span>
       </div>
     </div>
   </div>
 
   <section class="grid-stats">
     <div class="stat-item">
-      <h4 class="stat-num">50k+</h4>
-      <p class="stat-label">Scams Blocked</p>
+      <h4 class="stat-num">SECURE</h4>
+      <p class="stat-label">Citizen Platform</p>
     </div>
     <div class="stat-item">
-      <h4 class="stat-num">100%</h4>
-      <p class="stat-label">Secure Reporting</p>
+      <h4 class="stat-num">GOVT</h4>
+      <p class="stat-label">KSITM Led Initiative</p>
     </div>
     <div class="stat-item">
-      <h4 class="stat-num">24/7</h4>
-      <p class="stat-label">AI Support</p>
+      <h4 class="stat-num">FREE</h4>
+      <p class="stat-label">Awareness for All</p>
     </div>
   </section>
 
-  <section class="grid-services">
-    <div class="service-header">
-      <p class="eyebrow">. Our Expertise</p>
-      <h2>Core <br> Services</h2>
+  <section class="grid-mission">
+    <div class="mission-statement">
+      <p class="eyebrow"> Our Purpose</p>
+      <h2 class="section-title">Mission <br> & Vision</h2>
+      <div class="statement-content">
+        <div class="statement-box">
+          <h3>The Vision</h3>
+          <p>To create a digitally resilient Kerala where every citizen, regardless of age or background, can navigate the internet without fear of exploitation.</p>
+        </div>
+        <div class="statement-box">
+          <h3>The Mission</h3>
+          <p>Educating the public on cyber hygiene, providing real-time scam alerts, and offering accessible tools to identify and report digital threats effectively.</p>
+        </div>
+      </div>
     </div>
-    <div class="service-list">
-      <a routerLink="/phishing-checker" class="service-item">
-        <div class="serv-num">(01)</div>
-        <div class="serv-title">URL Checker</div>
-        <div class="serv-desc">Verify suspicious links against real-time phishing databases.</div>
-        <div class="serv-arrow">↗</div>
-      </a>
-      <a routerLink="/scams" class="service-item">
-        <div class="serv-num">(02)</div>
-        <div class="serv-title">Scam Alerts</div>
-        <div class="serv-desc">Real-time intelligence on active digital frauds and vulnerabilities.</div>
-        <div class="serv-arrow">↗</div>
-      </a>
-      <a routerLink="/training" class="service-item">
-        <div class="serv-num">(03)</div>
-        <div class="serv-title">Training</div>
-        <div class="serv-desc">Certified master trainer workshops and security documentation.</div>
-        <div class="serv-arrow">↗</div>
-      </a>
+
+    <div class="impact-pillars">
+      <div class="pillar-item">
+        <span class="pillar-num">01</span>
+        <div class="pillar-text">
+          <h4>Inclusion</h4>
+          <p>Tailored awareness programs specifically for the elderly and women to bridge the digital safety gap.</p>
+        </div>
+      </div>
+      <div class="pillar-item">
+        <span class="pillar-num">02</span>
+        <div class="pillar-text">
+          <h4>Prevention</h4>
+          <p>Proactive identification of phishing links and fraudulent schemes before they cause harm.</p>
+        </div>
+      </div>
+      <div class="pillar-item">
+        <span class="pillar-num">03</span>
+        <div class="pillar-text">
+          <h4>Response</h4>
+          <p>Streamlined pathways for citizens to report cybercrimes to the appropriate authorities.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer class="grid-footer">
     <a routerLink="/reporting" class="massive-footer-link">
-      <h2>REPORT A THREAT</h2>
+      <h2>Report Threats Now</h2>
     </a>
     <div class="footer-bottom">
-      <p>©2026 SafeTech Campaign</p>
-      <p>Made for KSITM</p>
+      <p>©2026 SafeTech Campaign | KSITM</p>
+      <p>Official Government Initiative</p>
     </div>
   </footer>
 

@@ -1,0 +1,116 @@
+/* =========================================================
+   TRAINING PAGE MOBILE OPTIMIZATION
+   Does NOT affect desktop
+   ========================================================= */
+
+
+/* -----------------------------
+   TABLET
+------------------------------*/
+@media (max-width: 1024px) {
+
+  /* Reduce container padding */
+  div[style*="max-width: 1300px"] {
+    padding: 0 24px !important;
+  }
+
+  /* Main grid stack */
+  div[style*="grid-template-columns: 1.6fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  /* Reduce title size */
+  h1 {
+    font-size: 56px !important;
+  }
+
+  /* Module cards still 2 columns but smaller gap */
+  div[style*="repeat(2, 1fr)"] {
+    gap: 20px !important;
+  }
+
+}
+
+
+/* -----------------------------
+   MOBILE
+------------------------------*/
+@media (max-width: 768px) {
+
+  /* Page padding */
+  div[style*="padding-top: 120px"] {
+    padding-top: 90px !important;
+    padding-bottom: 80px !important;
+  }
+
+  div[style*="max-width: 1300px"] {
+    padding: 0 18px !important;
+  }
+
+  /* Header title */
+  h1 {
+    font-size: 40px !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Subtitle text */
+  header p {
+    font-size: 16px !important;
+  }
+
+  /* Learning modules become single column */
+  div[style*="repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reduce card paddings */
+  div[style*="padding: 40px"] {
+    padding: 28px !important;
+  }
+
+  div[style*="padding: 50px"] {
+    padding: 32px !important;
+  }
+
+  /* Workshop guide card */
+  div[style*="border-left: 8px solid"] {
+    padding: 30px !important;
+  }
+
+  /* Master trainer card */
+  aside div[style*="background-color: #020202"] {
+    padding: 32px !important;
+  }
+
+}
+
+
+/* -----------------------------
+   SMALL PHONES
+------------------------------*/
+@media (max-width: 480px) {
+
+  h1 {
+    font-size: 32px !important;
+  }
+
+  header p {
+    font-size: 15px !important;
+  }
+
+  /* Learning modules title */
+  h2 {
+    font-size: 24px !important;
+  }
+
+  /* Reduce card paddings further */
+  div[style*="padding: 40px"] {
+    padding: 22px !important;
+  }
+
+  div[style*="padding: 50px"] {
+    padding: 24px !important;
+  }
+
+}

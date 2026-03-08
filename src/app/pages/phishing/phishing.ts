@@ -7,7 +7,8 @@ import { SupabaseService, UserReport } from '../../core/services/supabase';
   selector: 'app-phishing',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './phishing.html'
+  templateUrl: './phishing.html',
+  styleUrls: ['./phishing.scss']
 })
 export class PhishingComponent {
   targetUrl: string = '';

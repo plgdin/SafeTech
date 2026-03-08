@@ -1,0 +1,135 @@
+/* =========================================================
+   MOBILE OPTIMIZATION
+   Does NOT affect desktop layout
+   ========================================================= */
+
+/* Tablet */
+@media (max-width: 1024px) {
+
+  /* Reduce global padding */
+  div[style*="max-width: 1300px"] {
+    padding: 0 24px !important;
+  }
+
+  /* Main grid becomes vertical */
+  div[style*="grid-template-columns: 1fr 1.5fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  /* Feature cards grid */
+  div[style*="repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Reduce title size */
+  h1 {
+    font-size: 56px !important;
+  }
+
+  /* Reduce section paddings */
+  section[style*="padding: 60px"] {
+    padding: 40px !important;
+  }
+
+  section[style*="padding: 50px"] {
+    padding: 35px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  /* Page padding */
+  div[style*="padding-top: 120px"] {
+    padding-top: 90px !important;
+    padding-bottom: 60px !important;
+  }
+
+  div[style*="max-width: 1300px"] {
+    padding: 0 18px !important;
+  }
+
+  /* Heading */
+  h1 {
+    font-size: 40px !important;
+    line-height: 1.1 !important;
+  }
+
+  header p {
+    font-size: 16px !important;
+  }
+
+  /* Stack input + button */
+  div[style*="display: flex"][style*="gap: 20px"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  input {
+    width: 100% !important;
+  }
+
+  .axis-btn {
+    width: 100%;
+  }
+
+  /* Result header stack */
+  div[style*="justify-content: space-between"][style*="align-items: center"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  /* Buttons grid */
+  div[style*="grid-template-columns: 1.2fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Feature cards */
+  div[style*="repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mascot image */
+  img {
+    max-width: 220px !important;
+  }
+
+  /* Risk score text */
+  div[style*="font-size: 42px"] {
+    font-size: 32px !important;
+  }
+
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+
+  h1 {
+    font-size: 32px !important;
+  }
+
+  header p {
+    font-size: 15px !important;
+  }
+
+  section[style*="padding: 60px"] {
+    padding: 28px !important;
+  }
+
+  section[style*="padding: 50px"] {
+    padding: 24px !important;
+  }
+
+  /* Feature cards padding */
+  div[style*="padding: 40px"] {
+    padding: 24px !important;
+  }
+
+  /* Mascot */
+  img {
+    max-width: 180px !important;
+  }
+
+}

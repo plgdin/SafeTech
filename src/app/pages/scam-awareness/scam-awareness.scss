@@ -3,23 +3,40 @@
   min-height: 100vh;
   color: #020202;
   font-family: 'Poppins', sans-serif;
-  padding-top: 100px;
+  padding-top: 80px; // Slightly reduced for mobile top clearance
+
+  @media (min-width: 1024px) {
+    padding-top: 100px;
+  }
 }
 
 .content-container {
   max-width: 1300px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 20px; // More space for content on small screens
+
+  @media (min-width: 768px) {
+    padding: 0 40px;
+  }
 }
 
 /* --- HEADER --- */
 .page-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column; // Stack elements on mobile
+  align-items: flex-start;
+  gap: 30px;
   border-bottom: 1px solid #ebebeb;
-  padding-bottom: 60px;
-  margin-bottom: 80px;
+  padding-bottom: 40px;
+  margin-bottom: 50px;
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 60px;
+    margin-bottom: 80px;
+  }
 
   .badge {
     display: flex;
@@ -45,23 +62,29 @@
   }
 
   .main-title { 
-    font-size: 80px; 
+    // Uses clamp to ensure text shrinks on mobile but grows to 80px on desktop
+    font-size: clamp(40px, 12vw, 80px); 
     font-weight: 900; 
     line-height: 0.9; 
     letter-spacing: -0.04em; 
     margin: 0; 
     text-transform: uppercase; 
+    word-wrap: break-word; // Prevents overflow from long words
   }
   
   .highlight { color: #1e6aff; }
   
   .subtitle { 
     color: #666; 
-    font-size: 20px; 
+    font-size: clamp(16px, 4vw, 20px); 
     font-weight: 500; 
-    margin-top: 30px; 
+    margin-top: 20px; 
     line-height: 1.6; 
     max-width: 800px; 
+
+    @media (min-width: 1024px) {
+        margin-top: 30px;
+    }
   }
 
   .btn-dark {
@@ -82,13 +105,21 @@
 
 /* --- BENTO GRID (URGENT THREATS) --- */
 .urgent-section {
-  margin-bottom: 100px;
+  margin-bottom: 60px;
+
+  @media (min-width: 1024px) {
+    margin-bottom: 100px;
+  }
 
   .section-title {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+
+    @media (min-width: 1024px) {
+        margin-bottom: 40px;
+    }
 
     h2 { 
       font-size: 13px; 
@@ -125,14 +156,24 @@
 
   .bento-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: minmax(280px, auto);
-    gap: 24px;
+    grid-template-columns: 1fr; // Single column on mobile
+    gap: 20px;
+
+    @media (min-width: 900px) {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: minmax(280px, auto);
+        gap: 24px;
+    }
     
     .bento-card {
       background-color: #f4f6f8; 
       border-radius: 24px;
-      padding: 40px;
+      padding: 30px; // Slightly reduced padding for mobile
+
+      @media (min-width: 768px) {
+        padding: 40px;
+      }
+
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -147,7 +188,7 @@
       }
 
       h3 { 
-        font-size: 32px; 
+        font-size: clamp(24px, 6vw, 32px); 
         font-weight: 700; 
         color: #020202; 
         margin: 0 0 16px 0; 
@@ -189,20 +230,26 @@
       }
     }
 
-    /* Grid Mapping Rules */
+    /* Grid Mapping Rules - Only applies on Desktop */
     .feature-card {
-      grid-column: span 2;
-      grid-row: span 1;
+      @media (min-width: 900px) {
+        grid-column: span 2;
+        grid-row: span 1;
+      }
     }
     
     .tall-card {
-      grid-column: span 1;
-      grid-row: span 2;
+      @media (min-width: 900px) {
+        grid-column: span 1;
+        grid-row: span 2;
+      }
     }
     
     .standard-card {
-      grid-column: span 1;
-      grid-row: span 1;
+      @media (min-width: 900px) {
+        grid-column: span 1;
+        grid-row: span 1;
+      }
     }
   }
 }
@@ -210,27 +257,42 @@
 /* --- DIRECTORY --- */
 .directory-section {
   background-color: #f4f4f4;
-  border-radius: 50px;
-  padding: 60px;
-  margin-bottom: 100px;
+  border-radius: 30px; // Smaller radius for mobile
+  padding: 30px 20px;
+  margin-bottom: 60px;
+
+  @media (min-width: 768px) {
+    border-radius: 50px;
+    padding: 60px;
+    margin-bottom: 100px;
+  }
 
   .directory-title { 
-    font-size: 32px; 
+    font-size: clamp(24px, 5vw, 32px); 
     font-weight: 900; 
-    margin-bottom: 40px; 
+    margin-bottom: 30px; 
     letter-spacing: -0.02em; 
+
+    @media (min-width: 768px) {
+        margin-bottom: 40px;
+    }
   }
 
   .directory-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr; // Single column on mobile
+    gap: 15px;
+
+    @media (min-width: 1100px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
   }
 
   .directory-item {
     background-color: #ffffff;
-    padding: 25px 40px;
-    border-radius: 25px;
+    padding: 15px 20px;
+    border-radius: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -238,38 +300,55 @@
     cursor: pointer;
     border: 1px solid transparent;
 
+    @media (min-width: 768px) {
+        padding: 25px 40px;
+        border-radius: 25px;
+    }
+
     &:hover { border-color: #1e6aff; }
 
-    .item-info { display: flex; align-items: center; gap: 25px; }
+    .item-info { display: flex; align-items: center; gap: 15px; @media (min-width: 768px) { gap: 25px; } }
     
     .initial-box { 
-      width: 60px; 
-      height: 60px; 
+      width: 50px; 
+      height: 50px; 
       background-color: #1e6aff; 
       color: #ffffff; 
-      border-radius: 15px; 
+      border-radius: 12px; 
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      font-size: 24px; 
+      font-size: 20px; 
       font-weight: 900; 
+
+      @media (min-width: 768px) {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        border-radius: 15px;
+      }
     }
     
-    .item-name { font-weight: 800; font-size: 18px; color: #020202; }
-    .item-type { font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
-    .action-link { color: #1e6aff; font-weight: 900; font-size: 12px; }
+    .item-name { font-weight: 800; font-size: 16px; color: #020202; @media (min-width: 768px) { font-size: 18px; } }
+    .item-type { font-size: 10px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; @media (min-width: 768px) { font-size: 11px; } }
+    .action-link { color: #1e6aff; font-weight: 900; font-size: 11px; @media (min-width: 768px) { font-size: 12px; } }
   }
 }
 
 /* --- CTA SECTION --- */
 .cta-section {
   background-color: #020202;
-  border-radius: 60px;
-  padding: 80px;
+  border-radius: 30px; // Smaller radius for mobile
+  padding: 40px 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
+
+  @media (min-width: 768px) {
+    border-radius: 60px;
+    padding: 80px;
+  }
 
   .cta-content {
     position: relative;
@@ -277,7 +356,7 @@
 
     h2 { 
       color: #ffffff; 
-      font-size: 60px; 
+      font-size: clamp(32px, 8vw, 60px); 
       font-weight: 900; 
       letter-spacing: -0.04em; 
       line-height: 1; 
@@ -287,21 +366,41 @@
     
     p { 
       color: #a0a0a0; 
-      font-size: 20px; 
+      font-size: clamp(16px, 4vw, 20px); 
       font-weight: 500; 
       max-width: 600px; 
-      margin: 0 auto 40px; 
+      margin: 0 auto 30px; 
+      @media (min-width: 768px) { margin-bottom: 40px; }
     }
     
-    .btn-group { display: flex; justify-content: center; gap: 20px; }
+    .btn-group { 
+        display: flex; 
+        flex-direction: column; // Stack buttons on mobile
+        align-items: center;
+        gap: 15px; 
+
+        @media (min-width: 768px) {
+            flex-direction: row;
+            justify-content: center;
+            gap: 20px;
+        }
+    }
     
     button { 
-      padding: 20px 50px; 
+      width: 100%; // Buttons take full width on mobile
+      max-width: 300px;
+      padding: 18px 30px; 
       border-radius: 15px; 
       font-weight: 900; 
-      font-size: 16px; 
+      font-size: 15px; 
       cursor: pointer; 
       transition: 0.3s; 
+
+      @media (min-width: 768px) {
+        width: auto;
+        padding: 20px 50px;
+        font-size: 16px;
+      }
     }
     
     .btn-primary { 
@@ -323,12 +422,18 @@
     position: absolute; 
     top: -50px; 
     right: -50px; 
-    width: 300px; 
-    height: 300px; 
+    width: 200px; 
+    height: 200px; 
     background-color: #1e6aff; 
-    filter: blur(100px); 
+    filter: blur(80px); 
     opacity: 0.15; 
     border-radius: 50%; 
+
+    @media (min-width: 768px) {
+        width: 300px;
+        height: 300px;
+        filter: blur(100px);
+    }
   }
 }
 

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccessibilityWidget } from './accessibility-widget';
+import { AccessibilityWidgetComponent } from './accessibility-widget';
 
 describe('AccessibilityWidget', () => {
-  let component: AccessibilityWidget;
-  let fixture: ComponentFixture<AccessibilityWidget>;
+  let component: AccessibilityWidgetComponent;
+  let fixture: ComponentFixture<AccessibilityWidgetComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AccessibilityWidget],
+      imports: [AccessibilityWidgetComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AccessibilityWidget);
+    fixture = TestBed.createComponent(AccessibilityWidgetComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -10,11 +10,12 @@ import { AccessibilityService } from '../../../core/services/accessibility.servi
   styleUrls: ['./accessibility-widget.scss']
 })
 export class AccessibilityWidgetComponent {
+
   isOpen = false;
+
   languages = [
     { code: 'en', label: 'English' },
-    { code: 'ml', label: 'Malayalam' },
-    { code: 'hi', label: 'Hindi' }
+    { code: 'ml', label: 'Malayalam' }
   ];
 
   constructor(public a11yService: AccessibilityService) {}
@@ -31,4 +32,5 @@ export class AccessibilityWidgetComponent {
     const select = event.target as HTMLSelectElement;
     this.a11yService.changeLanguage(select.value);
   }
+
 }

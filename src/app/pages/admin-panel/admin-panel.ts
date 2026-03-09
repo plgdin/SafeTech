@@ -12,63 +12,92 @@ import autoTable from 'jspdf-autotable';
   styleUrl: './admin-panel.scss'
 })
 export class AdminPanelComponent implements OnInit {
-  activeSection: 'chats' | 'trainers' | 'bookings' = 'chats';
+  /**
+   * activeSection handles all the tables visible in your Supabase schema:
+   * chat_logs, trainers, bookings, phishing_reports, scams, citizen_reports, phishing_db
+   */
+  activeSection: 'chats' | 'trainers' | 'bookings' | 'reports' | 'scams' | 'citizen' | 'database' = 'chats';
   isLoading = true;
 
-  // Data arrays
-  chats: any[] = [];
-  trainers: any[] = [];
-  bookings: any[] = [];
+  // This will store the data fetched from Supabase
+  dataList: any[] = [];
 
   constructor() {}
 
   ngOnInit(): void {
-    this.fetchAdminData();
+    this.fetchData();
   }
 
   /**
-   * Fetches all admin data from the Google Apps Script API
+   * Helper to safely format table headers from object keys.
+   * Prevents TS2339 error by ensuring input is a string.
    */
-  async fetchAdminData() {
+  formatHeader(key: any): string {
+    return String(key).replace(/_/g, ' ');
+  }
+
+  /**
+   * Fetches data from Supabase based on the active section.
+   * tableMap links the UI buttons to the actual SQL table names in your schema.
+   */
+  async fetchData() {
     this.isLoading = true;
+    
+    const tableMap = {
+      'chats': 'chat_logs',
+      'trainers': 'trainers',
+      'bookings': 'bookings',
+      'reports': 'phishing_reports',
+      'scams': 'scams',               // Added from your schema
+      'citizen': 'citizen_reports',   // Added from your schema
+      'database': 'phishing_db'       // Added from your schema
+    };
+
+    const tableName = tableMap[this.activeSection];
+
     try {
-      const response = await fetch(`${environment.googleScriptUrl}?action=getAdminData`);
-      if (!response.ok) throw new Error('Network response was not ok');
+      const response = await fetch(
+        `${environment.supabaseUrl}/rest/v1/${tableName}?select=*&order=created_at.desc`, 
+        {
+          method: 'GET',
+          headers: {
+            'apikey': environment.supabaseKey,
+            'Authorization': `Bearer ${environment.supabaseKey}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) throw new Error(`Failed to fetch ${tableName}`);
       
-      const result = await response.json();
-      
-      // Ensure we always have an array even if the sheet is empty
-      this.chats = result.chats || [];
-      this.trainers = result.trainers || [];
-      this.bookings = result.bookings || [];
+      this.dataList = await response.json();
     } catch (error) {
-      console.error("Error fetching admin data:", error);
+      console.error("Supabase Fetch Error:", error);
+      this.dataList = []; // Clear list on error
     } finally {
       this.isLoading = false;
     }
   }
 
   /**
-   * Switches the visible table view
+   * Switches the visible table view and triggers a new fetch
    */
-  setSection(section: 'chats' | 'trainers' | 'bookings') {
+  setSection(section: 'chats' | 'trainers' | 'bookings' | 'reports' | 'scams' | 'citizen' | 'database') {
     this.activeSection = section;
+    this.fetchData();
   }
 
   /**
    * Returns the data set currently being viewed
    */
   getCurrentData() {
-    if (this.activeSection === 'chats') return this.chats;
-    if (this.activeSection === 'trainers') return this.trainers;
-    return this.bookings;
+    return this.dataList;
   }
 
   /**
-   * Generates and downloads a PDF report of the current table data
+   * Generates and downloads a PDF report using Supabase data
    */
   downloadPDF() {
-    // We cast to 'any' to bypass strict TS checks on internal jsPDF properties
     const doc: any = new jsPDF('l', 'mm', 'a4'); 
     const data = this.getCurrentData();
     
@@ -77,15 +106,15 @@ export class AdminPanelComponent implements OnInit {
       return;
     }
 
-    // 1. Prepare Table Headers (Keys from the first object)
+    // 1. Prepare Table Headers (Dynamically from keys)
     const headers = [Object.keys(data[0]).map(h => h.toUpperCase())];
 
-    // 2. Prepare Table Body (Values from all objects)
+    // 2. Prepare Table Body
     const body = data.map(row => Object.values(row)) as any[][];
 
     // 3. Set Document Header
     doc.setFontSize(20);
-    doc.setTextColor(30, 106, 255); // SafeTech Blue
+    doc.setTextColor(30, 106, 255); 
     doc.text(`SafeTech Systems: ${this.activeSection.toUpperCase()} Report`, 14, 15);
     
     doc.setFontSize(10);
@@ -111,12 +140,7 @@ export class AdminPanelComponent implements OnInit {
         overflow: 'linebreak',
         font: 'helvetica'
       },
-      columnStyles: {
-        // Example: If the second column is too wide, we can set specific widths
-        // 1: { cellWidth: 50 } 
-      },
       didDrawPage: (hookData) => {
-        // Footer: Page Numbering
         const totalPages = doc.getNumberOfPages();
         const pageSize = doc.internal.pageSize;
         const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
@@ -133,8 +157,6 @@ export class AdminPanelComponent implements OnInit {
       }
     });
 
-    // 5. Save the file
-    const fileName = `SafeTech_${this.activeSection}_${Date.now()}.pdf`;
-    doc.save(fileName);
+    doc.save(`SafeTech_${this.activeSection}_Export_${Date.now()}.pdf`);
   }
 }

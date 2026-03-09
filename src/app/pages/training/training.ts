@@ -82,28 +82,22 @@ export class TrainingComponent {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 1. Block Past Dates & Same Day
     if (selectedDate <= today) {
       return { valid: false, error: 'Bookings must be at least 48 hours in advance' };
     }
 
-    const dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 6 = Saturday
+    const dayOfWeek = selectedDate.getDay(); 
     const dayOfMonth = selectedDate.getDate();
 
-    // 2. Check Sunday
     if (dayOfWeek === 0) return { valid: false, error: 'Sundays are holidays' };
-
-    // 3. Check 2nd Saturday (falls between 8th and 14th)
     if (dayOfWeek === 6 && dayOfMonth >= 8 && dayOfMonth <= 14) {
       return { valid: false, error: '2nd Saturdays are holidays' };
     }
 
-    // 4. Check Time (10:15 to 17:15)
-    // Since session is 3 hours, latest start time is 14:15
     const [hours, minutes] = timeStr.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
-    const startLimit = 10 * 60 + 15; // 10:15
-    const endLimit = 14 * 60 + 15;  // 14:15 (to end by 17:15)
+    const startLimit = 10 * 60 + 15; 
+    const endLimit = 14 * 60 + 15;  
 
     if (totalMinutes < startLimit || totalMinutes > endLimit) {
       return { valid: false, error: 'Slots available 10:15 - 14:15 (for 3hr session)' };
@@ -125,20 +119,14 @@ export class TrainingComponent {
 
   onPhoneInput(value: string) {
     let cleaned = value.replace(/\D/g, '');
-    
-    // Ensure 91 prefix
     if (cleaned.length >= 10 && !cleaned.startsWith('91')) {
       cleaned = '91' + cleaned.slice(-10);
     }
-    
     cleaned = cleaned.substring(0, 12);
-    
-    // Formatting: +XX XXXXX XXXXX
     let formatted = '';
     if (cleaned.length > 0) formatted = '+' + cleaned.substring(0, 2);
     if (cleaned.length > 2) formatted += ' ' + cleaned.substring(2, 7);
     if (cleaned.length > 7) formatted += ' ' + cleaned.substring(7, 12);
-    
     this.phoneNumber = formatted;
   }
 
@@ -156,7 +144,8 @@ export class TrainingComponent {
       this.otpSent = true; 
       this.cdr.detectChanges();
 
-      const response = await fetch(environment.googleScriptUrl, {
+      // Note: Keeping Google Script ONLY for the WhatsApp Trigger logic
+      await fetch(environment.googleScriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
@@ -188,45 +177,48 @@ export class TrainingComponent {
   }
 
   async submitData() {
-    // 1. Phone Verification Check
     if (!this.isPhoneVerified) {
       this.triggerToast("Please verify phone first", "error");
       return;
     }
 
-    // 2. Tab-Specific Validation
     if (this.activeTab === 'book') {
       const dateVal = this.validateSessionDateTime(this.bookingData.date, this.bookingData.startTime);
       if (!dateVal.valid) {
         this.triggerToast(dateVal.error!, "error");
         return;
       }
-      if (!this.bookingData.orgType || !this.bookingData.email || !this.bookingData.address) {
-        this.triggerToast("Please fill all booking details", "error");
-        return;
-      }
-    } else {
-      if (!this.applicationData.name || !this.applicationData.education) {
-        this.triggerToast("Please fill all required fields", "error");
-        return;
-      }
     }
 
     this.isSubmitting = true;
+    const tableName = this.activeTab === 'register' ? 'trainers' : 'bookings';
     
-    const payload = {
-      action: this.activeTab === 'register' ? 'saveTrainer' : 'saveBooking',
-      phone: this.phoneNumber,
-      ...(this.activeTab === 'register' ? this.applicationData : this.bookingData),
-      timestamp: new Date().toISOString()
-    };
+    // Clean up payload for Supabase
+    const payload = this.activeTab === 'register' 
+      ? { ...this.applicationData, phone: this.phoneNumber } 
+      : { 
+          org_type: this.bookingData.orgType,
+          address: this.bookingData.address,
+          event_date: this.bookingData.date,
+          event_time: this.bookingData.startTime,
+          email: this.bookingData.email,
+          mode: this.bookingData.mode,
+          phone: this.phoneNumber 
+        };
 
     try {
-      await fetch(environment.googleScriptUrl, {
+      const response = await fetch(`${environment.supabaseUrl}/rest/v1/${tableName}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
+        headers: {
+          'apikey': environment.supabaseKey,
+          'Authorization': `Bearer ${environment.supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
         body: JSON.stringify(payload)
       });
+
+      if (!response.ok) throw new Error('Supabase insertion failed');
 
       this.triggerToast(
         this.activeTab === 'register' ? "Application Submitted Successfully!" : "Training Session Booked!", 
@@ -234,6 +226,7 @@ export class TrainingComponent {
       );
       this.closeForm();
     } catch (e) {
+      console.error(e);
       this.triggerToast("Submission failed. Try again.", "error");
     } finally {
       this.isSubmitting = false;

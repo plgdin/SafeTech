@@ -40,7 +40,7 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
   4. Keep responses helpful, authoritative, concise, and empathetic to victims of scams.`;
 
   private chatModel = this.genAI.getGenerativeModel({
-    model: "gemini-2.0-flash", // Updated to stable 2.0 version
+    model: "gemini-2.0-flash", 
     systemInstruction: this.systemInstruction,
   });
 
@@ -68,24 +68,31 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
   }
 
   /**
-   * Logs the conversation to the Google Sheet for the Admin Panel
+   * Logs the conversation to Supabase for the Admin Panel
+   * This replaces the broken Google Script logging
    */
-  private async logToAdminPanel(userMsg: string, aiMsg: string) {
+  private async logToSupabase(userMsg: string, aiMsg: string) {
     try {
-      // We send this as a background task; no need to wait for it for the UI to feel fast
-      fetch(environment.googleScriptUrl, {
+      const response = await fetch(`${environment.supabaseUrl}/rest/v1/chat_logs`, {
         method: 'POST',
-        mode: 'no-cors', // standard for Google Apps Script POST
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'apikey': environment.supabaseKey,
+          'Authorization': `Bearer ${environment.supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
         body: JSON.stringify({
-          action: 'logChat',
-          userMsg: userMsg,
-          aiMsg: aiMsg,
-          timestamp: new Date().toISOString()
+          user_msg: userMsg,
+          ai_msg: aiMsg,
+          // created_at is handled automatically by Supabase if set as default
         })
       });
-    } catch (e) {
-      console.warn('Logging to Admin Panel failed', e);
+
+      if (!response.ok) {
+        throw new Error('Supabase insert failed');
+      }
+    } catch (error) {
+      console.warn('Admin Logging failed:', error);
     }
   }
 
@@ -109,8 +116,8 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
 
       this.messages.push({ text: safeHtml, sender: 'bot' });
 
-      // 🔥 NEW: Send data to Google Sheets for Admin Panel visibility
-      this.logToAdminPanel(input, rawText);
+      // 🔥 LOG TO SUPABASE: No CORS issues here
+      this.logToSupabase(input, rawText);
 
     } catch (error) {
       console.error('TechBuddy AI Error:', error);

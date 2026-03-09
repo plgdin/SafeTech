@@ -1,0 +1,40 @@
+<button class="a11y-fab" (click)="toggleMenu()" aria-label="Open Accessibility Menu">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3"></circle><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path></svg>
+</button>
+
+<div class="a11y-menu" [class.open]="isOpen">
+  <div class="a11y-header">
+    <h3>Accessibility Menu</h3>
+    <button class="close-btn" (click)="toggleMenu()">×</button>
+  </div>
+
+  <div class="a11y-content">
+    <div class="lang-switcher">
+      <label for="lang-select">Language:</label>
+      <select id="lang-select" (change)="onLanguageChange($event)">
+        <option *ngFor="let lang of languages" [value]="lang.code">{{ lang.label }}</option>
+      </select>
+    </div>
+
+    <div class="a11y-grid">
+      <button [class.active]="a11yService.activeStates.contrast" (click)="toggle('contrast')">
+        <span class="icon">◑</span> Contrast +
+      </button>
+      <button [class.active]="a11yService.activeStates.highlightLinks" (click)="toggle('highlightLinks')">
+        <span class="icon">🔗</span> Highlight Links
+      </button>
+      <button [class.active]="a11yService.activeStates.biggerText" (click)="toggle('biggerText')">
+        <span class="icon">TT</span> Bigger Text
+      </button>
+      <button [class.active]="a11yService.activeStates.textSpacing" (click)="toggle('textSpacing')">
+        <span class="icon">↔</span> Text Spacing
+      </button>
+      <button [class.active]="a11yService.activeStates.dyslexia" (click)="toggle('dyslexia')">
+        <span class="icon">Df</span> Dyslexia Friendly
+      </button>
+      <button [class.active]="a11yService.activeStates.hideImages" (click)="toggle('hideImages')">
+        <span class="icon">🖼️</span> Hide Images
+      </button>
+    </div>
+  </div>
+</div>

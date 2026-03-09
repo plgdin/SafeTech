@@ -196,3 +196,58 @@ html, body {
   from {transform:scale(0.9); opacity:0;}
   to {transform:scale(1); opacity:1;}
 }
+/* --- ACCESSIBILITY OVERRIDES --- */
+
+/* Contrast + */
+body.a11y-contrast {
+  filter: contrast(140%);
+  background-color: #000 !important;
+  color: #fff !important;
+  
+  * {
+    background-color: #000 !important;
+    color: #0ff !important; /* High contrast cyan for text */
+    border-color: #0ff !important;
+  }
+}
+
+/* Highlight Links */
+body.a11y-highlight-links {
+  a {
+    text-decoration: underline 4px solid #ffeb3b !important;
+    text-underline-offset: 4px;
+    background-color: #000 !important;
+    color: #ffeb3b !important;
+  }
+}
+
+/* Bigger Text */
+body.a11y-biggerText {
+  * {
+    font-size: 110% !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* Text Spacing */
+body.a11y-textSpacing {
+  * {
+    letter-spacing: 0.12em !important;
+    word-spacing: 0.16em !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* Dyslexia Friendly (Falls back to Comic Sans if OpenDyslexic isn't installed) */
+body.a11y-dyslexia {
+  * {
+    font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+  }
+}
+
+/* Hide Images */
+body.a11y-hideImages {
+  img, svg, [style*="background-image"] {
+    visibility: hidden !important;
+  }
+}

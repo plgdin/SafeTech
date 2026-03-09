@@ -5,6 +5,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { environment } from '../../../../environments/environment';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { SupabaseService } from '../../../core/services/supabase'; //
 
 interface Message {
   text: string;
@@ -29,7 +30,7 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
     { text: "I am TechBuddy. How can I protect you today?", sender: 'bot' }
   ];
 
-  private genAI = new GoogleGenerativeAI(environment.geminiApiKey);
+  private genAI = new GoogleGenerativeAI(environment.geminiApiKey); //
   
   private systemInstruction = `You are TechBuddy, an official cybersecurity AI assistant for the SafeTech government campaign in Kerala, India. 
   
@@ -40,13 +41,16 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
   4. Keep responses helpful, authoritative, concise, and empathetic to victims of scams.`;
 
   private chatModel = this.genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.5-flash", //
     systemInstruction: this.systemInstruction,
   });
 
-  private chatSession = this.chatModel.startChat({ history: [] });
+  private chatSession = this.chatModel.startChat({ history: [] }); //
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private supabaseService: SupabaseService // Injected for Admin Panel logging
+  ) {}
 
   ngAfterViewChecked() {
     this.scrollToBottom();
@@ -79,11 +83,14 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
     this.scrollToBottom();
 
     try {
-      const result = await this.chatSession.sendMessage(input);
-      const rawText = result.response.text();
+      const result = await this.chatSession.sendMessage(input); //
+      const rawText = result.response.text(); //
       
-      const htmlText = await marked.parse(rawText);
-      const safeHtml = DOMPurify.sanitize(htmlText);
+      // Log the chat to Supabase for the Admin Panel
+      await this.supabaseService.saveChatLog(input, rawText);
+
+      const htmlText = await marked.parse(rawText); //
+      const safeHtml = DOMPurify.sanitize(htmlText); //
 
       this.messages.push({ text: safeHtml, sender: 'bot' });
     } catch (error) {

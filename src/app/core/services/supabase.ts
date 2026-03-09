@@ -14,7 +14,7 @@ export interface Scam {
   title: string;
   description: string;
   category?: string;
-  type?: string;       
+  type?: string;        
   risk_level?: string;
   severity?: string;   
   created_at?: string;
@@ -35,6 +35,10 @@ export class SupabaseService {
      1. PHISHING / URL SAFEGUARD BACKEND
      ========================================= */
   
+  /**
+   * Checks if a URL has been previously flagged as malicious.
+   *
+   */
   async checkPhishingUrl(url: string): Promise<{ isSafe: boolean; details: string } | null> {
     const { data, error } = await this.supabase
       .from('phishing_logs')
@@ -48,6 +52,10 @@ export class SupabaseService {
     return { isSafe: data.is_safe, details: data.threat_details };
   }
 
+  /**
+   * Logs a phishing scan audit for forensic tracking.
+   *
+   */
   async logPhishingAudit(url: string, score: number, details: string, markers: string[], isSafe: boolean) {
     return await this.supabase.from('phishing_logs').insert([
       {
@@ -64,19 +72,25 @@ export class SupabaseService {
      2. CITIZEN REPORTING (Production Ready)
      ========================================= */
      
+  /**
+   * Submits a new forensic report from a citizen.
+   *
+   */
   async submitReport(report: UserReport) {
-    // Maps forensic payload to the citizen_reports table
     return await this.supabase.from('citizen_reports').insert([
       {
         report_type: report.report_type,
         evidence_payload: report.content,
         status: report.status,
-        reference_id: report.reference_id // Production ID storage
+        reference_id: report.reference_id 
       }
     ]);
   }
 
-  // Production-ready lookup for the Tracking Panel
+  /**
+   * Retrieves the current status of a report via its Reference ID.
+   *
+   */
   async getReportStatus(refId: string) {
     return await this.supabase
       .from('citizen_reports')
@@ -89,10 +103,101 @@ export class SupabaseService {
      3. SCAM AWARENESS BACKEND
      ========================================= */
      
+  /**
+   * Retrieves a list of recent scams for public awareness.
+   *
+   */
   async getScams() {
     return await this.supabase
       .from('scams')
       .select('*')
       .order('created_at', { ascending: false });
+  }
+
+  /* =========================================
+     4. ADMIN PANEL & CHATBOT BACKEND
+     ========================================= */
+
+  /**
+   * Logs chatbot interactions for administrative visibility.
+   *
+   */
+  async saveChatLog(userMsg: string, botRes: string) {
+    return await this.supabase.from('chatbot_logs').insert([
+      { 
+        user_message: userMsg, 
+        bot_response: botRes 
+      }
+    ]);
+  }
+
+  /**
+   * Retrieves all chatbot logs, sorted by most recent.
+   *
+   */
+  async getChatLogs() {
+    return await this.supabase
+      .from('chatbot_logs')
+      .select('*')
+      .order('created_at', { ascending: false });
+  }
+
+  /**
+   * Fetches all training data, including session bookings and trainer applications.
+   *
+   */
+  async getAllTrainingData() {
+    const { data: bookings } = await this.supabase
+      .from('bookings')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    const { data: trainers } = await this.supabase
+      .from('trainers')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    return { bookings, trainers };
+  }
+
+  /**
+   * Fetches the complete history of phishing checker logs.
+   *
+   */
+  async getAllPhishingLogs() {
+    return await this.supabase
+      .from('phishing_logs')
+      .select('*')
+      .order('created_at', { ascending: false });
+  }
+
+  /**
+   * Retrieves all citizen-submitted reports for administrative review.
+   *
+   */
+  async getAllCitizenReports() {
+    return await this.supabase
+      .from('citizen_reports')
+      .select('*')
+      .order('created_at', { ascending: false });
+  }
+
+  /**
+   * Aggregates all system data into a single dashboard payload for the admin panel.
+   *
+   */
+  async getAdminDashboardData() {
+    const { data: reports } = await this.getAllCitizenReports();
+    const { bookings, trainers } = await this.getAllTrainingData();
+    const { data: phishingLogs } = await this.getAllPhishingLogs();
+    const { data: chatLogs } = await this.getChatLogs();
+
+    return {
+      reports,
+      bookings,
+      trainers,
+      phishingLogs,
+      chatLogs
+    };
   }
 }

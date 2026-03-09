@@ -40,11 +40,7 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
   4. Keep responses helpful, authoritative, concise, and empathetic to victims of scams.`;
 
   private chatModel = this.genAI.getGenerativeModel({
-<<<<<<< HEAD
-    model: "gemini-2.0-flash", 
-=======
     model: "gemini-2.5-flash",
->>>>>>> 2a46042617578709681f31523dfe898d82e5ecfb
     systemInstruction: this.systemInstruction,
   });
 
@@ -71,38 +67,6 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
     }
   }
 
-<<<<<<< HEAD
-  /**
-   * Logs the conversation to Supabase for the Admin Panel
-   * This replaces the broken Google Script logging
-   */
-  private async logToSupabase(userMsg: string, aiMsg: string) {
-    try {
-      const response = await fetch(`${environment.supabaseUrl}/rest/v1/chat_logs`, {
-        method: 'POST',
-        headers: {
-          'apikey': environment.supabaseKey,
-          'Authorization': `Bearer ${environment.supabaseKey}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          user_msg: userMsg,
-          ai_msg: aiMsg,
-          // created_at is handled automatically by Supabase if set as default
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Supabase insert failed');
-      }
-    } catch (error) {
-      console.warn('Admin Logging failed:', error);
-    }
-  }
-
-=======
->>>>>>> 2a46042617578709681f31523dfe898d82e5ecfb
   async sendMessage() {
     if (!this.userInput.trim() || this.isLoading) return;
     
@@ -122,13 +86,6 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
       const safeHtml = DOMPurify.sanitize(htmlText);
 
       this.messages.push({ text: safeHtml, sender: 'bot' });
-<<<<<<< HEAD
-
-      // 🔥 LOG TO SUPABASE: No CORS issues here
-      this.logToSupabase(input, rawText);
-
-=======
->>>>>>> 2a46042617578709681f31523dfe898d82e5ecfb
     } catch (error) {
       console.error('TechBuddy AI Error:', error);
       this.messages.push({ 

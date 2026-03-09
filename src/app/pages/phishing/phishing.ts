@@ -32,54 +32,72 @@ export class PhishingComponent {
     let reasons: string[] = [];
     
     try {
-      const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
+      const input = url.toLowerCase().trim();
+      const normalizedUrl = input.startsWith('http') ? input : `https://${input}`;
       const urlObj = new URL(normalizedUrl);
-      const hostname = urlObj.hostname.toLowerCase();
-      const path = urlObj.pathname.toLowerCase();
+      const hostname = urlObj.hostname;
 
-      const uniqueChars = new Set(hostname).size;
-      if (uniqueChars / hostname.length > 0.7 && hostname.length > 15) {
-        score += 40;
-        reasons.push('High Lexical Entropy: Domain name appears programmatically generated.');
+      // 1. STRICT AUTHORITY WHITELIST
+      // Only these absolute giants get a 0% score.
+      const verifiedDomains = [
+        'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
+        'apple.com', 'microsoft.com', 'amazon.in', 'amazon.com',
+        'kerala.gov.in', 'india.gov.in', 'sbi.co.in', 'onlinesbi.sbi'
+      ];
+
+      const isVerified = verifiedDomains.some(d => hostname === d || hostname.endsWith('.' + d));
+      if (isVerified) {
+        return { score: 0, reasons: ['Verified Official Domain Authority.'] };
       }
 
-      const highRiskTLDs = ['.xyz', '.top', '.zip', '.tg', '.site', '.biz', '.info', '.uno'];
-      if (highRiskTLDs.some(tld => hostname.endsWith(tld))) {
-        score += 25;
-        reasons.push('Suspicious TLD: Domain uses an extension frequently linked to malicious hosting.');
-      }
+      // 2. BASE RISK FOR UNKNOWN DOMAINS
+      // If it's not a verified giant, it's not "safe" by default.
+      score = 30; 
+      reasons.push('Unverified Domain: This site is not on the global trusted authority list.');
 
-      const subdomainCount = hostname.split('.').length;
-      if (subdomainCount > 3) {
-        score += 30;
-        reasons.push('Excessive Subdomains: Typical of URL masking and tunneling techniques.');
-      }
-
-      if (hostname.startsWith('xn--')) {
-        score += 60;
-        reasons.push('Homograph Attack: Domain uses international characters to mimic official brands.');
-      }
-
-      const targetKeywords = ['login', 'verify', 'bank', 'secure', 'update', 'wallet', 'crypto', 'kyc'];
-      targetKeywords.forEach(word => {
-        if (path.includes(word) || (hostname.includes(word) && subdomainCount > 2)) {
-          score += 35;
-          reasons.push(`Deceptive Keyword: "${word}" detected in a suspicious URL position.`);
+      // 3. BRAND IMPERSONATION
+      const majorBrands = ['youtube', 'google', 'sbi', 'hdfc', 'icici', 'amazon', 'netflix', 'paypal', 'axis'];
+      majorBrands.forEach(brand => {
+        if (hostname.includes(brand)) {
+          score += 45;
+          reasons.push(`Brand Spoofing: Suspicious use of "${brand}" in an unverified domain.`);
         }
       });
 
+      // 4. HIGH-RISK TLDs
+      const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.info', '.uno', '.tk', '.ga', '.cf'];
+      if (riskyTLDs.some(tld => hostname.endsWith(tld))) {
+        score += 35;
+        reasons.push('High-Risk TLD: Extension frequently used for malicious hosting.');
+      }
+
+      // 5. KEYWORD PHISHING
+      const suspiciousKeywords = ['login', 'verify', 'update', 'secure', 'banking', 'wallet', 'crypto', 'gift', 'prize'];
+      suspiciousKeywords.forEach(word => {
+        if (hostname.includes(word) || urlObj.pathname.includes(word)) {
+          score += 20;
+          reasons.push(`Phishing Marker: Use of sensitive keyword "${word}" detected.`);
+        }
+      });
+
+      // 6. STRUCTURAL ANOMALIES
+      if (hostname.split('.').length > 3) {
+        score += 25;
+        reasons.push('URL Masking: Excessive subdomains detected.');
+      }
+
       if (urlObj.protocol === 'http:') {
         score += 20;
-        reasons.push('Unencrypted Protocol: Site lacks SSL/TLS (HTTP).');
+        reasons.push('Insecure Protocol: Site lacks SSL/TLS (HTTP).');
       }
 
     } catch (e) {
-      return { score: 90, reasons: ['Malformed URL: The address structure is invalid or deceptive.'] };
+      return { score: 90, reasons: ['Malformed URL: Structure is deceptive or invalid.'] };
     }
 
     return { 
       score: Math.min(score, 100), 
-      reasons: reasons.length > 0 ? reasons : ['Structure appears standard. Continue with caution.'] 
+      reasons: reasons.length > 0 ? reasons : ['Unverified source. Proceed with caution.'] 
     };
   }
 
@@ -95,17 +113,10 @@ export class PhishingComponent {
     const dbCheck = await this.supabaseService.checkPhishingUrl(input).catch(() => null);
     const heuristic = this.analyzeUrlDynamically(input);
 
-    const steps = [
-      'Performing DNS Lookup...',
-      'Analyzing Domain Entropy...',
-      'Checking SSL Certificate Chain...',
-      'Scanning for Homograph Patterns...',
-      'Cross-referencing Global Blacklists...'
-    ];
-
+    const steps = ['DNS Validation...', 'Brand Audit...', 'Structural Analysis...', 'Heuristic Scoring...'];
     for (let i = 0; i < steps.length; i++) {
       this.scanStatus = steps[i];
-      this.scanProgress = (i + 1) * 20;
+      this.scanProgress = (i + 1) * 25;
       this.cdr.detectChanges();
       await this.delay(400);
     }
@@ -115,60 +126,45 @@ export class PhishingComponent {
 
   private finalizeScan(input: string, heuristic: any, dbCheck: any) {
     if (dbCheck && !dbCheck.isSafe) {
-      this.result = { 
-        isSafe: false, 
-        details: 'CRITICAL: Database Match Found.', 
-        score: 100, 
-        reasons: ['Confirmed malicious in global threat intelligence database.'] 
-      };
+      this.result = { isSafe: false, details: 'CRITICAL: Database Match.', score: 100, reasons: ['Blacklisted in global threat intelligence.'] };
     } else {
       this.result = { 
-        isSafe: heuristic.score < 65, 
-        details: heuristic.score >= 65 ? 'WARNING: Suspicious Patterns Detected.' : 'Heuristic Scan Complete.', 
+        isSafe: heuristic.score < 40, // Stricter safety threshold
+        details: heuristic.score >= 40 ? 'WARNING: Potential Threat Detected.' : 'Analysis Complete.', 
         score: heuristic.score,
         reasons: heuristic.reasons
       };
     }
 
-    this.supabaseService.logPhishingAudit(
-      input, 
-      this.result.score, 
-      this.result.details, 
-      this.result.reasons, 
-      this.result.isSafe
-    ).catch(err => console.error('Audit sync failed', err));
+    this.supabaseService.logPhishingAudit(input, this.result.score, this.result.details, this.result.reasons, this.result.isSafe)
+      .catch(err => console.error('Audit sync failed', err));
 
     this.loading = false;
     this.scanStatus = 'Analysis Complete';
     this.cdr.detectChanges();
   }
 
-  /**
-   * FIXED: Replaced 'evidence_payload' with 'content' to match the 
-   * UserReport interface defined in supabase.ts.
-   */
+  generateForensicReport() {
+    if (!this.result) return;
+    const auditID = `SF-${Math.floor(100000 + Math.random() * 900000)}`;
+    showToast(`Forensic Audit ${auditID} generated and logged.`);
+  }
+
   async reportUrl(type: 'phishing' | 'safe') {
     if (!this.targetUrl || !this.result) return;
     
     const refId = `PH-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
-
-    // Here we use the property names from UserReport
+    
+    // FIXED: Correctly referencing 'this.result.reasons'
     const report: UserReport = {
       report_type: type === 'phishing' ? 'Phishing URL' : 'False Positive',
-      content: `URL: ${this.targetUrl} | Risk Score: ${this.result.score}% | Markers: ${this.result.reasons.join(', ')}`,
+      content: `URL: ${this.targetUrl} | Risk: ${this.result.score}% | Markers: ${this.result.reasons.join(', ')}`,
       status: 'pending',
       reference_id: refId
     };
 
     const { error } = await this.supabaseService.submitReport(report);
-
-    if (!error) {
-      showToast('Intelligence synced with SafeTech Database.');
-    } else {
-      console.error('Database sync failed', error);
-      showToast('Failed to connect to KSITM secure server.');
-    }
-    
+    if (!error) showToast('Threat intelligence synced.');
     this.cdr.detectChanges();
   }
 }

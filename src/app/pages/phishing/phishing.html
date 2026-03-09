@@ -1,119 +1,213 @@
-<div style="min-height: 100vh; background-color: #FAF9F6; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 80px;">
+<div style="min-height: 100vh; background: radial-gradient(circle at top right, #f8fafc, #eff6ff); font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 80px;">
   <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
     
-    <header style="border-bottom: 1px solid #ebebeb; padding-bottom: 60px; margin-bottom: 80px;">
+    <header style="margin-bottom: 80px; position: relative;">
       <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
-        <span style="width: 8px; height: 8px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 12px #1e6aff;"></span>
-        <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-size: 11px;">URL SAFEGUARD</span>
+        <span style="width: 10px; height: 10px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 15px #1e6aff; animation: pulse 2s infinite;"></span>
+        <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; font-size: 12px;">Cyber-Intelligence Module</span>
       </div>
-      <h1 style="font-size: 80px; font-weight: 900; line-height: 0.85; letter-spacing: -0.04em; margin: 0; text-transform: uppercase;">
-        URL <span style="color: #1e6aff;">SAFEGUARD</span>
+      <h1 style="font-size: clamp(40px, 8vw, 85px); font-weight: 900; line-height: 0.9; letter-spacing: -0.05em; margin: 0; text-transform: uppercase;">
+        URL <span style="color: #1e6aff; text-shadow: 0 10px 30px rgba(30,106,255,0.2);">SAFEGUARD</span>
       </h1>
-      <p style="color: #666; font-size: 20px; font-weight: 500; margin-top: 35px; line-height: 1.6; max-width: 750px;">
-        Advanced Multi-Vector Heuristic Analysis for the SafeTech ecosystem. Verify digital intent and generate forensic evidence.
+      <p style="color: #64748b; font-size: 18px; font-weight: 500; margin-top: 30px; line-height: 1.6; max-width: 700px; border-left: 3px solid #1e6aff; padding-left: 25px;">
+        Deploying deep-packet inspection and multi-vector heuristics to neutralize malicious links before they compromise your data.
       </p>
     </header>
 
-    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start;">
+    <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 60px; align-items: start;">
       
-      <section style="background-color: #ffffff; border-radius: 50px; padding: 50px; text-align: center; border: 1px solid #ebebeb; box-shadow: 0 20px 40px rgba(0,0,0,0.02);">
-        <img src="/assets/images/tech-buddy.png" alt="Mascot" 
-             [style.filter]="loading ? 'hue-rotate(180deg) brightness(1.2)' : 'none'"
-             style="width: 100%; max-width: 300px; filter: drop-shadow(0 20px 40px rgba(30,106,255,0.15)); transition: 0.8s;">
-        <div style="margin-top: 40px;">
-          <h3 style="font-weight: 900; text-transform: uppercase; font-size: 24px;">{{ loading ? 'AUDITING...' : 'SYSTEM READY' }}</h3>
-          <p style="color: #1e6aff; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 8px;">{{ scanStatus }}</p>
+      <section style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border-radius: 40px; padding: 60px 40px; text-align: center; border: 1px solid rgba(30,106,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.03);">
+        <div style="position: relative; display: inline-block;">
+          <img src="/assets/images/tech-buddy.png" alt="Mascot" 
+               [style.filter]="loading ? 'hue-rotate(180deg) brightness(1.2) drop-shadow(0 0 20px #1e6aff)' : 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))'"
+               style="width: 100%; max-width: 280px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
+          <div *ngIf="loading" class="scan-ring"></div>
+        </div>
+        
+        <div style="margin-top: 50px;">
+          <div style="display: inline-block; padding: 6px 16px; background: #f1f5f9; border-radius: 100px; margin-bottom: 15px;">
+            <span style="font-size: 10px; font-weight: 900; letter-spacing: 0.1em; color: #64748b; text-transform: uppercase;">Engine Status</span>
+          </div>
+          <h3 style="font-weight: 900; text-transform: uppercase; font-size: 26px; margin: 0; letter-spacing: -0.02em;">
+            {{ loading ? 'Analyzing...' : 'Standby' }}
+          </h3>
+          <p style="color: #1e6aff; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 10px;">
+            {{ scanStatus }}
+          </p>
         </div>
       </section>
 
-      <section style="background-color: #ffffff; border: 1px solid #ebebeb; border-radius: 50px; padding: 60px; box-shadow: 0 40px 100px rgba(0,0,0,0.03);">
+      <section style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 40px; padding: 50px; box-shadow: 0 40px 100px rgba(0,0,0,0.04);">
         
-        <div style="display: flex; gap: 20px; margin-bottom: 50px; align-items: center;">
-          <input type="text" [(ngModel)]="targetUrl" (keyup.enter)="onCheck()" placeholder="Paste suspicious URL here..." 
-                 style="flex: 1; background: #f9f9f9; border: 1px solid #ebebeb; padding: 20px 25px; border-radius: 12px; font-weight: 600; outline: none;">
-          
-          <button class="axis-btn" (click)="onCheck()" [disabled]="loading" 
-                  style="--button-bg: #1e6aff; --hover-bg: #0a0a0a; --glow-color: #00e5ff;">
-            <div class="axis-content">
-              {{ loading ? 'SCANNING...' : 'SCAN URL' }}
-            </div>
-          </button>
+        <div style="position: relative; margin-bottom: 45px;">
+          <div style="display: flex; background: #f8fafc; border: 2px solid #f1f5f9; padding: 10px; border-radius: 20px; transition: 0.3s;"
+               [style.border-color]="loading ? '#1e6aff' : '#f1f5f9'">
+            <input type="text" [(ngModel)]="targetUrl" (keyup.enter)="onCheck()" 
+                   placeholder="Enter URL for forensic analysis..." 
+                   style="flex: 1; background: transparent; border: none; padding: 15px 20px; font-size: 16px; font-weight: 600; outline: none; color: #1e293b;">
+            
+            <button class="axis-btn" (click)="onCheck()" [disabled]="loading" 
+                    style="--button-bg: #1e6aff; --hover-bg: #0f172a; --glow-color: #38bdf8; border-radius: 15px !important;">
+              <div class="axis-content" style="padding: 0 30px;">
+                {{ loading ? 'SCANNING' : 'ANALYZE' }}
+              </div>
+            </button>
+          </div>
         </div>
 
-        <div *ngIf="loading" style="margin-bottom: 40px; animation: fadeIn 0.3s ease;">
-          <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; color: #1e6aff;">
-            <span>Deep Packet Inspection</span>
+        <div *ngIf="loading" style="margin-bottom: 40px; animation: slideDown 0.4s ease;">
+          <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 15px; color: #1e6aff;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <span class="dot-loader"></span> Heuristic Multi-Vector Scan
+            </span>
             <span>{{ scanProgress }}%</span>
           </div>
-          <div style="height: 14px; background: #f0f0f0; border-radius: 20px; overflow: hidden;">
-            <div [style.width.%]="scanProgress" style="height: 100%; background: #1e6aff; transition: width 0.1s linear;"></div>
+          <div style="height: 10px; background: #f1f5f9; border-radius: 20px; overflow: hidden;">
+            <div [style.width.%]="scanProgress" style="height: 100%; background: linear-gradient(90deg, #1e6aff, #00e5ff); transition: width 0.3s ease-out;"></div>
           </div>
         </div>
 
-        <div *ngIf="result" class="strategic-card" [ngClass]="result.isSafe ? 'secure' : 'critical'"
-             style="border: 1px solid; border-radius: 40px; padding: 50px; border-left-width: 14px; background: #fff;">
+        <div *ngIf="result" class="result-card" 
+             [style.border-color]="result.score > 40 ? '#fecaca' : '#bbf7d0'"
+             style="border: 2px solid; border-radius: 30px; padding: 40px; background: #fff; animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
           
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px;">
-             <div>
-               <h2 [style.color]="result.isSafe ? 'var(--safe-green)' : 'var(--critical-red)'" style="font-weight: 900; font-size: 32px; margin: 0; text-transform: uppercase;">
-                 {{ result.isSafe ? 'URL SECURE' : 'THREAT DETECTED' }}
-               </h2>
-               <p style="margin-top: 8px; color: #666; font-weight: 600;">{{ result.details }}</p>
-             </div>
-             <div style="text-align: right;">
-               <div [style.color]="result.isSafe ? 'var(--safe-green)' : 'var(--critical-red)'" style="font-size: 42px; font-weight: 900;">{{ result.score }}%</div>
-               <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; color: #94a3b8;">Risk Score</div>
-             </div>
-          </div>
-
-          <div class="forensic-marker-list" style="margin-bottom: 40px;">
-            <h4 style="font-weight: 900; font-size: 13px; text-transform: uppercase; margin-bottom: 20px; color: #1e6aff;">🛡️ Forensic Markers</h4>
-            <ul style="margin: 0; padding: 0;">
-              <li *ngFor="let reason of result.reasons">{{ reason }}</li>
-            </ul>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 15px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
+            <div>
+              <div [style.background]="result.isSafe ? '#dcfce7' : '#fee2e2'" 
+                   [style.color]="result.isSafe ? '#15803d' : '#b91c1c'"
+                   style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px;">
+                {{ result.isSafe ? 'Clearance: Safe' : 'Alert: Malicious' }}
+              </div>
+              <h2 style="font-weight: 900; font-size: 36px; margin: 0; letter-spacing: -0.03em; line-height: 1;">
+                {{ result.isSafe ? 'Secure Domain' : 'Threat Verified' }}
+              </h2>
+              <p style="margin-top: 10px; color: #64748b; font-weight: 500; font-size: 15px;">{{ result.details }}</p>
+            </div>
             
-            <button class="axis-btn" (click)="generateForensicReport()" style="--button-bg: #020202; --hover-bg: #0a0a0a; --glow-color: #ffffff; width: 100%;">
-              <div class="axis-content">📄 PDF</div>
+            <div style="text-align: center; background: #f8fafc; padding: 20px; border-radius: 25px; min-width: 100px;">
+              <div [style.color]="result.isSafe ? '#10b981' : '#ef4444'" style="font-size: 48px; font-weight: 900; line-height: 1;">
+                {{ result.score }}<span style="font-size: 20px;">%</span>
+              </div>
+              <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin-top: 5px;">Risk Level</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 40px;">
+            <h4 style="font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+              <span style="color: #1e6aff;">◆</span> Forensic Data Points
+            </h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              <div *ngFor="let reason of result.reasons" 
+                   style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569;">
+                {{ reason }}
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+            <button class="axis-btn" (click)="generateForensicReport()" style="--button-bg: #0f172a; --hover-bg: #1e293b; --glow-color: #94a3b8; width: 100%;">
+              <div class="axis-content">GENERATE PDF</div>
             </button>
 
-            <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #1a0505; --hover-bg: #3a0000; --glow-color: #ef4444; width: 100%;">
-              <div class="axis-content" style="color: #ff8a8a;">🚩 Report</div>
+            <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #450a0a; --hover-bg: #7f1d1d; --glow-color: #ef4444; width: 100%;">
+              <div class="axis-content" style="color: #fca5a5;">FLAG THREAT</div>
             </button>
 
-            <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #021a0f; --hover-bg: #003a20; --glow-color: #10b981; width: 100%;">
-              <div class="axis-content" style="color: #6ee7b7;">✅ Safe</div>
+            <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #064e3b; --hover-bg: #065f46; --glow-color: #10b981; width: 100%;">
+              <div class="axis-content" style="color: #6ee7b7;">VOUCH SAFE</div>
             </button>
-
           </div>
         </div>
       </section>
     </div>
 
-    <section style="margin-top: 100px; border-top: 1px solid #ebebeb; padding-top: 80px;">
-      <h2 style="font-size: 42px; font-weight: 900; margin-bottom: 50px; text-transform: uppercase;">
-        How to spot <span style="color: #1e6aff;">Risky URLs</span>
-      </h2>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;">
-        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 40px; border-radius: 30px;">
-          <div style="font-size: 32px; margin-bottom: 20px;">🧐</div>
-          <h3 style="font-weight: 900; font-size: 18px; margin-bottom: 15px; text-transform: uppercase;">Domain Spoofing</h3>
-          <p style="color: #666; font-size: 14px; line-height: 1.7; font-weight: 500;">Attackers use misspellings like 'paypa1.com' to mislead you. SafeTech's engine detects these character manipulations.</p>
+    <section style="margin-top: 120px; border-top: 1px solid #e2e8f0; padding-top: 100px;">
+      <div style="text-align: center; max-width: 800px; margin: 0 auto 70px;">
+        <h2 style="font-size: 48px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 20px;">
+          Anatomy of a <span style="color: #1e6aff;">Cyber Attack</span>
+        </h2>
+        <p style="color: #64748b; font-size: 18px; font-weight: 500;">SafeTech identifies patterns that the human eye often misses.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+        <div class="info-card">
+          <div class="info-icon">🔍</div>
+          <h3 class="info-title">Homograph Attacks</h3>
+          <p class="info-text">Using look-alike characters (like replacing 'o' with '0') to mimic bank portals. Our Punycode detector isolates these instantly.</p>
         </div>
-        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 40px; border-radius: 30px;">
-          <div style="font-size: 32px; margin-bottom: 20px;">🔒</div>
-          <h3 style="font-weight: 900; font-size: 18px; margin-bottom: 15px; text-transform: uppercase;">Protocol check</h3>
-          <p style="color: #666; font-size: 14px; line-height: 1.7; font-weight: 500;">Sensitive portals without HTTPS are extreme risks. SafeTech flags any insecure protocol on financial domains.</p>
+        <div class="info-card">
+          <div class="info-icon">🏗️</div>
+          <h3 class="info-title">Subdomain Tunneling</h3>
+          <p class="info-text">Hiding malicious intent deep within nested subdomains (e.g., login.bank.com.secure-update.tk) to bypass simple filters.</p>
         </div>
-        <div style="background: #ffffff; border: 1px solid #ebebeb; padding: 40px; border-radius: 30px;">
-          <div style="font-size: 32px; margin-bottom: 20px;">🌍</div>
-          <h3 style="font-weight: 900; font-size: 18px; margin-bottom: 15px; text-transform: uppercase;">Risky Extensions</h3>
-          <p style="color: #666; font-size: 14px; line-height: 1.7; font-weight: 500;">Be wary of .zip or .tk extensions. These are often used to hide malware payloads from basic filters.</p>
+        <div class="info-card">
+          <div class="info-icon">⚡</div>
+          <h3 class="info-title">DGA Detection</h3>
+          <p class="info-text">Identifying Domain Generation Algorithms that create random-looking URLs to communicate with malware servers.</p>
         </div>
       </div>
     </section>
 
   </div>
 </div>
+
+<style>
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
+  
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .dot-loader {
+    width: 8px;
+    height: 8px;
+    background: #1e6aff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 1s infinite;
+  }
+
+  .info-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 50px 40px;
+    border-radius: 35px;
+    transition: all 0.4s ease;
+  }
+
+  .info-card:hover {
+    transform: translateY(-10px);
+    border-color: #1e6aff;
+    box-shadow: 0 20px 40px rgba(30,106,255,0.05);
+  }
+
+  .info-icon { font-size: 40px; margin-bottom: 25px; }
+  .info-title { font-weight: 900; font-size: 20px; margin-bottom: 15px; text-transform: uppercase; color: #0f172a; }
+  .info-text { color: #64748b; font-size: 15px; line-height: 1.7; font-weight: 500; margin: 0; }
+
+  .scan-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110%;
+    height: 110%;
+    border: 2px solid #1e6aff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>

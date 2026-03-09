@@ -23,49 +23,63 @@ export class PhishingComponent {
     private cdr: ChangeDetectorRef 
   ) { }
 
-  // Async delay helper for smoother, Angular-safe animations
   private delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  private calculateRiskScore(url: string): { score: number; reasons: string[] } {
+  private analyzeUrlDynamically(url: string): { score: number; reasons: string[] } {
     let score = 0;
     let reasons: string[] = [];
-    const urlLower = url.toLowerCase().trim();
+    
+    try {
+      const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
+      const urlObj = new URL(normalizedUrl);
+      const hostname = urlObj.hostname.toLowerCase();
+      const path = urlObj.pathname.toLowerCase();
 
-    // Authority Whitelist
-    const safeDomains = ['google.com', 'kerala.gov.in', 'youtube.com', 'github.com', 'microsoft.com', 'paypal.com'];
-    if (safeDomains.some(d => urlLower === d || urlLower.endsWith('.' + d))) {
-      return { score: 0, reasons: ['Verified Official Domain Authority.'] };
-    }
-
-    if (urlLower.startsWith('http://')) {
-      score += 40;
-      reasons.push('Insecure Protocol: Data transmission is unencrypted (HTTP).');
-    }
-
-    const badTLDs = ['.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.zip', '.top', '.icu'];
-    if (badTLDs.some(tld => urlLower.includes(tld))) {
-      score += 35;
-      reasons.push('High-Risk TLD: Domain extension frequently used for malicious hosting.');
-    }
-
-    const suspiciousPatterns = [
-      { regex: /(0|1|l|i|-){3,}/, weight: 20, reason: 'Typosquatting: Visual character manipulation detected.' },
-      { regex: /verify|secure|update|login|banking|account|paypal/, weight: 55, reason: 'Brand Spoofing: Suspicious use of urgency/financial keywords.' },
-      { regex: /(\..*){3,}/, weight: 25, reason: 'URL Masking: Excessive subdomains detected.' }
-    ];
-
-    suspiciousPatterns.forEach(p => {
-      if (p.regex.test(urlLower)) {
-        score += p.weight;
-        reasons.push(p.reason);
+      const uniqueChars = new Set(hostname).size;
+      if (uniqueChars / hostname.length > 0.7 && hostname.length > 15) {
+        score += 40;
+        reasons.push('High Lexical Entropy: Domain name appears programmatically generated.');
       }
-    });
+
+      const highRiskTLDs = ['.xyz', '.top', '.zip', '.tg', '.site', '.biz', '.info', '.uno'];
+      if (highRiskTLDs.some(tld => hostname.endsWith(tld))) {
+        score += 25;
+        reasons.push('Suspicious TLD: Domain uses an extension frequently linked to malicious hosting.');
+      }
+
+      const subdomainCount = hostname.split('.').length;
+      if (subdomainCount > 3) {
+        score += 30;
+        reasons.push('Excessive Subdomains: Typical of URL masking and tunneling techniques.');
+      }
+
+      if (hostname.startsWith('xn--')) {
+        score += 60;
+        reasons.push('Homograph Attack: Domain uses international characters to mimic official brands.');
+      }
+
+      const targetKeywords = ['login', 'verify', 'bank', 'secure', 'update', 'wallet', 'crypto', 'kyc'];
+      targetKeywords.forEach(word => {
+        if (path.includes(word) || (hostname.includes(word) && subdomainCount > 2)) {
+          score += 35;
+          reasons.push(`Deceptive Keyword: "${word}" detected in a suspicious URL position.`);
+        }
+      });
+
+      if (urlObj.protocol === 'http:') {
+        score += 20;
+        reasons.push('Unencrypted Protocol: Site lacks SSL/TLS (HTTP).');
+      }
+
+    } catch (e) {
+      return { score: 90, reasons: ['Malformed URL: The address structure is invalid or deceptive.'] };
+    }
 
     return { 
       score: Math.min(score, 100), 
-      reasons: reasons.length > 0 ? reasons : ['Heuristic scan complete. No immediate threats found.'] 
+      reasons: reasons.length > 0 ? reasons : ['Structure appears standard. Continue with caution.'] 
     };
   }
 
@@ -76,94 +90,85 @@ export class PhishingComponent {
     this.loading = true;
     this.result = null;
     this.scanProgress = 0;
-    this.scanStatus = 'Initializing Multi-Vector Audit...';
-    
     this.cdr.detectChanges();
 
-    // Start background analysis against Supabase
-    const dbTask = this.supabaseService.checkPhishingUrl(input).catch(() => null);
-    const heuristic = this.calculateRiskScore(input);
+    const dbCheck = await this.supabaseService.checkPhishingUrl(input).catch(() => null);
+    const heuristic = this.analyzeUrlDynamically(input);
 
-    // Simulation Engine: Deep Packet Inspection Simulation
-    while (this.scanProgress < 100) {
-      await this.delay(50);
-      this.scanProgress += 5;
-      
-      if (this.scanProgress === 20) this.scanStatus = 'Auditing SSL Certificates...';
-      if (this.scanProgress === 50) this.scanStatus = 'Consulting Global Threat Intelligence...';
-      if (this.scanProgress === 85) this.scanStatus = 'Executing Heuristic Logic...';
-      
-      this.cdr.detectChanges(); 
-    }
+    const steps = [
+      'Performing DNS Lookup...',
+      'Analyzing Domain Entropy...',
+      'Checking SSL Certificate Chain...',
+      'Scanning for Homograph Patterns...',
+      'Cross-referencing Global Blacklists...'
+    ];
 
-    await this.finalizeScan(input, heuristic, dbTask);
-  }
-
-  private async finalizeScan(input: string, heuristic: any, dbTask: Promise<any>) {
-    try {
-      const dbCheck = await dbTask;
-      if (dbCheck && !dbCheck.isSafe) {
-        this.result = { isSafe: false, details: dbCheck.details, score: 100, reasons: ['DATABASE MATCH: Confirmed malicious in global blacklist.'] };
-      } else {
-        this.result = { 
-          isSafe: heuristic.score < 70, 
-          details: heuristic.score >= 70 ? 'CRITICAL: High probability of phishing detected.' : 'Heuristic scan complete.', 
-          score: heuristic.score,
-          reasons: heuristic.reasons
-        };
-      }
-
-      // AUTOMATIC AUDIT LOGGING: Silently push result to Supabase for the KSITM audit trail
-      this.supabaseService.logPhishingAudit(
-        input, 
-        this.result.score, 
-        this.result.details, 
-        this.result.reasons, 
-        this.result.isSafe
-      ).catch(err => console.error('Audit log failed to sync:', err));
-
-    } catch (error) {
-      this.result = { isSafe: heuristic.score < 70, details: 'Offline Mode: Local heuristic fallback active.', score: heuristic.score, reasons: heuristic.reasons };
-    } finally {
-      this.loading = false;
-      this.scanStatus = 'Analysis Complete';
+    for (let i = 0; i < steps.length; i++) {
+      this.scanStatus = steps[i];
+      this.scanProgress = (i + 1) * 20;
       this.cdr.detectChanges();
+      await this.delay(400);
     }
+
+    this.finalizeScan(input, heuristic, dbCheck);
   }
 
-  generateForensicReport() {
-    if (!this.result) return;
-    this.scanStatus = 'Logging Forensic Evidence...';
+  private finalizeScan(input: string, heuristic: any, dbCheck: any) {
+    if (dbCheck && !dbCheck.isSafe) {
+      this.result = { 
+        isSafe: false, 
+        details: 'CRITICAL: Database Match Found.', 
+        score: 100, 
+        reasons: ['Confirmed malicious in global threat intelligence database.'] 
+      };
+    } else {
+      this.result = { 
+        isSafe: heuristic.score < 65, 
+        details: heuristic.score >= 65 ? 'WARNING: Suspicious Patterns Detected.' : 'Heuristic Scan Complete.', 
+        score: heuristic.score,
+        reasons: heuristic.reasons
+      };
+    }
+
+    this.supabaseService.logPhishingAudit(
+      input, 
+      this.result.score, 
+      this.result.details, 
+      this.result.reasons, 
+      this.result.isSafe
+    ).catch(err => console.error('Audit sync failed', err));
+
+    this.loading = false;
+    this.scanStatus = 'Analysis Complete';
     this.cdr.detectChanges();
-    
-    setTimeout(() => {
-      const auditID = `SF-${Math.floor(100000 + Math.random() * 900000)}`;
-      showToast(`Forensic Audit ${auditID} generated. Digital evidence logged for Law Enforcement.`);
-      this.scanStatus = 'Audit Logged';
-      this.cdr.detectChanges();
-    }, 1200);
   }
 
+  /**
+   * FIXED: Replaced 'evidence_payload' with 'content' to match the 
+   * UserReport interface defined in supabase.ts.
+   */
   async reportUrl(type: 'phishing' | 'safe') {
     if (!this.targetUrl || !this.result) return;
     
-    this.scanStatus = 'Syncing with KSITM Secure Server...';
-    this.cdr.detectChanges();
+    const refId = `PH-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
 
-    const { error } = await this.supabaseService.submitReport({
+    // Here we use the property names from UserReport
+    const report: UserReport = {
       report_type: type === 'phishing' ? 'Phishing URL' : 'False Positive',
       content: `URL: ${this.targetUrl} | Risk Score: ${this.result.score}% | Markers: ${this.result.reasons.join(', ')}`,
-      status: 'pending'
-    });
- 
-    if (error) {
+      status: 'pending',
+      reference_id: refId
+    };
+
+    const { error } = await this.supabaseService.submitReport(report);
+
+    if (!error) {
+      showToast('Intelligence synced with SafeTech Database.');
+    } else {
       console.error('Database sync failed', error);
       showToast('Failed to connect to KSITM secure server.');
-      this.scanStatus = 'Sync Failed';
-    } else {
-      showToast('Threat Intelligence synced with SafeTech Database.');
-      this.scanStatus = 'Intelligence Synced';
     }
+    
     this.cdr.detectChanges();
   }
 }

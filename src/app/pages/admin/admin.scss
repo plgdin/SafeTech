@@ -1,0 +1,189 @@
+/* =========================================
+   1. LAYOUT & CONTAINERS
+   ========================================= */
+.admin-container {
+  padding: 40px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.admin-header {
+  margin-bottom: 40px;
+  border-bottom: 2px solid #ebebeb;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #020202;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    color: #666;
+    margin-top: 8px;
+  }
+}
+
+/* =========================================
+   2. DASHBOARD CARDS (SECTIONS)
+   ========================================= */
+.admin-section {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #ebebeb;
+  padding: 30px;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    color: #1e6aff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: #1e6aff;
+      border-radius: 10px;
+    }
+  }
+}
+
+/* =========================================
+   3. DATA TABLES
+   ========================================= */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+
+  th {
+    background: #f8f9fa;
+    padding: 16px;
+    font-weight: 700;
+    color: #020202;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #ebebeb;
+  }
+
+  td {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+    vertical-align: middle;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background-color: #fcfdfe;
+  }
+}
+
+/* Status Badges */
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &.status-pending { background: #fff4e5; color: #ff9800; }
+  &.status-resolved { background: #e6fffa; color: #38b2ac; }
+  &.status-audit { background: #ebf8ff; color: #3182ce; }
+}
+
+/* =========================================
+   4. BUTTONS
+   ========================================= */
+.download-btn {
+  background: #1e6aff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #1557d1;
+    box-shadow: 0 4px 12px rgba(30, 106, 255, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* =========================================
+   5. UTILITIES
+   ========================================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+/* Responsive Table Adjustments */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  
+  .admin-section {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,102 @@
+<div class="admin-container">
+  <header class="admin-header">
+    <div>
+      <h1>Command Center</h1>
+      <p>Administrative Oversight & Forensic Data Management</p>
+    </div>
+  </header>
+
+  <section class="admin-section">
+    <div class="section-header">
+      <h2>Forensic Incident Reports</h2>
+      <button class="download-btn" (click)="downloadPDF('CitizenReports', dashboardData.reports)">
+        Download PDF
+      </button>
+    </div>
+    <div class="table-wrapper">
+      <table *ngIf="dashboardData.reports?.length; else emptyReports">
+        <thead>
+          <tr>
+            <th>Ref ID</th>
+            <th>Incident Type</th>
+            <th>Evidence Snippet</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of dashboardData.reports">
+            <td><strong>{{ report.reference_id }}</strong></td>
+            <td>{{ report.report_type }}</td>
+            <td [title]="report.evidence_payload">{{ report.evidence_payload }}</td>
+            <td>
+              <span class="badge" [ngClass]="'status-' + report.status">
+                {{ report.status }}
+              </span>
+            </td>
+            <td>{{ report.created_at | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyReports><div class="empty-state">No forensic reports found.</div></ng-template>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <div class="section-header">
+      <h2>TechBuddy AI Transcripts</h2>
+      <button class="download-btn" (click)="downloadPDF('ChatLogs', dashboardData.chatLogs)">
+        Download PDF
+      </button>
+    </div>
+    <div class="table-wrapper">
+      <table *ngIf="dashboardData.chatLogs?.length; else emptyChats">
+        <thead>
+          <tr>
+            <th>User Query</th>
+            <th>AI Response</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let chat of dashboardData.chatLogs">
+            <td>{{ chat.user_message }}</td>
+            <td>{{ chat.bot_response }}</td>
+            <td>{{ chat.created_at | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyChats><div class="empty-state">No chat logs recorded.</div></ng-template>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <div class="section-header">
+      <h2>Session Bookings</h2>
+      <button class="download-btn" (click)="downloadPDF('Bookings', dashboardData.bookings)">
+        Download PDF
+      </button>
+    </div>
+    <div class="table-wrapper">
+      <table *ngIf="dashboardData.bookings?.length; else emptyBookings">
+        <thead>
+          <tr>
+            <th>Organization</th>
+            <th>Date/Time</th>
+            <th>Mode</th>
+            <th>Contact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let book of dashboardData.bookings">
+            <td>{{ book.org_type }} - {{ book.address }}</td>
+            <td>{{ book.event_date }} @ {{ book.event_time }}</td>
+            <td>{{ book.mode }}</td>
+            <td>{{ book.phone }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyBookings><div class="empty-state">No session bookings found.</div></ng-template>
+    </div>
+  </section>
+</div>

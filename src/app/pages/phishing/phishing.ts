@@ -36,13 +36,15 @@ export class PhishingComponent {
       const normalizedUrl = input.startsWith('http') ? input : `https://${input}`;
       const urlObj = new URL(normalizedUrl);
       const hostname = urlObj.hostname;
+      const path = urlObj.pathname;
 
-      // 1. STRICT AUTHORITY WHITELIST
-      // Only these absolute giants get a 0% score.
+      // 1. STRICT AUTHORITY WHITELIST (The 0% Club)
+      // Added Vercel and common dev platforms to prevent false positives
       const verifiedDomains = [
         'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
         'apple.com', 'microsoft.com', 'amazon.in', 'amazon.com',
-        'kerala.gov.in', 'india.gov.in', 'sbi.co.in', 'onlinesbi.sbi'
+        'kerala.gov.in', 'india.gov.in', 'sbi.co.in', 'onlinesbi.sbi',
+        'vercel.com', 'github.com', 'netlify.app', 'stack-overflow.com'
       ];
 
       const isVerified = verifiedDomains.some(d => hostname === d || hostname.endsWith('.' + d));
@@ -50,49 +52,57 @@ export class PhishingComponent {
         return { score: 0, reasons: ['Verified Official Domain Authority.'] };
       }
 
-      // 2. BASE RISK FOR UNKNOWN DOMAINS
-      // If it's not a verified giant, it's not "safe" by default.
-      score = 30; 
-      reasons.push('Unverified Domain: This site is not on the global trusted authority list.');
+      // 2. INTELLIGENT TLD BASELINE
+      // Standard TLDs start at 10% risk, "trash" TLDs start at 35%
+      const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.tk', '.ga', '.cf'];
+      const isRiskyTLD = riskyTLDs.some(tld => hostname.endsWith(tld));
+      
+      score = isRiskyTLD ? 35 : 10; 
+      reasons.push(isRiskyTLD ? 'High-Risk TLD detected.' : 'Unverified Domain (Standard TLD).');
 
-      // 3. BRAND IMPERSONATION
-      const majorBrands = ['youtube', 'google', 'sbi', 'hdfc', 'icici', 'amazon', 'netflix', 'paypal', 'axis'];
+      // 3. WEIGHTED PENALTY TABLE (The "1337x" & "Piracy" Filter)
+      const weightTable = [
+        { key: '1337x', penalty: 65, reason: 'High-Risk Piracy/Torrent Signature detected.' },
+        { key: 'torrent', penalty: 45, reason: 'P2P/Piracy Content Marker found.' },
+        { key: 'login', penalty: 30, reason: 'Credential Harvesting pattern detected.' },
+        { key: 'verify', penalty: 25, reason: 'Deceptive urgency keyword found.' },
+        { key: 'banking', penalty: 40, reason: 'Unauthorized Financial keyword usage.' },
+        { key: 'wallet', penalty: 35, reason: 'Crypto-drainer pattern detected.' },
+        { key: 'free', penalty: 20, reason: 'Social Engineering bait detected.' }
+      ];
+
+      weightTable.forEach(item => {
+        if (hostname.includes(item.key) || path.includes(item.key)) {
+          score += item.penalty;
+          reasons.push(item.reason);
+        }
+      });
+
+      // 4. BRAND SPOOFING (The "Youthube" check)
+      const majorBrands = ['youtube', 'google', 'sbi', 'hdfc', 'amazon', 'netflix', 'paypal', 'vercel'];
       majorBrands.forEach(brand => {
-        if (hostname.includes(brand)) {
-          score += 45;
-          reasons.push(`Brand Spoofing: Suspicious use of "${brand}" in an unverified domain.`);
+        if (hostname.includes(brand) && !isVerified) {
+          score += 50;
+          reasons.push(`Brand Spoofing: Unofficial use of "${brand}" brand name.`);
         }
       });
 
-      // 4. HIGH-RISK TLDs
-      const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.info', '.uno', '.tk', '.ga', '.cf'];
-      if (riskyTLDs.some(tld => hostname.endsWith(tld))) {
-        score += 35;
-        reasons.push('High-Risk TLD: Extension frequently used for malicious hosting.');
-      }
-
-      // 5. KEYWORD PHISHING
-      const suspiciousKeywords = ['login', 'verify', 'update', 'secure', 'banking', 'wallet', 'crypto', 'gift', 'prize'];
-      suspiciousKeywords.forEach(word => {
-        if (hostname.includes(word) || urlObj.pathname.includes(word)) {
-          score += 20;
-          reasons.push(`Phishing Marker: Use of sensitive keyword "${word}" detected.`);
-        }
-      });
-
-      // 6. STRUCTURAL ANOMALIES
-      if (hostname.split('.').length > 3) {
-        score += 25;
-        reasons.push('URL Masking: Excessive subdomains detected.');
-      }
-
-      if (urlObj.protocol === 'http:') {
+      // 5. NUMERIC OBFUSCATION
+      // Checks for high density of numbers (common in malicious/bot domains)
+      const digitCount = (hostname.match(/\d/g) || []).length;
+      if (digitCount > 4 && !isVerified) {
         score += 20;
-        reasons.push('Insecure Protocol: Site lacks SSL/TLS (HTTP).');
+        reasons.push('High Numeric Density: Typical of DGA or obfuscated domains.');
+      }
+
+      // 6. INSECURE PROTOCOL
+      if (urlObj.protocol === 'http:') {
+        score += 25;
+        reasons.push('Insecure Protocol: Site lacks SSL/TLS encryption (HTTP).');
       }
 
     } catch (e) {
-      return { score: 90, reasons: ['Malformed URL: Structure is deceptive or invalid.'] };
+      return { score: 95, reasons: ['Malformed URL: The address structure is deceptive or invalid.'] };
     }
 
     return { 
@@ -129,8 +139,8 @@ export class PhishingComponent {
       this.result = { isSafe: false, details: 'CRITICAL: Database Match.', score: 100, reasons: ['Blacklisted in global threat intelligence.'] };
     } else {
       this.result = { 
-        isSafe: heuristic.score < 40, // Stricter safety threshold
-        details: heuristic.score >= 40 ? 'WARNING: Potential Threat Detected.' : 'Analysis Complete.', 
+        isSafe: heuristic.score < 45, 
+        details: heuristic.score >= 45 ? 'WARNING: Suspicious Patterns Detected.' : 'Analysis Complete.', 
         score: heuristic.score,
         reasons: heuristic.reasons
       };
@@ -152,10 +162,7 @@ export class PhishingComponent {
 
   async reportUrl(type: 'phishing' | 'safe') {
     if (!this.targetUrl || !this.result) return;
-    
     const refId = `PH-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
-    
-    // FIXED: Correctly referencing 'this.result.reasons'
     const report: UserReport = {
       report_type: type === 'phishing' ? 'Phishing URL' : 'False Positive',
       content: `URL: ${this.targetUrl} | Risk: ${this.result.score}% | Markers: ${this.result.reasons.join(', ')}`,

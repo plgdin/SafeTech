@@ -10,7 +10,6 @@ import { PhishingComponent } from './pages/phishing/phishing';
 import { ScamAwarenessComponent } from './pages/scam-awareness/scam-awareness';
 import { TrainingComponent } from './pages/training/training';
 import { AboutComponent } from './pages/about/about';
-import { AdminPanelComponent } from './pages/admin-panel/admin-panel'; // New Import
 
 export const routes: Routes = [
   // App boots up directly to the Home page
@@ -25,9 +24,6 @@ export const routes: Routes = [
   { path: 'scams', component: ScamAwarenessComponent }, 
   { path: 'training', component: TrainingComponent }, 
   { path: 'about', component: AboutComponent },
-  
-  // Admin Route
-  { path: 'admin-portal', component: AdminPanelComponent }, 
   
   { path: '**', redirectTo: '' }
 ];

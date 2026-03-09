@@ -40,7 +40,11 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
   4. Keep responses helpful, authoritative, concise, and empathetic to victims of scams.`;
 
   private chatModel = this.genAI.getGenerativeModel({
+<<<<<<< HEAD
     model: "gemini-2.0-flash", 
+=======
+    model: "gemini-2.5-flash",
+>>>>>>> 2a46042617578709681f31523dfe898d82e5ecfb
     systemInstruction: this.systemInstruction,
   });
 
@@ -67,6 +71,7 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
     }
   }
 
+<<<<<<< HEAD
   /**
    * Logs the conversation to Supabase for the Admin Panel
    * This replaces the broken Google Script logging
@@ -96,6 +101,8 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
     }
   }
 
+=======
+>>>>>>> 2a46042617578709681f31523dfe898d82e5ecfb
   async sendMessage() {
     if (!this.userInput.trim() || this.isLoading) return;
     
@@ -115,14 +122,17 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
       const safeHtml = DOMPurify.sanitize(htmlText);
 
       this.messages.push({ text: safeHtml, sender: 'bot' });
+<<<<<<< HEAD
 
       // 🔥 LOG TO SUPABASE: No CORS issues here
       this.logToSupabase(input, rawText);
 
+=======
+>>>>>>> 2a46042617578709681f31523dfe898d82e5ecfb
     } catch (error) {
       console.error('TechBuddy AI Error:', error);
       this.messages.push({ 
-        text: "Connection to Guardian Protocol disrupted. Please check your connectivity.", 
+        text: "Connection to Guardian Protocol disrupted. Please ensure your API key is valid and check the browser console for details.", 
         sender: 'bot' 
       });
     } finally {

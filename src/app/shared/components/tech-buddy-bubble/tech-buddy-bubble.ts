@@ -40,7 +40,7 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
   4. Keep responses helpful, authoritative, concise, and empathetic to victims of scams.`;
 
   private chatModel = this.genAI.getGenerativeModel({
-    model: "gemini-2.0-flash", // Updated to stable 2.0 version
+    model: "gemini-2.5-flash",
     systemInstruction: this.systemInstruction,
   });
 
@@ -67,28 +67,6 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
     }
   }
 
-  /**
-   * Logs the conversation to the Google Sheet for the Admin Panel
-   */
-  private async logToAdminPanel(userMsg: string, aiMsg: string) {
-    try {
-      // We send this as a background task; no need to wait for it for the UI to feel fast
-      fetch(environment.googleScriptUrl, {
-        method: 'POST',
-        mode: 'no-cors', // standard for Google Apps Script POST
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'logChat',
-          userMsg: userMsg,
-          aiMsg: aiMsg,
-          timestamp: new Date().toISOString()
-        })
-      });
-    } catch (e) {
-      console.warn('Logging to Admin Panel failed', e);
-    }
-  }
-
   async sendMessage() {
     if (!this.userInput.trim() || this.isLoading) return;
     
@@ -108,14 +86,10 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
       const safeHtml = DOMPurify.sanitize(htmlText);
 
       this.messages.push({ text: safeHtml, sender: 'bot' });
-
-      // 🔥 NEW: Send data to Google Sheets for Admin Panel visibility
-      this.logToAdminPanel(input, rawText);
-
     } catch (error) {
       console.error('TechBuddy AI Error:', error);
       this.messages.push({ 
-        text: "Connection to Guardian Protocol disrupted. Please check your connectivity.", 
+        text: "Connection to Guardian Protocol disrupted. Please ensure your API key is valid and check the browser console for details.", 
         sender: 'bot' 
       });
     } finally {

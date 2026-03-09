@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../core/services/supabase';
 import { environment } from '../../../environments/environment';
 import { showToast } from '../../core/utils/toast';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-auditing',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './auditing.html',
   styleUrl: './auditing.scss'
 })

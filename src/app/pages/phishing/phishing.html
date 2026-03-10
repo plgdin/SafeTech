@@ -68,24 +68,26 @@
         </div>
 
         <div *ngIf="result" class="result-card" 
-             [style.border-color]="result.score > 40 ? '#fecaca' : '#bbf7d0'"
-             style="border: 2px solid; border-radius: 30px; padding: 40px; background: #fff; animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+             [style.border-color]="result.score >= 100 ? '#7f1d1d' : (result.score > 40 ? '#fecaca' : '#bbf7d0')"
+             [style.background]="result.score >= 100 ? '#fff5f5' : '#fff'"
+             style="border: 2px solid; border-radius: 30px; padding: 40px; animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
           
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
             <div>
-              <div [style.background]="result.isSafe ? '#dcfce7' : '#fee2e2'" 
-                   [style.color]="result.isSafe ? '#15803d' : '#b91c1c'"
+              <div [style.background]="result.score >= 100 ? '#7f1d1d' : (result.isSafe ? '#dcfce7' : '#fee2e2')" 
+                   [style.color]="result.score >= 100 ? '#ffffff' : (result.isSafe ? '#15803d' : '#b91c1c')"
                    style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px;">
-                {{ result.isSafe ? 'Clearance: Safe' : 'Alert: Malicious' }}
+                {{ result.score >= 100 ? 'Blacklisted TLD' : (result.isSafe ? 'Clearance: Safe' : 'Alert: Malicious') }}
               </div>
-              <h2 style="font-weight: 900; font-size: 36px; margin: 0; letter-spacing: -0.03em; line-height: 1;">
-                {{ result.isSafe ? 'Secure Domain' : 'Threat Verified' }}
+              <h2 style="font-weight: 900; font-size: 36px; margin: 0; letter-spacing: -0.03em; line-height: 1;"
+                  [style.color]="result.score >= 100 ? '#7f1d1d' : '#020202'">
+                {{ result.score >= 100 ? 'Security Violation' : (result.isSafe ? 'Secure Domain' : 'Threat Verified') }}
               </h2>
               <p style="margin-top: 10px; color: #64748b; font-weight: 500; font-size: 15px;">{{ result.details }}</p>
             </div>
             
-            <div style="text-align: center; background: #f8fafc; padding: 20px; border-radius: 25px; min-width: 100px;">
-              <div [style.color]="result.isSafe ? '#10b981' : '#ef4444'" style="font-size: 48px; font-weight: 900; line-height: 1;">
+            <div style="text-align: center; background: #f8fafc; padding: 20px; border-radius: 25px; min-width: 100px; border: 1px solid #e2e8f0;">
+              <div [style.color]="result.score >= 100 ? '#7f1d1d' : (result.isSafe ? '#10b981' : '#ef4444')" style="font-size: 48px; font-weight: 900; line-height: 1;">
                 {{ result.score }}<span style="font-size: 20px;">%</span>
               </div>
               <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin-top: 5px;">Risk Level</div>
@@ -94,11 +96,13 @@
 
           <div style="margin-bottom: 40px;">
             <h4 style="font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-              <span style="color: #1e6aff;">◆</span> Forensic Data Points
+              <span [style.color]="result.score >= 100 ? '#7f1d1d' : '#1e6aff'">◆</span> Forensic Data Points
             </h4>
             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
               <div *ngFor="let reason of result.reasons" 
-                   style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569;">
+                   [style.background]="result.score >= 100 ? '#fee2e2' : '#f1f5f9'"
+                   [style.border-color]="result.score >= 100 ? '#fecaca' : '#e2e8f0'"
+                   style="border: 1px solid; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569;">
                 {{ reason }}
               </div>
             </div>
@@ -108,11 +112,9 @@
             <button class="axis-btn" (click)="generateForensicReport()" style="--button-bg: #0f172a; --hover-bg: #1e293b; --glow-color: #94a3b8; width: 100%;">
               <div class="axis-content">GENERATE PDF</div>
             </button>
-
             <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #450a0a; --hover-bg: #7f1d1d; --glow-color: #ef4444; width: 100%;">
               <div class="axis-content" style="color: #fca5a5;">FLAG THREAT</div>
             </button>
-
             <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #064e3b; --hover-bg: #065f46; --glow-color: #10b981; width: 100%;">
               <div class="axis-content" style="color: #6ee7b7;">VOUCH SAFE</div>
             </button>
@@ -136,9 +138,9 @@
           <p class="info-text">Using look-alike characters (like replacing 'o' with '0') to mimic bank portals. Our Punycode detector isolates these instantly.</p>
         </div>
         <div class="info-card">
-          <div class="info-icon">🏗️</div>
-          <h3 class="info-title">Subdomain Tunneling</h3>
-          <p class="info-text">Hiding malicious intent deep within nested subdomains (e.g., login.bank.com.secure-update.tk) to bypass simple filters.</p>
+          <div class="info-icon">🛡️</div>
+          <h3 class="info-title">Global Blacklists</h3>
+          <p class="info-text">Instant blocking of high-threat domains (.ru, .pk, .onion) often used in phishing campaigns and illegal operations.</p>
         </div>
         <div class="info-card">
           <div class="info-icon">⚡</div>
@@ -147,7 +149,6 @@
         </div>
       </div>
     </section>
-
   </div>
 </div>
 
@@ -156,57 +157,34 @@
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(1.2); }
   }
-  
   @keyframes slideDown {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
   @keyframes zoomIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
   }
-
   .dot-loader {
-    width: 8px;
-    height: 8px;
-    background: #1e6aff;
-    border-radius: 50%;
-    display: inline-block;
-    animation: pulse 1s infinite;
+    width: 8px; height: 8px; background: #1e6aff; border-radius: 50%;
+    display: inline-block; animation: pulse 1s infinite;
   }
-
   .info-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    padding: 50px 40px;
-    border-radius: 35px;
-    transition: all 0.4s ease;
+    background: #ffffff; border: 1px solid #e2e8f0; padding: 50px 40px;
+    border-radius: 35px; transition: all 0.4s ease;
   }
-
   .info-card:hover {
-    transform: translateY(-10px);
-    border-color: #1e6aff;
+    transform: translateY(-10px); border-color: #1e6aff;
     box-shadow: 0 20px 40px rgba(30,106,255,0.05);
   }
-
   .info-icon { font-size: 40px; margin-bottom: 25px; }
   .info-title { font-weight: 900; font-size: 20px; margin-bottom: 15px; text-transform: uppercase; color: #0f172a; }
   .info-text { color: #64748b; font-size: 15px; line-height: 1.7; font-weight: 500; margin: 0; }
-
   .scan-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 110%;
-    height: 110%;
-    border: 2px solid #1e6aff;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 110%; height: 110%; border: 2px solid #1e6aff; border-radius: 50%;
+    border-top-color: transparent; animation: spin 1s linear infinite;
   }
-
   @keyframes spin {
     to { transform: translate(-50%, -50%) rotate(360deg); }
   }

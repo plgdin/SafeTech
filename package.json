@@ -20,6 +20,7 @@
     "@angular/router": "^21.2.0",
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.98.0",
+    "angular": "^1.8.3",
     "dompurify": "^3.3.2",
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",

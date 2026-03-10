@@ -54,7 +54,7 @@ export class PhishingComponent {
 
       // 2. INTELLIGENT TLD BASELINE
       // Standard TLDs start at 10% risk, "trash" TLDs start at 35%
-      const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.tk', '.ga', '.cf'];
+      const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.tk', '.ga', '.cf','.ru','.pk','.onion'];
       const isRiskyTLD = riskyTLDs.some(tld => hostname.endsWith(tld));
       
       score = isRiskyTLD ? 35 : 10; 

@@ -13,22 +13,6 @@ $border: #d1d1d1;
 %grid-border-right { border-right: 1px solid $border; }
 
 // ==========================================
-// UTILITY: TEXT JUSTIFICATION
-// ==========================================
-.text-justify {
-  text-align: justify;
-  text-justify: inter-word; // Distributes space between words for a clean block look
-  text-align-last: left;    // Ensures the final line of a paragraph stays left-aligned
-  hyphens: auto;            
-  
-  // Responsive reset: Justification can look "gappy" on tiny screens
-  @media (max-width: 480px) {
-    text-align: left;
-    hyphens: none;
-  }
-}
-
-// ==========================================
 // 1. STAGGERED COLUMN PRELOADER
 // ==========================================
 .preloader {
@@ -108,7 +92,9 @@ $border: #d1d1d1;
   min-height: 100vh;
 }
 
+// ==========================================
 // HERO SECTION
+// ==========================================
 .grid-hero {
   @extend %grid-border-bottom;
   display: grid;
@@ -157,10 +143,9 @@ $border: #d1d1d1;
     .hero-mini-desc {
       font-size: 20px; 
       font-weight: 600; 
-      max-width: 650px; // Increased slightly for better justification flow
-      line-height: 1.6; // Increased for better readability in justified blocks
+      max-width: 400px;
+      line-height: 1.4;
       padding-left: 20px;
-      padding-right: 10px;
       border-left: 4px solid $blue; 
       background: rgba($blue, 0.03); 
       padding-top: 10px;
@@ -168,10 +153,6 @@ $border: #d1d1d1;
       margin-top: 20px;
       animation: slideInLeft 1s ease-out forwards;
       opacity: 0;
-
-      &.text-justify {
-        @extend .text-justify;
-      }
     }
   }
 
@@ -401,8 +382,6 @@ $border: #d1d1d1;
           line-height: 1.6;
           color: #444;
           font-weight: 500;
-
-          &.text-justify { @extend .text-justify; }
         }
       }
     }
@@ -450,8 +429,6 @@ $border: #d1d1d1;
           color: #666;
           line-height: 1.5;
           transition: color 0.3s;
-
-          &.text-justify { @extend .text-justify; }
         }
       }
     }
@@ -522,13 +499,13 @@ $border: #d1d1d1;
 @media (max-width: 1024px) {
   .grid-hero {
     grid-template-columns: 1fr;
-    min-height: auto; 
+    min-height: auto; // Allows content to dictate height on mobile
   }
 
   .hero-left {
     order: 1;
     padding: 40px 20px;
-    border-right: none; 
+    border-right: none; // Remove desktop vertical border
     border-bottom: 1px solid $border;
   }
   .hero-right {
@@ -536,14 +513,16 @@ $border: #d1d1d1;
     padding: 40px 30px 60px;
   }
 
+
   .massive-text {
-    font-size: clamp(50px, 15vw, 80px) !important; 
-    line-height: 0.85; 
+    font-size: clamp(50px, 15vw, 80px) !important; // Slightly smaller for mobile screens
+    line-height: 0.85; // Keeps the 'CAMPAIGN' text tightly tucked
     margin: 20px 0;
     display: block;
 
     .text-blue {
       display: inline-block;
+      // Adjusting the shadow offset for mobile so it doesn't "drift" too far
       filter: drop-shadow(4px 4px 0px $blue) !important; 
       -webkit-text-stroke: 1.5px $text !important;
     }
@@ -556,12 +535,14 @@ $border: #d1d1d1;
   }
 }
 
+// Extra tweak for very small phones
 @media (max-width: 480px) {
   .massive-text {
     font-size: 45px !important;
     line-height: 0.8;
   }
 }
+
 
 @media (max-width: 900px) {
   .grid-mission { grid-template-columns: 1fr; }

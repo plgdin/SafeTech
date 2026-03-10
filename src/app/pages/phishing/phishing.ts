@@ -39,7 +39,6 @@ export class PhishingComponent {
       const path = urlObj.pathname;
 
       // 1. STRICT AUTHORITY WHITELIST (The 0% Club)
-      // Added Vercel and common dev platforms to prevent false positives
       const verifiedDomains = [
         'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
         'apple.com', 'microsoft.com', 'amazon.in', 'amazon.com',
@@ -52,15 +51,25 @@ export class PhishingComponent {
         return { score: 0, reasons: ['Verified Official Domain Authority.'] };
       }
 
-      // 2. INTELLIGENT TLD BASELINE
-      // Standard TLDs start at 10% risk, "trash" TLDs start at 35%
-      const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.tk', '.ga', '.cf','.ru','.pk','.onion'];
+      // 2. CRITICAL BLACKLISTED TLDs (Instant 100% Risk)
+      const blacklistedTLDs = ['.ru', '.pk', '.onion'];
+      const isBlacklisted = blacklistedTLDs.some(tld => hostname.endsWith(tld));
+      
+      if (isBlacklisted) {
+        return { 
+          score: 100, 
+          reasons: ['CRITICAL: High-risk geographic or darknet TLD detected.', 'Domain originates from restricted or high-threat zone.'] 
+        };
+      }
+
+      // 3. INTELLIGENT TLD BASELINE (Risky but not blacklisted)
+      const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.tk', '.ga', '.cf'];
       const isRiskyTLD = riskyTLDs.some(tld => hostname.endsWith(tld));
       
       score = isRiskyTLD ? 35 : 10; 
       reasons.push(isRiskyTLD ? 'High-Risk TLD detected.' : 'Unverified Domain (Standard TLD).');
 
-      // 3. WEIGHTED PENALTY TABLE (The "1337x" & "Piracy" Filter)
+      // 4. WEIGHTED PENALTY TABLE
       const weightTable = [
         { key: '1337x', penalty: 65, reason: 'High-Risk Piracy/Torrent Signature detected.' },
         { key: 'torrent', penalty: 45, reason: 'P2P/Piracy Content Marker found.' },
@@ -78,7 +87,7 @@ export class PhishingComponent {
         }
       });
 
-      // 4. BRAND SPOOFING (The "Youthube" check)
+      // 5. BRAND SPOOFING
       const majorBrands = ['youtube', 'google', 'sbi', 'hdfc', 'amazon', 'netflix', 'paypal', 'vercel'];
       majorBrands.forEach(brand => {
         if (hostname.includes(brand) && !isVerified) {
@@ -87,15 +96,14 @@ export class PhishingComponent {
         }
       });
 
-      // 5. NUMERIC OBFUSCATION
-      // Checks for high density of numbers (common in malicious/bot domains)
+      // 6. NUMERIC OBFUSCATION
       const digitCount = (hostname.match(/\d/g) || []).length;
       if (digitCount > 4 && !isVerified) {
         score += 20;
         reasons.push('High Numeric Density: Typical of DGA or obfuscated domains.');
       }
 
-      // 6. INSECURE PROTOCOL
+      // 7. INSECURE PROTOCOL
       if (urlObj.protocol === 'http:') {
         score += 25;
         reasons.push('Insecure Protocol: Site lacks SSL/TLS encryption (HTTP).');
@@ -120,23 +128,33 @@ export class PhishingComponent {
     this.scanProgress = 0;
     this.cdr.detectChanges();
 
-    const dbCheck = await this.supabaseService.checkPhishingUrl(input).catch(() => null);
-    const heuristic = this.analyzeUrlDynamically(input);
+    try {
+      const dbCheck = await this.supabaseService.checkPhishingUrl(input).catch(() => null);
+      const heuristic = this.analyzeUrlDynamically(input);
 
-    const steps = ['DNS Validation...', 'Brand Audit...', 'Structural Analysis...', 'Heuristic Scoring...'];
-    for (let i = 0; i < steps.length; i++) {
-      this.scanStatus = steps[i];
-      this.scanProgress = (i + 1) * 25;
-      this.cdr.detectChanges();
-      await this.delay(400);
+      const steps = ['DNS Validation...', 'Brand Audit...', 'Structural Analysis...', 'Heuristic Scoring...'];
+      for (let i = 0; i < steps.length; i++) {
+        this.scanStatus = steps[i];
+        this.scanProgress = (i + 1) * 25;
+        this.cdr.detectChanges();
+        await this.delay(400);
+      }
+
+      this.finalizeScan(input, heuristic, dbCheck);
+    } catch (error) {
+      this.loading = false;
+      showToast('Analysis encountered an error.');
     }
-
-    this.finalizeScan(input, heuristic, dbCheck);
   }
 
   private finalizeScan(input: string, heuristic: any, dbCheck: any) {
     if (dbCheck && !dbCheck.isSafe) {
-      this.result = { isSafe: false, details: 'CRITICAL: Database Match.', score: 100, reasons: ['Blacklisted in global threat intelligence.'] };
+      this.result = { 
+        isSafe: false, 
+        details: 'CRITICAL: Database Match.', 
+        score: 100, 
+        reasons: ['Blacklisted in global threat intelligence.'] 
+      };
     } else {
       this.result = { 
         isSafe: heuristic.score < 45, 
@@ -146,7 +164,7 @@ export class PhishingComponent {
       };
     }
 
-    this.supabaseService.logPhishingAudit(input, this.result.score, this.result.details, this.result.reasons, this.result.isSafe)
+    this.supabaseService.logPhishingAudit(input, this.result!.score, this.result!.details, this.result!.reasons, this.result!.isSafe)
       .catch(err => console.error('Audit sync failed', err));
 
     this.loading = false;

@@ -39,7 +39,7 @@ export class SupabaseService {
       .eq('scanned_url', url)
       .eq('is_safe', false)
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (error || !data) return null; 
     return { isSafe: data.is_safe, details: data.threat_details };

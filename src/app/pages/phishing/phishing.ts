@@ -356,4 +356,13 @@ export class PhishingComponent {
     if (!error) showToast('Threat intelligence synced.');
     this.cdr.detectChanges();
   }
+
+  // ─── Fix for Vercel Build Error ───────────────────────────────────────────
+  openVTReport() {
+    if (this.result?.vtPermalink) {
+      window.open(this.result.vtPermalink, '_blank', 'noopener,noreferrer');
+    } else {
+      showToast('VirusTotal report link is not available for this scan.');
+    }
+  }
 }

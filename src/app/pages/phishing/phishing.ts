@@ -58,7 +58,7 @@ export class PhishingComponent {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
   }
 
-  // ─── HEURISTIC ENGINE (FIXED FOR SUBDOMAINS) ──────────────────────────────
+  // ─── HEURISTIC ENGINE (FIXED FOR SUBDOMAINS & PROTOCOLS) ──────────────────
   private analyzeUrlDynamically(url: string): { score: number; reasons: string[]; isVerified: boolean } {
     let score = 0;
     const reasons: string[] = [];
@@ -66,11 +66,12 @@ export class PhishingComponent {
 
     try {
       const input = url.toLowerCase().trim();
+      // Ensure we have a protocol for the URL constructor to work correctly
       const normalizedUrl = input.startsWith('http') ? input : `https://${input}`;
       const urlObj = new URL(normalizedUrl);
       const hostname = urlObj.hostname;
 
-      // 1. Domain Normalization Check
+      // 1. Domain Normalization Check (The "www" fix)
       const officialDomains = [
         'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
         'apple.com', 'microsoft.com', 'amazon.in', 'amazon.com',
@@ -101,7 +102,7 @@ export class PhishingComponent {
         reasons.push('High-Risk TLD detected.');
       }
 
-      // 4. Protocol check
+      // 4. Insecure Protocol Check
       if (urlObj.protocol === 'http:') {
         score += 25;
         reasons.push('Insecure Protocol: No SSL/TLS (HTTP).');
@@ -118,6 +119,7 @@ export class PhishingComponent {
     };
   }
 
+  // ─── SECURE PROXY CALL ───
   private async callVTProxy(url: string): Promise<VTResponse | null> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -140,6 +142,7 @@ export class PhishingComponent {
     }
   }
 
+  // ─── MAIN ORCHESTRATOR ───
   async onCheck() {
     const input = this.targetUrl.trim();
     if (!input || this.loading) return;
@@ -167,6 +170,7 @@ export class PhishingComponent {
     this.finalizeScan(input, heuristic, dbCheck, vtResponse);
   }
 
+  // ─── MERGE LOGIC ───
   private finalizeScan(
     input: string, 
     heuristic: { score: number; reasons: string[]; isVerified: boolean }, 
@@ -184,7 +188,7 @@ export class PhishingComponent {
       isSafe = false;
       vtScore = 100;
     } 
-    // 2. VirusTotal Logic (Zero-Trust but smart about False Positives)
+    // 2. VirusTotal Logic (URLVoid style: Ignore single flags on verified domains)
     else if (maliciousCount > 1) {
       isSafe = false;
       vtScore = Math.min(100, 60 + (maliciousCount * 5));
@@ -217,6 +221,7 @@ export class PhishingComponent {
       vtEngineNames: vt?.engines?.filter(e => e.category === 'malicious').map(e => e.name) || []
     };
 
+    // Log the audit to Supabase
     this.supabaseService.logPhishingAudit(input, this.result.score, this.result.details, this.result.reasons, this.result.isSafe)
       .catch(err => console.error('Audit failed', err));
 
@@ -225,6 +230,7 @@ export class PhishingComponent {
     this.cdr.detectChanges();
   }
 
+  // ─── UI ACTIONS ───
   openVTReport() {
     if (this.result?.vtPermalink) {
       window.open(this.result.vtPermalink, '_blank', 'noopener,noreferrer');

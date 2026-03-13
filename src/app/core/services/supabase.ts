@@ -18,7 +18,6 @@ export interface Scam {
   risk_level?: string;
   severity?: string;    
   created_at?: string;
-  [key: string]: any;
 }
 
 @Injectable({
@@ -39,34 +38,30 @@ export class SupabaseService {
       .eq('scanned_url', url)
       .eq('is_safe', false)
       .limit(1)
-      .maybeSingle();
+      .maybeSingle(); // Fix: maybeSingle prevents 406 error if URL is not found
 
     if (error || !data) return null; 
-    return { isSafe: data.is_safe, details: data.threat_details };
+    return { isSafe: data.is_safe, details: data.threat_details || 'Flagged by Threat Intelligence' };
   }
 
   async logPhishingAudit(url: string, score: number, details: string, markers: string[], isSafe: boolean) {
-    return await this.supabase.from('phishing_logs').insert([
-      {
-        scanned_url: url,
-        risk_score: score,
-        threat_details: details,
-        forensic_markers: markers,
-        is_safe: isSafe
-      }
-    ]);
+    return await this.supabase.from('phishing_logs').insert([{
+      scanned_url: url,
+      risk_score: score,
+      threat_details: details,
+      forensic_markers: markers,
+      is_safe: isSafe
+    }]);
   }
 
   /* --- 2. CITIZEN REPORTING --- */
   async submitReport(report: UserReport) {
-    return await this.supabase.from('citizen_reports').insert([
-      {
-        report_type: report.report_type,
-        evidence_payload: report.content,
-        status: report.status,
-        reference_id: report.reference_id 
-      }
-    ]);
+    return await this.supabase.from('citizen_reports').insert([{
+      report_type: report.report_type,
+      evidence_payload: report.content,
+      status: report.status,
+      reference_id: report.reference_id 
+    }]);
   }
 
   async getReportStatus(refId: string) {
@@ -74,7 +69,7 @@ export class SupabaseService {
       .from('citizen_reports')
       .select('status, created_at')
       .eq('reference_id', refId)
-      .single();
+      .maybeSingle();
   }
 
   /* --- 3. SCAMS --- */
@@ -87,20 +82,10 @@ export class SupabaseService {
 
   /* --- 4. ADMIN & CHAT LOGS --- */
   async saveChatLog(userMsg: string, botRes: string) {
-    const { data, error } = await this.supabase
-      .from('chatbot_logs')
-      .insert([
-        {
-          user_message: userMsg,
-          bot_response: botRes
-        }
-      ]);
-
-    if (error) {
-      console.error("Supabase Insert Error:", error);
-    }
-
-    return { data, error };
+    return await this.supabase.from('chatbot_logs').insert([{
+      user_message: userMsg,
+      bot_response: botRes
+    }]);
   }
 
   async getChatLogs() {
@@ -110,53 +95,17 @@ export class SupabaseService {
       .order('created_at', { ascending: false });
   }
 
-  async getAllTrainingData() {
-    const { data: bookings } = await this.supabase.from('bookings').select('*').order('created_at', { ascending: false });
-    const { data: trainers } = await this.supabase.from('trainers').select('*').order('created_at', { ascending: false });
-    return { bookings: bookings || [], trainers: trainers || [] };
-  }
-
   async getAdminDashboardData() {
-    // Parallel fetching for performance
-    const [reports, training, phishing, chats] = await Promise.all([
+    const [reports, phishing, chats] = await Promise.all([
       this.supabase.from('citizen_reports').select('*').order('created_at', { ascending: false }),
-      this.getAllTrainingData(),
       this.supabase.from('phishing_logs').select('*').order('created_at', { ascending: false }),
-      this.getChatLogs()
+      this.supabase.from('chatbot_logs').select('*').order('created_at', { ascending: false })
     ]);
 
     return {
       reports: reports.data || [],
-      bookings: training.bookings || [],
-      trainers: training.trainers || [],
       phishingLogs: phishing.data || [],
       chatLogs: chats.data || []
     };
-  }
-
-  /* --- 5. EXTERNAL THREAT INTELLIGENCE --- */
-  async checkVirusTotal(url: string): Promise<any> {
-    const apiKey = environment.virusTotalApiKey;
-    if (!apiKey) {
-      console.warn('VirusTotal API Key missing from environment.');
-      return null;
-    }
-    
-    // Standard VT encoding: base64 without padding
-    const urlId = btoa(url).replace(/=/g, ''); 
-    
-    const response = await fetch(`https://www.virustotal.com/api/v3/urls/${urlId}`, {
-      method: 'GET',
-      headers: {
-        'x-apikey': apiKey
-      }
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) return null; // Not found in VT database
-      throw new Error('VirusTotal lookup failed');
-    }
-    
-    return await response.json();
   }
 }

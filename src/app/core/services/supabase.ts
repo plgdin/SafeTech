@@ -87,21 +87,21 @@ export class SupabaseService {
 
   /* --- 4. ADMIN & CHAT LOGS --- */
   async saveChatLog(userMsg: string, botRes: string) {
-  const { data, error } = await this.supabase
-    .from('chatbot_logs')
-    .insert([
-      {
-        user_message: userMsg,
-        bot_response: botRes
-      }
-    ]);
+    const { data, error } = await this.supabase
+      .from('chatbot_logs')
+      .insert([
+        {
+          user_message: userMsg,
+          bot_response: botRes
+        }
+      ]);
 
-  if (error) {
-    console.error("Supabase Insert Error:", error);
+    if (error) {
+      console.error("Supabase Insert Error:", error);
+    }
+
+    return { data, error };
   }
-
-  return { data, error };
-}
 
   async getChatLogs() {
     return await this.supabase
@@ -132,5 +132,31 @@ export class SupabaseService {
       phishingLogs: phishing.data || [],
       chatLogs: chats.data || []
     };
+  }
+
+  /* --- 5. EXTERNAL THREAT INTELLIGENCE --- */
+  async checkVirusTotal(url: string): Promise<any> {
+    const apiKey = environment.virusTotalApiKey;
+    if (!apiKey) {
+      console.warn('VirusTotal API Key missing from environment.');
+      return null;
+    }
+    
+    // Standard VT encoding: base64 without padding
+    const urlId = btoa(url).replace(/=/g, ''); 
+    
+    const response = await fetch(`https://www.virustotal.com/api/v3/urls/${urlId}`, {
+      method: 'GET',
+      headers: {
+        'x-apikey': apiKey
+      }
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) return null; // Not found in VT database
+      throw new Error('VirusTotal lookup failed');
+    }
+    
+    return await response.json();
   }
 }

@@ -11,6 +11,7 @@ const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || '';
 const geminiKey = process.env.GEMINI_API_KEY || '';
 const scriptUrl = process.env.SCRIPT_URL || '';
+const virusTotalKey = process.env.VIRUSTOTAL_API_KEY || ''; 
 
 // Notice how we removed the single quotes and wrapped the variables in JSON.stringify()
 const envConfigFile = `export const environment = {
@@ -18,7 +19,8 @@ const envConfigFile = `export const environment = {
   supabaseUrl: ${JSON.stringify(supabaseUrl)},
   supabaseKey: ${JSON.stringify(supabaseKey)},
   geminiApiKey: ${JSON.stringify(geminiKey)},
-  googleScriptUrl: ${JSON.stringify(scriptUrl)}
+  googleScriptUrl: ${JSON.stringify(scriptUrl)},
+  virusTotalApiKey: ${JSON.stringify(virusTotalKey)}
 };`;
 
 // Write to BOTH files 

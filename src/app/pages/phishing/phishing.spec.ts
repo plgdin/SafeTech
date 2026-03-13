@@ -10,13 +10,15 @@ describe('PhishingComponent', () => {
   // Using Vitest's superior 'vi' mocking engine
   let mockSupabaseService = {
     checkPhishingUrl: vi.fn(),
-    submitReport: vi.fn()
+    submitReport: vi.fn(),
+    checkVirusTotal: vi.fn()
   };
 
   beforeEach(async () => {
     // Resetting mocks for clean state per test
     mockSupabaseService.checkPhishingUrl.mockResolvedValue({ isSafe: true, details: 'Safe' });
     mockSupabaseService.submitReport.mockResolvedValue({ error: null });
+    mockSupabaseService.checkVirusTotal.mockResolvedValue(null);
 
     await TestBed.configureTestingModule({
       imports: [PhishingComponent],
@@ -40,7 +42,20 @@ describe('PhishingComponent', () => {
 
   // Demo Specific Test: Verifying the Forensic Audit Trail
   it('should trigger forensic audit logging', async () => {
-    component.result = { isSafe: false, details: 'Phishing', score: 98, reasons: ['Typosquatting'] };
+    // FIX: Provide the complete ScanResult object to satisfy TypeScript
+    component.result = { 
+      isSafe: false, 
+      details: 'Phishing', 
+      score: 98, 
+      reasons: ['Typosquatting'],
+      vtVerified: false,
+      vtScore: null,
+      vtMalicious: 0,
+      vtEngines: 0,
+      vtPermalink: '',
+      vtTimedOut: false,
+      vtEngineNames: []
+    };
     component.generateForensicReport();
     expect(component.scanStatus).toBe('Generating Forensic Audit...');
   });

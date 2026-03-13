@@ -5,6 +5,7 @@ import { SupabaseService, UserReport } from '../../core/services/supabase';
 import { showToast } from '../../core/utils/toast';
 import { environment } from '../../../environments/environment';
 
+// ─── VirusTotal proxy response shape ────────────────────────────────────────
 export interface VTResponse {
   isSafe: boolean | null;
   vtScore: number | null;
@@ -19,6 +20,7 @@ export interface VTResponse {
   engines: Array<{ name: string; result: string; category: string }>;
 }
 
+// ─── Unified scan result (heuristic + VT merged) ────────────────────────────
 export interface ScanResult {
   isSafe: boolean;
   details: string;
@@ -30,7 +32,7 @@ export interface ScanResult {
   vtEngines: number;
   vtPermalink: string;
   vtTimedOut: boolean;
-  vtEngineNames: string[];
+  vtEngineNames: string[]; 
 }
 
 @Component({
@@ -56,44 +58,64 @@ export class PhishingComponent {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
   }
 
-  private analyzeUrlDynamically(url: string): { score: number; reasons: string[] } {
+  // ─── HEURISTIC ENGINE (FIXED FOR SUBDOMAINS) ──────────────────────────────
+  private analyzeUrlDynamically(url: string): { score: number; reasons: string[]; isVerified: boolean } {
     let score = 0;
     const reasons: string[] = [];
+    let isVerified = false;
+
     try {
       const input = url.toLowerCase().trim();
       const normalizedUrl = input.startsWith('http') ? input : `https://${input}`;
       const urlObj = new URL(normalizedUrl);
       const hostname = urlObj.hostname;
 
+      // 1. Domain Normalization Check
+      const officialDomains = [
+        'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
+        'apple.com', 'microsoft.com', 'amazon.in', 'amazon.com',
+        'kerala.gov.in', 'india.gov.in', 'sbi.co.in', 'onlinesbi.sbi',
+        'vercel.com', 'github.com', 'netlify.app', 'netflix.com'
+      ];
+
+      // Logic: Matches "netflix.com" AND "www.netflix.com"
+      isVerified = officialDomains.some(d => hostname === d || hostname.endsWith('.' + d));
+
+      if (isVerified) {
+        return { score: 0, reasons: ['Verified Official Domain Authority.'], isVerified: true };
+      }
+
+      // 2. Brand Spoofing (Aggressive)
       const brands = ['google', 'youtube', 'sbi', 'paypal', 'amazon', 'facebook', 'netflix'];
       brands.forEach(brand => {
-        if (hostname.includes(brand)) {
-          const officialDomains = [
-            'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
-            'amazon.com', 'amazon.in', 'sbi.co.in', 'onlinesbi.sbi', 
-            'paypal.com', 'netflix.com'
-          ];
-          if (!officialDomains.includes(hostname)) {
-            score += 65;
-            reasons.push(`CRITICAL: Suspicious use of "${brand}" brand signature.`);
-          }
+        if (hostname.includes(brand) && !isVerified) {
+          score += 70;
+          reasons.push(`CRITICAL: Suspicious use of "${brand}" brand signature.`);
         }
       });
 
+      // 3. Risky TLDs
       const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.tk', '.ga'];
       if (riskyTLDs.some(tld => hostname.endsWith(tld))) {
         score += 35;
         reasons.push('High-Risk TLD detected.');
       }
 
+      // 4. Protocol check
       if (urlObj.protocol === 'http:') {
         score += 25;
         reasons.push('Insecure Protocol: No SSL/TLS (HTTP).');
       }
+
     } catch {
-      return { score: 95, reasons: ['Malformed URL structure.'] };
+      return { score: 95, reasons: ['Malformed URL structure.'], isVerified: false };
     }
-    return { score: Math.min(score, 100), reasons };
+
+    return { 
+      score: Math.min(score, 100), 
+      reasons: reasons.length > 0 ? reasons : ['Unverified source.'],
+      isVerified 
+    };
   }
 
   private async callVTProxy(url: string): Promise<VTResponse | null> {
@@ -145,30 +167,37 @@ export class PhishingComponent {
     this.finalizeScan(input, heuristic, dbCheck, vtResponse);
   }
 
-  private finalizeScan(input: string, heuristic: { score: number; reasons: string[] }, dbCheck: any, vt: VTResponse | null) {
+  private finalizeScan(
+    input: string, 
+    heuristic: { score: number; reasons: string[]; isVerified: boolean }, 
+    dbCheck: any, 
+    vt: VTResponse | null
+  ) {
     const maliciousCount = vt?.malicious || 0;
     const totalEngines = vt?.totalEngines || 0;
-
-    // PRODUCTION LOGIC:
-    // 1. If DB blacklisted -> Mark Malicious immediately.
-    // 2. If VT Detections > 1 -> Mark Malicious.
-    // 3. If VT Detections == 1 -> Mark as SUSPICIOUS (UI stays yellow/safe-ish).
-    // This stops YouTube/Netflix from turning RED due to a single false positive.
     
     let isSafe = true;
     let vtScore = 0;
 
+    // 1. DB Blacklist check (Absolute priority)
     if (dbCheck && !dbCheck.isSafe) {
       isSafe = false;
       vtScore = 100;
-    } else if (maliciousCount > 1) {
+    } 
+    // 2. VirusTotal Logic (Zero-Trust but smart about False Positives)
+    else if (maliciousCount > 1) {
       isSafe = false;
       vtScore = Math.min(100, 60 + (maliciousCount * 5));
-    } else if (maliciousCount === 1) {
-      isSafe = true; // Still safe, but we will add a warning marker
-      vtScore = 35;
-    } else if (heuristic.score >= 50) {
-      isSafe = false; // Flag if heuristic engine is very confident
+    } 
+    else if (maliciousCount === 1) {
+      // If it's a verified domain (YT/Netflix) and only 1 engine flags, it's safe.
+      // If it's an UNVERIFIED domain and 1 engine flags, it's a threat.
+      isSafe = heuristic.isVerified; 
+      vtScore = heuristic.isVerified ? 30 : 65;
+    } 
+    // 3. Heuristic Logic
+    else if (heuristic.score >= 60) {
+      isSafe = false;
     }
 
     this.result = {
@@ -177,7 +206,7 @@ export class PhishingComponent {
       score: Math.min(100, Math.max(heuristic.score, vtScore)),
       reasons: [
         ...heuristic.reasons,
-        `Vendor Detections: ${maliciousCount}/${totalEngines} flagged this URL.`
+        `Vendor Detections: ${maliciousCount}/${totalEngines} engines flagged this URL.`
       ],
       vtVerified: !!vt,
       vtScore: vtScore,

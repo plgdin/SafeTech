@@ -66,7 +66,6 @@ export class PhishingComponent {
 
     try {
       const input = url.toLowerCase().trim();
-      // Ensure we have a protocol for the URL constructor to work correctly
       const normalizedUrl = input.startsWith('http') ? input : `https://${input}`;
       const urlObj = new URL(normalizedUrl);
       const hostname = urlObj.hostname;
@@ -79,7 +78,6 @@ export class PhishingComponent {
         'vercel.com', 'github.com', 'netlify.app', 'netflix.com'
       ];
 
-      // Logic: Matches "netflix.com" AND "www.netflix.com"
       isVerified = officialDomains.some(d => hostname === d || hostname.endsWith('.' + d));
 
       if (isVerified) {
@@ -159,7 +157,7 @@ export class PhishingComponent {
 
     const heuristic = this.analyzeUrlDynamically(input);
 
-    const steps = ['DNS Validation...', 'Brand Audit...', 'Structural Analysis...', 'Intelligence Sync...'];
+    const steps = ['DNS Validation...', 'Brand Audit...', 'Structural Analysis...', 'Threat Intelligence Sync...'];
     for (let i = 0; i < steps.length; i++) {
       this.scanStatus = steps[i];
       this.scanProgress = (i + 1) * 25;
@@ -170,7 +168,7 @@ export class PhishingComponent {
     this.finalizeScan(input, heuristic, dbCheck, vtResponse);
   }
 
-  // ─── MERGE LOGIC ───
+  // ─── CONTEXT-AWARE MERGE LOGIC ───
   private finalizeScan(
     input: string, 
     heuristic: { score: number; reasons: string[]; isVerified: boolean }, 
@@ -183,30 +181,35 @@ export class PhishingComponent {
     let isSafe = true;
     let vtScore = 0;
 
-    // 1. DB Blacklist check (Absolute priority)
+    // 1. Database Match (Highest Priority)
     if (dbCheck && !dbCheck.isSafe) {
       isSafe = false;
       vtScore = 100;
     } 
-    // 2. VirusTotal Logic (URLVoid style: Ignore single flags on verified domains)
-    else if (maliciousCount > 1) {
-      isSafe = false;
-      vtScore = Math.min(100, 60 + (maliciousCount * 5));
+    // 2. Consensus Scoring (Stop 1-engine false positives on verified sites)
+    else if (maliciousCount > 0) {
+      if (heuristic.isVerified && maliciousCount === 1) {
+        // Safe: Verified authority with only 1 engine flagging (False Positive)
+        isSafe = true;
+        vtScore = 15; 
+      } else if (!heuristic.isVerified && maliciousCount === 1) {
+        // Suspicious: Unknown domain with 1 engine flagging
+        isSafe = true; 
+        vtScore = 40;
+      } else {
+        // Malicious: Multiple engines flagging
+        isSafe = false;
+        vtScore = Math.min(100, 60 + (maliciousCount * 5));
+      }
     } 
-    else if (maliciousCount === 1) {
-      // If it's a verified domain (YT/Netflix) and only 1 engine flags, it's safe.
-      // If it's an UNVERIFIED domain and 1 engine flags, it's a threat.
-      isSafe = heuristic.isVerified; 
-      vtScore = heuristic.isVerified ? 30 : 65;
-    } 
-    // 3. Heuristic Logic
+    // 3. Heuristic Overrides
     else if (heuristic.score >= 60) {
       isSafe = false;
     }
 
     this.result = {
       isSafe,
-      details: isSafe ? (maliciousCount === 1 ? 'SUSPICIOUS (Low Risk)' : 'Verified Safe') : 'MALICIOUS VERDICT',
+      details: isSafe ? (vtScore > 30 ? 'SUSPICIOUS (Low Risk)' : 'Verified Safe') : 'MALICIOUS VERDICT',
       score: Math.min(100, Math.max(heuristic.score, vtScore)),
       reasons: [
         ...heuristic.reasons,
@@ -221,7 +224,6 @@ export class PhishingComponent {
       vtEngineNames: vt?.engines?.filter(e => e.category === 'malicious').map(e => e.name) || []
     };
 
-    // Log the audit to Supabase
     this.supabaseService.logPhishingAudit(input, this.result.score, this.result.details, this.result.reasons, this.result.isSafe)
       .catch(err => console.error('Audit failed', err));
 

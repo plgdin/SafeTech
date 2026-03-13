@@ -56,7 +56,6 @@ export class PhishingComponent {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
   }
 
-  // ─── RAW HEURISTIC ENGINE ───
   private analyzeUrlDynamically(url: string): { score: number; reasons: string[] } {
     let score = 0;
     const reasons: string[] = [];
@@ -66,11 +65,14 @@ export class PhishingComponent {
       const urlObj = new URL(normalizedUrl);
       const hostname = urlObj.hostname;
 
-      // Aggressive Brand Spoofing Check
       const brands = ['google', 'youtube', 'sbi', 'paypal', 'amazon', 'facebook', 'netflix'];
       brands.forEach(brand => {
         if (hostname.includes(brand)) {
-          const officialDomains = ['google.com', 'google.co.in', 'youtube.com', 'facebook.com', 'amazon.com', 'amazon.in', 'sbi.co.in', 'onlinesbi.sbi', 'paypal.com', 'netflix.com'];
+          const officialDomains = [
+            'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
+            'amazon.com', 'amazon.in', 'sbi.co.in', 'onlinesbi.sbi', 
+            'paypal.com', 'netflix.com'
+          ];
           if (!officialDomains.includes(hostname)) {
             score += 65;
             reasons.push(`CRITICAL: Suspicious use of "${brand}" brand signature.`);
@@ -143,25 +145,39 @@ export class PhishingComponent {
     this.finalizeScan(input, heuristic, dbCheck, vtResponse);
   }
 
-  private finalizeScan(input: string, heuristic: any, dbCheck: any, vt: VTResponse | null) {
+  private finalizeScan(input: string, heuristic: { score: number; reasons: string[] }, dbCheck: any, vt: VTResponse | null) {
     const maliciousCount = vt?.malicious || 0;
     const totalEngines = vt?.totalEngines || 0;
 
-    // RAW ZERO-TRUST LOGIC: Malicious detections force a high score
+    // PRODUCTION LOGIC:
+    // 1. If DB blacklisted -> Mark Malicious immediately.
+    // 2. If VT Detections > 1 -> Mark Malicious.
+    // 3. If VT Detections == 1 -> Mark as SUSPICIOUS (UI stays yellow/safe-ish).
+    // This stops YouTube/Netflix from turning RED due to a single false positive.
+    
+    let isSafe = true;
     let vtScore = 0;
-    if (maliciousCount > 0) {
-      vtScore = Math.min(100, 60 + (maliciousCount * 10));
-    }
 
-    const isSafe = !(dbCheck && !dbCheck.isSafe) && maliciousCount === 0 && heuristic.score < 45;
+    if (dbCheck && !dbCheck.isSafe) {
+      isSafe = false;
+      vtScore = 100;
+    } else if (maliciousCount > 1) {
+      isSafe = false;
+      vtScore = Math.min(100, 60 + (maliciousCount * 5));
+    } else if (maliciousCount === 1) {
+      isSafe = true; // Still safe, but we will add a warning marker
+      vtScore = 35;
+    } else if (heuristic.score >= 50) {
+      isSafe = false; // Flag if heuristic engine is very confident
+    }
 
     this.result = {
       isSafe,
-      details: isSafe ? 'Verified Safe' : (maliciousCount > 0 ? 'MALICIOUS VERDICT' : 'SUSPICIOUS'),
+      details: isSafe ? (maliciousCount === 1 ? 'SUSPICIOUS (Low Risk)' : 'Verified Safe') : 'MALICIOUS VERDICT',
       score: Math.min(100, Math.max(heuristic.score, vtScore)),
       reasons: [
         ...heuristic.reasons,
-        `Detections: ${maliciousCount}/${totalEngines} security vendors.`
+        `Vendor Detections: ${maliciousCount}/${totalEngines} flagged this URL.`
       ],
       vtVerified: !!vt,
       vtScore: vtScore,

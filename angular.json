@@ -36,12 +36,6 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/index.html",
-                  "with": "src/index.prod.html"
-                }
-              ],
               "budgets": [
                 {
                   "type": "initial",

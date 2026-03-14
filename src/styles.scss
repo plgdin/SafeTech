@@ -26,11 +26,7 @@ html, body {
    GLOBAL RACING BUTTON ANIMATION (.axis-btn)
    ========================================================================== */
 
-@property --bg-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
+
 
 .axis-btn {
   position: relative;

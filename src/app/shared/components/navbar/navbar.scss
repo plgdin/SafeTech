@@ -102,7 +102,13 @@
   }
 }
 
+
+/* Tech Buddy Button Fix for CSP */
 .tech-buddy-btn {
+  --button-bg: #1e6aff;
+  --hover-bg: #020202;
+  --glow-color: #00e5ff;
+
   @media (min-width: 1024px) {
     margin-left: 16px;
   }

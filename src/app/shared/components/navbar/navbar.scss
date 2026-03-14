@@ -109,7 +109,14 @@
   --hover-bg: #020202;
   --glow-color: #00e5ff;
 
+  background: var(--button-bg);
+  border-color: var(--button-bg);
+
   @media (min-width: 1024px) {
     margin-left: 16px;
   }
+}
+
+.tech-buddy-btn:hover {
+  background: var(--hover-bg);
 }

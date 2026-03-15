@@ -2,6 +2,37 @@
    1. GLOBAL ANIMATIONS & PROPERTIES
    ========================================= */
 
+.training-page {
+  min-height: 100vh;
+  background-color: #FAF9F6;
+  font-family: 'Poppins', sans-serif;
+  color: #020202;
+  padding-top: 120px;
+  padding-bottom: 120px;
+}
+
+.training-shell {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.training-header {
+  border-bottom: 1px solid #ebebeb;
+  padding-bottom: 70px;
+  margin-bottom: 90px;
+}
+
+.training-content {
+  display: grid;
+  gap: 40px;
+}
+
+.training-sidebar {
+  display: grid;
+  gap: 30px;
+}
+
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;

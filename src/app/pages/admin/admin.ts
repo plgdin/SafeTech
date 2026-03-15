@@ -56,7 +56,8 @@ export class AdminComponent implements OnInit {
   reportStatusFilter = 'all';
   reportSearch = '';
 
-  reportStatuses = ['pending', 'under_audit', 'resolved', 'flagged'];
+  // Added 'investigating' and 'dismissed' to match resolution logic
+  reportStatuses = ['pending', 'under_audit', 'resolved', 'flagged', 'investigating', 'dismissed'];
   trainingStatuses = ['pending', 'scheduled', 'in_review', 'approved', 'completed', 'cancelled'];
 
   reportStatusDrafts: Record<string, string> = {};
@@ -278,6 +279,62 @@ export class AdminComponent implements OnInit {
       return;
     }
   }
+
+  // --- NEW INTEGRATED PHISHING FUNCTIONS ---
+
+  isPhishingResolution(report: AdminReport): boolean {
+    return report.report_type === 'USER_FLAG_MALICIOUS' || report.report_type === 'USER_VOUCH_SAFE';
+  }
+
+  getPhishingData(report: AdminReport) {
+    try {
+      return report.evidence_payload ? JSON.parse(report.evidence_payload) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async approvePhishingResolution(report: AdminReport) {
+    // Type Safety Fix: Ensure ID is present before passing to Service
+    if (!report.id) {
+      this.setFeedback('Cannot resolve: Missing Report ID.', 'error');
+      return;
+    }
+
+    const data = this.getPhishingData(report);
+    if (!data || !data.url) {
+      this.setFeedback('Invalid phishing data found in evidence.', 'error');
+      return;
+    }
+
+    const key = this.getRowKey(report);
+    const isVouch = report.report_type === 'USER_VOUCH_SAFE';
+    this.pendingReportUpdates[key] = true;
+
+    try {
+      const { error } = await this.supabase.resolvePhishingReport(
+        report.id, 
+        data.url, 
+        isVouch, 
+        isVouch ? 'Approved user vouch' : 'Confirmed user flag'
+      );
+
+      if (error) throw error;
+
+      this.setFeedback('Live database updated successfully.', 'success');
+      report.status = 'resolved';
+      this.reportStatusDrafts[key] = 'resolved';
+      
+      await this.loadDashboard(); // Sync lists
+    } catch (err) {
+      console.error(err);
+      this.setFeedback('Failed to update security database.', 'error');
+    } finally {
+      this.pendingReportUpdates[key] = false;
+    }
+  }
+
+  // --- END OF NEW FUNCTIONS ---
 
   setReportStatusDraft(report: AdminReport, status: string) {
     this.reportStatusDrafts[this.getRowKey(report)] = status;

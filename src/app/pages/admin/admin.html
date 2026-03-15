@@ -68,7 +68,24 @@
             <tr *ngFor="let report of filteredReports">
               <td><strong>{{ report.reference_id }}</strong></td>
               <td>{{ report.report_type }}</td>
-              <td [title]="report.evidence_payload">{{ report.evidence_payload }}</td>
+              
+              <td>
+                <div *ngIf="isPhishingResolution(report); else standardEvidence" class="phishing-detail-box">
+                  <ng-container *ngIf="getPhishingData(report) as pData">
+                    <code class="url-snippet">{{ pData.url }}</code>
+                    <div class="risk-meta">
+                      <span class="score-tag">Risk: {{ pData.risk }}%</span>
+                      <span class="hit-tag">Detections: {{ pData.detections }}</span>
+                    </div>
+                  </ng-container>
+                </div>
+                <ng-template #standardEvidence>
+                  <div class="truncate-evidence" [title]="report.evidence_payload">
+                    {{ report.evidence_payload }}
+                  </div>
+                </ng-template>
+              </td>
+
               <td>
                 <span class="badge" [ngClass]="statusClass(report.status)">
                   {{ report.status }}
@@ -77,14 +94,24 @@
               <td>{{ report.created_at | date:'short' }}</td>
               <td>
                 <div class="row-actions">
+                  <button 
+                    *ngIf="isPhishingResolution(report) && report.status !== 'resolved'"
+                    class="mini-btn success-btn" 
+                    (click)="approvePhishingResolution(report)"
+                    [disabled]="isReportPending(report)">
+                    Approve DB Change
+                  </button>
+
                   <select
                     #reportStatusSelect
+                    [disabled]="isReportPending(report)"
                     [ngModel]="reportStatusDrafts[getRowKey(report)]"
                     (ngModelChange)="setReportStatusDraft(report, $event)">
                     <option *ngFor="let status of reportStatuses" [value]="status">{{ status }}</option>
                   </select>
                   <button
                     class="mini-btn"
+                    [disabled]="isReportPending(report)"
                     (click)="updateReportStatus(report, reportStatusSelect.value)">
                     Update
                   </button>
@@ -168,7 +195,7 @@
                   [ngModel]="bookingMessageDrafts[getRowKey(book)]"
                   (ngModelChange)="setBookingMessageDraft(book, $event)"
                   rows="2"
-                  placeholder="Optional message to attach"></textarea>
+                  placeholder="Optional message"></textarea>
               </td>
               <td>
                 <button
@@ -238,10 +265,7 @@
 
     <section class="admin-section split-section">
       <div>
-        <div class="section-header">
-          <h2>Training Messages</h2>
-        </div>
-
+        <div class="section-header"><h2>Training Messages</h2></div>
         <div class="stack-form">
           <label class="control-field">
             <span>Audience</span>
@@ -251,27 +275,21 @@
               <option value="all-training-users">All training users</option>
             </select>
           </label>
-
           <label class="control-field">
             <span>Subject</span>
             <input [(ngModel)]="messageForm.subject" type="text" placeholder="Message subject">
           </label>
-
           <label class="control-field">
             <span>Message</span>
-            <textarea [(ngModel)]="messageForm.message" rows="5" placeholder="Write the message you want to send or store"></textarea>
+            <textarea [(ngModel)]="messageForm.message" rows="5" placeholder="Write message..."></textarea>
           </label>
-
           <button class="download-btn" (click)="sendTrainingMessage()">Save Message</button>
         </div>
       </div>
 
       <div>
-        <div class="section-header">
-          <h2>Recent Messages</h2>
-        </div>
-
-        <div *ngIf="isSecondaryLoading" class="empty-state">Loading training messages...</div>
+        <div class="section-header"><h2>Recent Messages</h2></div>
+        <div *ngIf="isSecondaryLoading" class="empty-state">Loading...</div>
         <div class="card-list" *ngIf="!isSecondaryLoading && dashboardData.trainingMessages.length; else emptyMessages">
           <article class="info-card" *ngFor="let item of dashboardData.trainingMessages">
             <p class="card-meta">{{ item.audience }} · {{ item.created_at | date:'short' }}</p>
@@ -279,24 +297,18 @@
             <p>{{ item.message }}</p>
           </article>
         </div>
-        <ng-template #emptyMessages>
-          <div *ngIf="!isSecondaryLoading" class="empty-state">No training messages saved yet.</div>
-        </ng-template>
+        <ng-template #emptyMessages><div class="empty-state">No messages saved.</div></ng-template>
       </div>
     </section>
 
     <section class="admin-section split-section">
       <div>
-        <div class="section-header">
-          <h2>Upload Training Resources</h2>
-        </div>
-
+        <div class="section-header"><h2>Upload Training Resources</h2></div>
         <div class="stack-form">
           <label class="control-field">
             <span>Resource title</span>
-            <input [(ngModel)]="resourceForm.title" type="text" placeholder="Awareness session notes">
+            <input [(ngModel)]="resourceForm.title" type="text" placeholder="Title">
           </label>
-
           <label class="control-field">
             <span>Resource type</span>
             <select [(ngModel)]="resourceForm.resource_type">
@@ -304,38 +316,30 @@
               <option value="notes">Notes</option>
             </select>
           </label>
-
           <label class="control-field">
             <span>Description</span>
-            <textarea [(ngModel)]="resourceForm.description" rows="4" placeholder="Short description for admins"></textarea>
+            <textarea [(ngModel)]="resourceForm.description" rows="4" placeholder="Description"></textarea>
           </label>
-
           <label class="control-field">
             <span>File</span>
             <input type="file" (change)="onResourceSelected($event)" [attr.accept]="resourceForm.resource_type === 'video' ? 'video/*' : '.pdf,.doc,.docx,.ppt,.pptx,.txt'">
           </label>
-
           <button class="download-btn" (click)="uploadResource()">Upload Resource</button>
         </div>
       </div>
 
       <div>
-        <div class="section-header">
-          <h2>Uploaded Resources</h2>
-        </div>
-
-        <div *ngIf="isSecondaryLoading" class="empty-state">Loading uploaded resources...</div>
+        <div class="section-header"><h2>Uploaded Resources</h2></div>
+        <div *ngIf="isSecondaryLoading" class="empty-state">Loading...</div>
         <div class="card-list" *ngIf="!isSecondaryLoading && dashboardData.trainingResources.length; else emptyResources">
           <article class="info-card" *ngFor="let resource of dashboardData.trainingResources">
             <p class="card-meta">{{ resource.resource_type }} · {{ resource.created_at | date:'short' }}</p>
             <h3>{{ resource.title }}</h3>
-            <p>{{ resource.description || 'No description provided.' }}</p>
+            <p>{{ resource.description || 'No description.' }}</p>
             <a *ngIf="resource.file_url" [href]="resource.file_url" target="_blank" rel="noreferrer">Open file</a>
           </article>
         </div>
-        <ng-template #emptyResources>
-          <div *ngIf="!isSecondaryLoading" class="empty-state">No training resources uploaded yet.</div>
-        </ng-template>
+        <ng-template #emptyResources><div class="empty-state">No resources uploaded.</div></ng-template>
       </div>
     </section>
   </ng-container>

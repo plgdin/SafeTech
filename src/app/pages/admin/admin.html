@@ -97,8 +97,9 @@
           Download PDF
         </button>
       </div>
+      <div *ngIf="isSecondaryLoading" class="empty-state">Loading chat logs...</div>
       <div class="table-wrapper">
-        <table *ngIf="dashboardData.chatLogs.length; else emptyChats">
+        <table *ngIf="!isSecondaryLoading && dashboardData.chatLogs.length; else emptyChats">
           <thead>
             <tr>
               <th>User Query</th>
@@ -114,7 +115,9 @@
             </tr>
           </tbody>
         </table>
-        <ng-template #emptyChats><div class="empty-state">No chat logs recorded.</div></ng-template>
+        <ng-template #emptyChats>
+          <div *ngIf="!isSecondaryLoading" class="empty-state">No chat logs recorded.</div>
+        </ng-template>
       </div>
     </section>
 
@@ -241,14 +244,17 @@
           <h2>Recent Messages</h2>
         </div>
 
-        <div class="card-list" *ngIf="dashboardData.trainingMessages.length; else emptyMessages">
+        <div *ngIf="isSecondaryLoading" class="empty-state">Loading training messages...</div>
+        <div class="card-list" *ngIf="!isSecondaryLoading && dashboardData.trainingMessages.length; else emptyMessages">
           <article class="info-card" *ngFor="let item of dashboardData.trainingMessages">
             <p class="card-meta">{{ item.audience }} · {{ item.created_at | date:'short' }}</p>
             <h3>{{ item.subject }}</h3>
             <p>{{ item.message }}</p>
           </article>
         </div>
-        <ng-template #emptyMessages><div class="empty-state">No training messages saved yet.</div></ng-template>
+        <ng-template #emptyMessages>
+          <div *ngIf="!isSecondaryLoading" class="empty-state">No training messages saved yet.</div>
+        </ng-template>
       </div>
     </section>
 
@@ -291,7 +297,8 @@
           <h2>Uploaded Resources</h2>
         </div>
 
-        <div class="card-list" *ngIf="dashboardData.trainingResources.length; else emptyResources">
+        <div *ngIf="isSecondaryLoading" class="empty-state">Loading uploaded resources...</div>
+        <div class="card-list" *ngIf="!isSecondaryLoading && dashboardData.trainingResources.length; else emptyResources">
           <article class="info-card" *ngFor="let resource of dashboardData.trainingResources">
             <p class="card-meta">{{ resource.resource_type }} · {{ resource.created_at | date:'short' }}</p>
             <h3>{{ resource.title }}</h3>
@@ -299,7 +306,9 @@
             <a *ngIf="resource.file_url" [href]="resource.file_url" target="_blank" rel="noreferrer">Open file</a>
           </article>
         </div>
-        <ng-template #emptyResources><div class="empty-state">No training resources uploaded yet.</div></ng-template>
+        <ng-template #emptyResources>
+          <div *ngIf="!isSecondaryLoading" class="empty-state">No training resources uploaded yet.</div>
+        </ng-template>
       </div>
     </section>
   </ng-container>

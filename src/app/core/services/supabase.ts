@@ -153,25 +153,72 @@ export class SupabaseService {
       .order('created_at', { ascending: false });
   }
 
-  async getAdminDashboardData() {
-    const [reports, phishing, chats, bookings, trainers, trainingMessages, trainingResources] = await Promise.all([
-      this.supabase.from('citizen_reports').select('*').order('created_at', { ascending: false }),
-      this.supabase.from('phishing_logs').select('*').order('created_at', { ascending: false }),
-      this.supabase.from('chatbot_logs').select('*').order('created_at', { ascending: false }),
-      this.supabase.from('bookings').select('*').order('created_at', { ascending: false }),
-      this.supabase.from('trainers').select('*').order('created_at', { ascending: false }),
-      this.supabase.from('training_messages').select('*').order('created_at', { ascending: false }),
-      this.supabase.from('training_resources').select('*').order('created_at', { ascending: false })
+  async getAdminDashboardPrimaryData() {
+    const [reports, bookings, trainers] = await Promise.all([
+      this.supabase
+        .from('citizen_reports')
+        .select('id, reference_id, report_type, evidence_payload, status, created_at')
+        .order('created_at', { ascending: false })
+        .limit(100),
+      this.supabase
+        .from('bookings')
+        .select('id, org_type, address, event_date, event_time, mode, phone, email, status, admin_message, created_at')
+        .order('created_at', { ascending: false })
+        .limit(50),
+      this.supabase
+        .from('trainers')
+        .select('id, name, age, location, education, phone, status, admin_message, created_at')
+        .order('created_at', { ascending: false })
+        .limit(50)
     ]);
 
     return {
       reports: reports.data || [],
-      phishingLogs: phishing.data || [],
-      chatLogs: chats.data || [],
       bookings: bookings.data || [],
-      trainers: trainers.data || [],
+      trainers: trainers.data || []
+    };
+  }
+
+  async getAdminDashboardSecondaryData() {
+    const [chats, trainingMessages, trainingResources] = await Promise.all([
+      this.supabase
+        .from('chatbot_logs')
+        .select('id, user_message, bot_response, created_at')
+        .order('created_at', { ascending: false })
+        .limit(50),
+      this.supabase
+        .from('training_messages')
+        .select('id, audience, subject, message, target_table, target_id, created_at')
+        .order('created_at', { ascending: false })
+        .limit(20),
+      this.supabase
+        .from('training_resources')
+        .select('id, title, description, resource_type, file_name, file_url, created_at')
+        .order('created_at', { ascending: false })
+        .limit(20)
+    ]);
+
+    return {
+      chatLogs: chats.data || [],
       trainingMessages: trainingMessages.data || [],
       trainingResources: trainingResources.data || []
+    };
+  }
+
+  async getAdminDashboardData() {
+    const [primary, secondary] = await Promise.all([
+      this.getAdminDashboardPrimaryData(),
+      this.getAdminDashboardSecondaryData()
+    ]);
+
+    return {
+      reports: primary.reports,
+      phishingLogs: [],
+      chatLogs: secondary.chatLogs,
+      bookings: primary.bookings,
+      trainers: primary.trainers,
+      trainingMessages: secondary.trainingMessages,
+      trainingResources: secondary.trainingResources
     };
   }
 

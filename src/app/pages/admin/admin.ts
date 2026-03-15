@@ -26,6 +26,7 @@ type SortDirection = 'asc' | 'desc';
 })
 export class AdminComponent implements OnInit {
   isLoading = true;
+  isSecondaryLoading = true;
   feedbackMessage = '';
   feedbackTone: 'success' | 'error' | 'info' = 'info';
 
@@ -91,16 +92,33 @@ export class AdminComponent implements OnInit {
 
   async loadDashboard() {
     this.isLoading = true;
+    this.isSecondaryLoading = true;
     this.clearFeedback();
 
     try {
-      this.dashboardData = await this.supabase.getAdminDashboardData();
+      const primary = await this.supabase.getAdminDashboardPrimaryData();
+      this.dashboardData = {
+        ...this.dashboardData,
+        reports: primary.reports,
+        bookings: primary.bookings,
+        trainers: primary.trainers
+      };
       this.seedDrafts();
+      this.isLoading = false;
+
+      const secondary = await this.supabase.getAdminDashboardSecondaryData();
+      this.dashboardData = {
+        ...this.dashboardData,
+        chatLogs: secondary.chatLogs,
+        trainingMessages: secondary.trainingMessages,
+        trainingResources: secondary.trainingResources
+      };
     } catch (error) {
       console.error(error);
       this.setFeedback('Failed to load admin data.', 'error');
     } finally {
       this.isLoading = false;
+      this.isSecondaryLoading = false;
     }
   }
 

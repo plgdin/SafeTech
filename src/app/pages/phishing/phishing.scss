@@ -2,10 +2,25 @@
    MOBILE & TABLET OPTIMIZATION (SafeTech Safeguard)
    ========================================================= */
 
+.phishing-page {
+  min-height: 100vh;
+  background: #FAF9F6;
+  font-family: 'Poppins', sans-serif;
+  color: #020202;
+  padding-top: 120px;
+  padding-bottom: 80px;
+}
+
+.phishing-shell {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
 /* Tablet Optimization (iPad / Small Laptops) */
 @media (max-width: 1024px) {
   // Global Container
-  div[style*="max-width: 1300px"] {
+  .phishing-shell {
     padding: 0 30px !important;
   }
 
@@ -35,7 +50,7 @@
 /* Mobile Optimization (Phones) */
 @media (max-width: 768px) {
   // Reduce top spacing for mobile view
-  div[style*="padding-top: 120px"] {
+  .phishing-page {
     padding-top: 80px !important;
   }
 

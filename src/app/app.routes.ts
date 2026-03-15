@@ -25,6 +25,7 @@ export const routes: Routes = [
   { path: 'tech-buddy', component: TechBuddyComponent }, 
   { path: 'phishing-checker', component: PhishingComponent }, 
   { path: 'scams', component: ScamAwarenessComponent }, 
+  { path: 'scam-awareness', component: ScamAwarenessComponent },
   { path: 'training', component: TrainingComponent }, 
   { path: 'about', component: AboutComponent },
   { path: 'admin/login', component: AdminLoginComponent },

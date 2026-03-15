@@ -33,6 +33,13 @@
   gap: 30px;
 }
 
+.main-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;

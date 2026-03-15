@@ -25,6 +25,8 @@ type SortDirection = 'asc' | 'desc';
   styleUrl: './admin.scss'
 })
 export class AdminComponent implements OnInit {
+  private readonly primaryCacheKey = 'safetech_admin_primary_cache';
+  private readonly secondaryCacheKey = 'safetech_admin_secondary_cache';
   isLoading = true;
   isSecondaryLoading = true;
   feedbackMessage = '';
@@ -89,12 +91,16 @@ export class AdminComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.loadCachedDashboard();
     await this.loadDashboard();
   }
 
   async loadDashboard() {
-    this.isLoading = true;
-    this.isSecondaryLoading = true;
+    const hasPrimaryCache = this.dashboardData.reports.length > 0 || this.dashboardData.bookings.length > 0 || this.dashboardData.trainers.length > 0;
+    const hasSecondaryCache = this.dashboardData.chatLogs.length > 0 || this.dashboardData.trainingMessages.length > 0 || this.dashboardData.trainingResources.length > 0;
+
+    this.isLoading = !hasPrimaryCache;
+    this.isSecondaryLoading = !hasSecondaryCache;
     this.clearFeedback();
 
     try {
@@ -106,6 +112,7 @@ export class AdminComponent implements OnInit {
         trainers: primary.trainers
       };
       this.seedDrafts();
+      this.writeCache(this.primaryCacheKey, primary);
       this.isLoading = false;
 
       const secondary = await this.supabase.getAdminDashboardSecondaryData();
@@ -115,12 +122,66 @@ export class AdminComponent implements OnInit {
         trainingMessages: secondary.trainingMessages,
         trainingResources: secondary.trainingResources
       };
+      this.writeCache(this.secondaryCacheKey, secondary);
     } catch (error) {
       console.error(error);
       this.setFeedback('Failed to load admin data.', 'error');
     } finally {
       this.isLoading = false;
       this.isSecondaryLoading = false;
+    }
+  }
+
+  private loadCachedDashboard() {
+    const primary = this.readCache<{
+      reports: AdminReport[];
+      bookings: TrainingBooking[];
+      trainers: TrainerApplication[];
+    }>(this.primaryCacheKey);
+
+    if (primary) {
+      this.dashboardData = {
+        ...this.dashboardData,
+        reports: primary.reports || [],
+        bookings: primary.bookings || [],
+        trainers: primary.trainers || []
+      };
+      this.seedDrafts();
+      this.isLoading = false;
+    }
+
+    const secondary = this.readCache<{
+      chatLogs: any[];
+      trainingMessages: TrainingMessage[];
+      trainingResources: TrainingResource[];
+    }>(this.secondaryCacheKey);
+
+    if (secondary) {
+      this.dashboardData = {
+        ...this.dashboardData,
+        chatLogs: secondary.chatLogs || [],
+        trainingMessages: secondary.trainingMessages || [],
+        trainingResources: secondary.trainingResources || []
+      };
+      this.isSecondaryLoading = false;
+    }
+  }
+
+  private readCache<T>(key: string): T | null {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      return JSON.parse(raw) as T;
+    } catch {
+      return null;
+    }
+  }
+
+  private writeCache(key: string, value: unknown) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Ignore cache write issues and continue with live data.
     }
   }
 

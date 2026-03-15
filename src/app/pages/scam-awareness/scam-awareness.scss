@@ -438,11 +438,34 @@
 }
 
 .cta-submit-content {
+  color: inherit;
   transition: color 0.3s ease;
 }
 
 .axis-btn:hover .cta-submit-content {
   color: #020202 !important;
+}
+
+.scam-report-btn {
+  --button-bg: #020202;
+  --hover-bg: #1e6aff;
+  --glow-color: #00e5ff;
+}
+
+.cta-submit-btn {
+  --button-bg: #1e6aff;
+  --hover-bg: #ffffff;
+  --glow-color: #00e5ff;
+}
+
+.cta-tech-buddy-btn {
+  --button-bg: #111111;
+  --hover-bg: #1e6aff;
+  --glow-color: #00e5ff;
+}
+
+.cta-tech-buddy-content {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @keyframes ping {

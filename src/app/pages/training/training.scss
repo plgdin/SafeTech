@@ -61,6 +61,16 @@
   border-left: 8px solid #1e6aff;
 }
 
+.training-sidebar-card-dark {
+  background-color: #020202;
+  border-radius: 40px;
+  padding: 50px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+}
+
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;

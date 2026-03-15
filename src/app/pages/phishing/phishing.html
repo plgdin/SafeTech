@@ -16,7 +16,6 @@
 
     <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 60px; align-items: start;">
       
-      <!-- ── LEFT: Mascot / Status Panel ── -->
       <section style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border-radius: 40px; padding: 60px 40px; text-align: center; border: 1px solid rgba(30,106,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.03);">
         <div style="position: relative; display: inline-block;">
           <img src="/assets/images/tech-buddy.png" alt="Mascot" 
@@ -37,12 +36,10 @@
           </p>
         </div>
 
-        <!-- VT attribution badge — appears after a successful VT-backed scan -->
         <div *ngIf="result?.vtVerified"
              style="margin-top: 30px; padding: 16px 20px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 20px;">
           <p style="margin: 0 0 6px 0; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8;">Powered by</p>
           <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <span style="font-size: 18px;">🔬</span>
             <span style="font-size: 14px; font-weight: 900; color: #1e6aff;">VirusTotal</span>
           </div>
           <p style="margin: 6px 0 0 0; font-size: 11px; color: #94a3b8; font-weight: 500;">
@@ -51,10 +48,8 @@
         </div>
       </section>
 
-      <!-- ── RIGHT: Scan Panel ── -->
       <section style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 40px; padding: 50px; box-shadow: 0 40px 100px rgba(0,0,0,0.04);">
         
-        <!-- URL input row -->
         <div style="position: relative; margin-bottom: 45px;">
           <div style="display: flex; background: #f8fafc; border: 2px solid #f1f5f9; padding: 10px; border-radius: 20px; transition: 0.3s;"
                [style.border-color]="loading ? '#1e6aff' : '#f1f5f9'">
@@ -71,12 +66,9 @@
           </div>
         </div>
 
-        <!-- Progress bar -->
-        <div *ngIf="loading" style="margin-bottom: 40px; animation: slideDown 0.4s ease;">
+        <div *ngIf="loading" style="margin-bottom: 40px;">
           <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 15px; color: #1e6aff;">
-            <span style="display: flex; align-items: center; gap: 8px;">
-              <span class="dot-loader"></span> Heuristic Multi-Vector Scan
-            </span>
+            <span>Heuristic Multi-Vector Scan</span>
             <span>{{ scanProgress }}%</span>
           </div>
           <div style="height: 10px; background: #f1f5f9; border-radius: 20px; overflow: hidden;">
@@ -84,109 +76,55 @@
           </div>
         </div>
 
-        <!-- ── Result Card ── -->
         <div *ngIf="result" class="result-card" 
-             [style.border-color]="result.score > 40 ? '#fecaca' : '#bbf7d0'"
-             style="border: 2px solid; border-radius: 30px; padding: 40px; background: #fff; animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+             [style.border-color]="result.isSafe ? '#bbf7d0' : '#fecaca'"
+             style="border: 2px solid; border-radius: 30px; padding: 40px; background: #fff;">
           
-          <!-- Verdict header -->
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
             <div>
               <div [style.background]="result.isSafe ? '#dcfce7' : '#fee2e2'" 
                    [style.color]="result.isSafe ? '#15803d' : '#b91c1c'"
-                   style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px;">
+                   style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px;">
                 {{ result.isSafe ? 'Clearance: Safe' : 'Alert: Malicious' }}
               </div>
-              <h2 style="font-weight: 900; font-size: 36px; margin: 0; letter-spacing: -0.03em; line-height: 1;">
+              <h2 style="font-weight: 900; font-size: 36px; margin: 0; letter-spacing: -0.03em;">
                 {{ result.isSafe ? 'Secure Domain' : 'Threat Verified' }}
               </h2>
-              <p style="margin-top: 10px; color: #64748b; font-weight: 500; font-size: 15px;">{{ result.details }}</p>
+              <p style="margin-top: 10px; color: #64748b; font-weight: 500;">{{ result.details }}</p>
             </div>
             
             <div style="text-align: center; background: #f8fafc; padding: 20px; border-radius: 25px; min-width: 100px;">
-              <div [style.color]="result.isSafe ? '#10b981' : '#ef4444'" style="font-size: 48px; font-weight: 900; line-height: 1;">
-                {{ result.score }}<span style="font-size: 20px;">%</span>
+              <div [style.color]="result.isSafe ? '#10b981' : '#ef4444'" style="font-size: 48px; font-weight: 900;">
+                {{ result.score }}%
               </div>
               <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin-top: 5px;">Risk Level</div>
             </div>
           </div>
 
-          <!-- ── VirusTotal Intelligence Panel ──────────────────────────────
-               NEW BLOCK: renders only when VT scan completed successfully.
-               When VT is unavailable, nothing changes — result card looks
-               exactly like it did before this feature was added.
-          ──────────────────────────────────────────────────────────────── -->
           <div *ngIf="result.vtVerified && !result.vtTimedOut"
                style="margin-bottom: 30px; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden;">
-            
-            <!-- Dark header bar -->
-            <div style="padding: 14px 20px; background: #0f172a; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 14px;">🔬</span>
-              <span style="font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: #94a3b8;">VirusTotal Intelligence</span>
-              <span *ngIf="result.vtPermalink"
-                    (click)="openVTReport()"
-                    style="margin-left: auto; font-size: 10px; font-weight: 800; color: #1e6aff; cursor: pointer; text-decoration: underline;">
-                Full Report →
-              </span>
+            <div style="padding: 14px 20px; background: #0f172a; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 11px; font-weight: 900; text-transform: uppercase; color: #94a3b8;">VirusTotal Intelligence</span>
+              <span *ngIf="result.vtPermalink" (click)="openVTReport()" style="font-size: 10px; font-weight: 800; color: #1e6aff; cursor: pointer;">Full Report →</span>
             </div>
-
-            <!-- Three stat columns: Malicious / Engines / VT Risk % -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); background: #f8fafc;">
               <div style="padding: 20px; text-align: center; border-right: 1px solid #e2e8f0;">
-                <div style="font-size: 28px; font-weight: 900; color: #ef4444; line-height: 1;">{{ result.vtMalicious }}</div>
-                <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-top: 4px;">Malicious</div>
+                <div style="font-size: 28px; font-weight: 900; color: #ef4444;">{{ result.vtMalicious }}</div>
+                <div style="font-size: 10px; font-weight: 800; color: #94a3b8;">Malicious</div>
               </div>
               <div style="padding: 20px; text-align: center; border-right: 1px solid #e2e8f0;">
-                <div style="font-size: 28px; font-weight: 900; color: #10b981; line-height: 1;">{{ result.vtEngines }}</div>
-                <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-top: 4px;">Engines</div>
+                <div style="font-size: 28px; font-weight: 900; color: #10b981;">{{ result.vtEngines }}</div>
+                <div style="font-size: 10px; font-weight: 800; color: #94a3b8;">Engines</div>
               </div>
               <div style="padding: 20px; text-align: center;">
-                <div style="font-size: 28px; font-weight: 900; line-height: 1;"
-                     [style.color]="(result.vtScore ?? 0) > 0 ? '#ef4444' : '#10b981'">
-                  {{ result.vtScore ?? 0 }}<span style="font-size: 14px;">%</span>
-                </div>
-                <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-top: 4px;">VT Risk</div>
-              </div>
-            </div>
-
-            <!-- Flagging engine name chips — only visible when something was flagged -->
-            <div *ngIf="result.vtEngineNames.length > 0"
-                 style="padding: 16px 20px; border-top: 1px solid #e2e8f0; background: #fff;">
-              <p style="margin: 0 0 10px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b;">
-                Flagging Engines
-              </p>
-              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                <span *ngFor="let eng of result.vtEngineNames"
-                      style="background: #fee2e2; color: #b91c1c; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;">
-                  {{ eng }}
-                </span>
+                <div style="font-size: 28px; font-weight: 900;" [style.color]="(result.vtScore ?? 0) > 30 ? '#ef4444' : '#10b981'">{{ result.vtScore ?? 0 }}%</div>
+                <div style="font-size: 10px; font-weight: 800; color: #94a3b8;">VT Risk</div>
               </div>
             </div>
           </div>
 
-          <!-- VT timeout fallback notice -->
-          <div *ngIf="result.vtTimedOut"
-               style="margin-bottom: 25px; padding: 14px 20px; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 14px; display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 20px;">⏱</span>
-            <div>
-              <p style="margin: 0; font-size: 12px; font-weight: 800; color: #92400e; text-transform: uppercase;">VirusTotal Scan Still Processing</p>
-              <p style="margin: 4px 0 0 0; font-size: 13px; color: #78350f; font-weight: 500;">
-                Result is heuristic-only.
-                <a *ngIf="result.vtPermalink" [href]="result.vtPermalink"
-                   target="_blank" rel="noopener noreferrer"
-                   style="color: #1e6aff; font-weight: 700; text-decoration: underline;">
-                  Check on VirusTotal →
-                </a>
-              </p>
-            </div>
-          </div>
-          <!-- ── End VirusTotal Panel ── -->
-
-          <!-- Forensic Data Points (heuristic reasons — unchanged) -->
           <div style="margin-bottom: 40px;">
-            <h4 style="font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-              <span style="color: #1e6aff;">◆</span> Forensic Data Points
-            </h4>
+            <h4 style="font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 20px;">◆ Forensic Data Points</h4>
             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
               <div *ngFor="let reason of result.reasons" 
                    style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569;">
@@ -195,51 +133,16 @@
             </div>
           </div>
 
-          <!-- Action buttons (unchanged) -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-            <button class="axis-btn" (click)="generateForensicReport()" style="--button-bg: #0f172a; --hover-bg: #1e293b; --glow-color: #94a3b8; width: 100%;">
-              <div class="axis-content">GENERATE PDF</div>
-            </button>
-
-            <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #450a0a; --hover-bg: #7f1d1d; --glow-color: #ef4444; width: 100%;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #450a0a; --hover-bg: #7f1d1d; --glow-color: #ef4444;">
               <div class="axis-content" style="color: #fca5a5;">FLAG THREAT</div>
             </button>
-
-            <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #064e3b; --hover-bg: #065f46; --glow-color: #10b981; width: 100%;">
+            <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #064e3b; --hover-bg: #065f46; --glow-color: #10b981;">
               <div class="axis-content" style="color: #6ee7b7;">VOUCH SAFE</div>
             </button>
           </div>
         </div>
       </section>
     </div>
-
-    <!-- ── Educational section (completely unchanged) ── -->
-    <section style="margin-top: 120px; border-top: 1px solid #e2e8f0; padding-top: 100px;">
-      <div style="text-align: center; max-width: 800px; margin: 0 auto 70px;">
-        <h2 style="font-size: 48px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 20px;">
-          Anatomy of a <span style="color: #1e6aff;">Cyber Attack</span>
-        </h2>
-        <p style="color: #64748b; font-size: 18px; font-weight: 500;">SafeTech identifies patterns that the human eye often misses.</p>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-        <div class="info-card">
-          <div class="info-icon">🔍</div>
-          <h3 class="info-title">Homograph Attacks</h3>
-          <p class="info-text">Using look-alike characters (like replacing 'o' with '0') to mimic bank portals. Our Punycode detector isolates these instantly.</p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon">🏗️</div>
-          <h3 class="info-title">Subdomain Tunneling</h3>
-          <p class="info-text">Hiding malicious intent deep within nested subdomains (e.g., login.bank.com.secure-update.tk) to bypass simple filters.</p>
-        </div>
-        <div class="info-card">
-          <div class="info-icon">⚡</div>
-          <h3 class="info-title">DGA Detection</h3>
-          <p class="info-text">Identifying Domain Generation Algorithms that create random-looking URLs to communicate with malware servers.</p>
-        </div>
-      </div>
-    </section>
-
   </div>
 </div>

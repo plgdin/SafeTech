@@ -1,306 +1,219 @@
-<div style="min-height: 100vh; background: #FAF9F6; font-family: 'Poppins', sans-serif; color: #020202; padding-top: 120px; padding-bottom: 80px;">
-  <div style="max-width: 1300px; margin: 0 auto; padding: 0 40px;">
-    
-    <header style="margin-bottom: 80px; position: relative;">
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 25px;">
-        <span style="width: 10px; height: 10px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 15px #1e6aff; animation: pulse 2s infinite;"></span>
-        <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.3em; text-transform: uppercase; font-size: 12px;">Cyber-Intelligence Module</span>
+<div class="phishing-page">
+  <div class="phishing-shell">
+    <header class="phishing-header">
+      <div class="phishing-eyebrow">
+        <span class="phishing-eyebrow-dot"></span>
+        <span class="phishing-eyebrow-label">Cyber-Intelligence Module</span>
       </div>
-      <h1 style="font-size: clamp(40px, 8vw, 85px); font-weight: 900; line-height: 0.9; letter-spacing: -0.05em; margin: 0; text-transform: uppercase;">
-        URL <span style="color: #1e6aff; text-shadow: 0 10px 30px rgba(30,106,255,0.2);">SAFEGUARD</span>
+      <h1 class="phishing-title">
+        URL <span class="phishing-title-highlight">SAFEGUARD</span>
       </h1>
-      <p style="color: #64748b; font-size: 18px; font-weight: 500; margin-top: 30px; line-height: 1.6; max-width: 700px; border-left: 3px solid #1e6aff; padding-left: 25px;">
+      <p class="phishing-subtitle">
         യഥാർത്ഥ വെബ്‌സൈറ്റുകളുടെ അപരന്മാരെ തിരിച്ചറിയാൻ സഹായിക്കുന്ന സംവിധാനം. വ്യാജ ലിങ്കുകൾ വഴി നിങ്ങളുടെ ബാങ്ക് വിവരങ്ങളോ പാസ്‌വേഡുകളോ ചോരുന്നത് തടയാൻ ലിങ്ക് പരിശോധിക്കൂ.
       </p>
     </header>
 
-    <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 60px; align-items: start;">
-      
-      <!-- ── LEFT: Mascot / Status Panel ── -->
-      <section style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border-radius: 40px; padding: 60px 40px; text-align: center; border: 1px solid rgba(30,106,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.03);">
-        <div style="position: relative; display: inline-block;">
-          <img src="/assets/images/tech-buddy.png" alt="Mascot" 
-               [style.filter]="loading ? 'hue-rotate(180deg) brightness(1.2) drop-shadow(0 0 20px #1e6aff)' : 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))'"
-               style="width: 100%; max-width: 280px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">
+    <div class="phishing-layout">
+      <section class="phishing-status-panel">
+        <div class="phishing-mascot-wrap">
+          <img
+            src="/assets/images/tech-buddy.png"
+            alt="Mascot"
+            class="phishing-mascot"
+            [class.phishing-mascot-loading]="loading"
+          >
           <div *ngIf="loading" class="scan-ring"></div>
         </div>
-        
-        <div style="margin-top: 50px;">
-          <div style="display: inline-block; padding: 6px 16px; background: #f1f5f9; border-radius: 100px; margin-bottom: 15px;">
-            <span style="font-size: 10px; font-weight: 900; letter-spacing: 0.1em; color: #64748b; text-transform: uppercase;">Engine Status</span>
+
+        <div class="phishing-status-copy">
+          <div class="phishing-status-badge">
+            <span class="phishing-status-badge-label">Engine Status</span>
           </div>
-          <h3 style="font-weight: 900; text-transform: uppercase; font-size: 26px; margin: 0; letter-spacing: -0.02em;">
+          <h3 class="phishing-status-title">
             {{ loading ? 'Analyzing...' : 'Standby' }}
           </h3>
-          <p style="color: #1e6aff; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 10px;">
+          <p class="phishing-status-text">
             {{ scanStatus }}
           </p>
         </div>
 
-        <!-- VT attribution badge — appears after a successful VT-backed scan -->
-        <div *ngIf="result?.vtVerified"
-             style="margin-top: 30px; padding: 16px 20px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 20px;">
-          <p style="margin: 0 0 6px 0; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8;">Powered by</p>
-          <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <span style="font-size: 18px;">🔬</span>
-            <span style="font-size: 14px; font-weight: 900; color: #1e6aff;">VirusTotal</span>
+        <div *ngIf="result?.vtVerified" class="phishing-vt-badge">
+          <p class="phishing-vt-badge-label">Powered by</p>
+          <div class="phishing-vt-badge-brand">
+            <span class="phishing-vt-badge-icon">🔬</span>
+            <span class="phishing-vt-badge-name">VirusTotal</span>
           </div>
-          <p style="margin: 6px 0 0 0; font-size: 11px; color: #94a3b8; font-weight: 500;">
+          <p class="phishing-vt-badge-text">
             {{ result?.vtEngines }} security engines scanned
           </p>
         </div>
       </section>
 
-      <!-- ── RIGHT: Scan Panel ── -->
-      <section style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 40px; padding: 50px; box-shadow: 0 40px 100px rgba(0,0,0,0.04);">
-        
-        <!-- URL input row -->
-        <div style="position: relative; margin-bottom: 45px;">
-          <div style="display: flex; background: #f8fafc; border: 2px solid #f1f5f9; padding: 10px; border-radius: 20px; transition: 0.3s;"
-               [style.border-color]="loading ? '#1e6aff' : '#f1f5f9'">
-            <input type="text" [(ngModel)]="targetUrl" (keyup.enter)="onCheck()" 
-                   placeholder="Enter URL for forensic analysis..." 
-                   style="flex: 1; background: transparent; border: none; padding: 15px 20px; font-size: 16px; font-weight: 600; outline: none; color: #1e293b;">
-            
-            <button class="axis-btn" (click)="onCheck()" [disabled]="loading" 
-                    style="--button-bg: #1e6aff; --hover-bg: #0f172a; --glow-color: #38bdf8; border-radius: 15px !important;">
-              <div class="axis-content" style="padding: 0 30px;">
+      <section class="phishing-scan-panel">
+        <div class="phishing-input-shell">
+          <div class="phishing-input-row" [class.phishing-input-row-loading]="loading">
+            <input
+              type="text"
+              [(ngModel)]="targetUrl"
+              (keyup.enter)="onCheck()"
+              placeholder="Enter URL for forensic analysis..."
+              class="phishing-input"
+            >
+
+            <button class="axis-btn phishing-action-btn phishing-action-btn-primary" (click)="onCheck()" [disabled]="loading">
+              <div class="axis-content phishing-action-content">
                 {{ loading ? 'SCANNING' : 'ANALYZE' }}
               </div>
             </button>
           </div>
         </div>
 
-        <!-- Progress bar -->
-        <div *ngIf="loading" style="margin-bottom: 40px; animation: slideDown 0.4s ease;">
-          <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 15px; color: #1e6aff;">
-            <span style="display: flex; align-items: center; gap: 8px;">
+        <div *ngIf="loading" class="phishing-progress">
+          <div class="phishing-progress-header">
+            <span class="phishing-progress-label">
               <span class="dot-loader"></span> Heuristic Multi-Vector Scan
             </span>
             <span>{{ scanProgress }}%</span>
           </div>
-          <div style="height: 10px; background: #f1f5f9; border-radius: 20px; overflow: hidden;">
-            <div [style.width.%]="scanProgress" style="height: 100%; background: linear-gradient(90deg, #1e6aff, #00e5ff); transition: width 0.3s ease-out;"></div>
+          <div class="phishing-progress-track">
+            <div
+              class="phishing-progress-fill"
+              [class.phishing-progress-25]="scanProgress >= 25"
+              [class.phishing-progress-50]="scanProgress >= 50"
+              [class.phishing-progress-75]="scanProgress >= 75"
+              [class.phishing-progress-100]="scanProgress >= 100"
+            ></div>
           </div>
         </div>
 
-        <!-- ── Result Card ── -->
-        <div *ngIf="result" class="result-card" 
-             [style.border-color]="result.score > 40 ? '#fecaca' : '#bbf7d0'"
-             style="border: 2px solid; border-radius: 30px; padding: 40px; background: #fff; animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-          
-          <!-- Verdict header -->
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+        <div *ngIf="result" class="result-card" [ngClass]="result.score > 40 ? 'result-card-risk' : 'result-card-safe'">
+          <div class="phishing-result-header">
             <div>
-              <div [style.background]="result.isSafe ? '#dcfce7' : '#fee2e2'" 
-                   [style.color]="result.isSafe ? '#15803d' : '#b91c1c'"
-                   style="display: inline-block; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px;">
+              <div class="phishing-verdict-pill" [ngClass]="result.isSafe ? 'phishing-verdict-safe' : 'phishing-verdict-danger'">
                 {{ result.isSafe ? 'Clearance: Safe' : 'Alert: Malicious' }}
               </div>
-              <h2 style="font-weight: 900; font-size: 36px; margin: 0; letter-spacing: -0.03em; line-height: 1;">
+              <h2 class="phishing-result-title">
                 {{ result.isSafe ? 'Secure Domain' : 'Threat Verified' }}
               </h2>
-              <p style="margin-top: 10px; color: #64748b; font-weight: 500; font-size: 15px;">{{ result.details }}</p>
+              <p class="phishing-result-details">{{ result.details }}</p>
             </div>
-            
-            <div style="text-align: center; background: #f8fafc; padding: 20px; border-radius: 25px; min-width: 100px;">
-              <div [style.color]="result.isSafe ? '#10b981' : '#ef4444'" style="font-size: 48px; font-weight: 900; line-height: 1;">
-                {{ result.score }}<span style="font-size: 20px;">%</span>
+
+            <div class="phishing-score-box">
+              <div class="phishing-score-value" [ngClass]="result.isSafe ? 'phishing-score-safe' : 'phishing-score-danger'">
+                {{ result.score }}<span class="phishing-score-unit">%</span>
               </div>
-              <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; color: #94a3b8; margin-top: 5px;">Risk Level</div>
+              <div class="phishing-score-label">Risk Level</div>
             </div>
           </div>
 
-          <!-- ── VirusTotal Intelligence Panel ──────────────────────────────
-               NEW BLOCK: renders only when VT scan completed successfully.
-               When VT is unavailable, nothing changes — result card looks
-               exactly like it did before this feature was added.
-          ──────────────────────────────────────────────────────────────── -->
-          <div *ngIf="result.vtVerified && !result.vtTimedOut"
-               style="margin-bottom: 30px; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden;">
-            
-            <!-- Dark header bar -->
-            <div style="padding: 14px 20px; background: #0f172a; display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 14px;">🔬</span>
-              <span style="font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: #94a3b8;">VirusTotal Intelligence</span>
-              <span *ngIf="result.vtPermalink"
-                    (click)="openVTReport()"
-                    style="margin-left: auto; font-size: 10px; font-weight: 800; color: #1e6aff; cursor: pointer; text-decoration: underline;">
+          <div *ngIf="result.vtVerified && !result.vtTimedOut" class="phishing-vt-panel">
+            <div class="phishing-vt-panel-header">
+              <span class="phishing-vt-panel-icon">🔬</span>
+              <span class="phishing-vt-panel-title">VirusTotal Intelligence</span>
+              <span *ngIf="result.vtPermalink" (click)="openVTReport()" class="phishing-vt-panel-link">
                 Full Report →
               </span>
             </div>
 
-            <!-- Three stat columns: Malicious / Engines / VT Risk % -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); background: #f8fafc;">
-              <div style="padding: 20px; text-align: center; border-right: 1px solid #e2e8f0;">
-                <div style="font-size: 28px; font-weight: 900; color: #ef4444; line-height: 1;">{{ result.vtMalicious }}</div>
-                <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-top: 4px;">Malicious</div>
+            <div class="phishing-vt-stats">
+              <div class="phishing-vt-stat phishing-vt-stat-divider">
+                <div class="phishing-vt-stat-value phishing-vt-stat-danger">{{ result.vtMalicious }}</div>
+                <div class="phishing-vt-stat-label">Malicious</div>
               </div>
-              <div style="padding: 20px; text-align: center; border-right: 1px solid #e2e8f0;">
-                <div style="font-size: 28px; font-weight: 900; color: #10b981; line-height: 1;">{{ result.vtEngines }}</div>
-                <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-top: 4px;">Engines</div>
+              <div class="phishing-vt-stat phishing-vt-stat-divider">
+                <div class="phishing-vt-stat-value phishing-vt-stat-safe">{{ result.vtEngines }}</div>
+                <div class="phishing-vt-stat-label">Engines</div>
               </div>
-              <div style="padding: 20px; text-align: center;">
-                <div style="font-size: 28px; font-weight: 900; line-height: 1;"
-                     [style.color]="(result.vtScore ?? 0) > 0 ? '#ef4444' : '#10b981'">
-                  {{ result.vtScore ?? 0 }}<span style="font-size: 14px;">%</span>
+              <div class="phishing-vt-stat">
+                <div class="phishing-vt-stat-value" [ngClass]="(result.vtScore ?? 0) > 0 ? 'phishing-vt-stat-danger' : 'phishing-vt-stat-safe'">
+                  {{ result.vtScore ?? 0 }}<span class="phishing-vt-stat-unit">%</span>
                 </div>
-                <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-top: 4px;">VT Risk</div>
+                <div class="phishing-vt-stat-label">VT Risk</div>
               </div>
             </div>
 
-            <!-- Flagging engine name chips — only visible when something was flagged -->
-            <div *ngIf="result.vtEngineNames.length > 0"
-                 style="padding: 16px 20px; border-top: 1px solid #e2e8f0; background: #fff;">
-              <p style="margin: 0 0 10px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b;">
-                Flagging Engines
-              </p>
-              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                <span *ngFor="let eng of result.vtEngineNames"
-                      style="background: #fee2e2; color: #b91c1c; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;">
+            <div *ngIf="result.vtEngineNames.length > 0" class="phishing-vt-engines">
+              <p class="phishing-vt-engines-label">Flagging Engines</p>
+              <div class="phishing-vt-engines-list">
+                <span *ngFor="let eng of result.vtEngineNames" class="phishing-vt-engine-chip">
                   {{ eng }}
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- VT timeout fallback notice -->
-          <div *ngIf="result.vtTimedOut"
-               style="margin-bottom: 25px; padding: 14px 20px; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 14px; display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 20px;">⏱</span>
+          <div *ngIf="result.vtTimedOut" class="phishing-vt-timeout">
+            <span class="phishing-vt-timeout-icon">⏱</span>
             <div>
-              <p style="margin: 0; font-size: 12px; font-weight: 800; color: #92400e; text-transform: uppercase;">VirusTotal Scan Still Processing</p>
-              <p style="margin: 4px 0 0 0; font-size: 13px; color: #78350f; font-weight: 500;">
+              <p class="phishing-vt-timeout-title">VirusTotal Scan Still Processing</p>
+              <p class="phishing-vt-timeout-copy">
                 Result is heuristic-only.
-                <a *ngIf="result.vtPermalink" [href]="result.vtPermalink"
-                   target="_blank" rel="noopener noreferrer"
-                   style="color: #1e6aff; font-weight: 700; text-decoration: underline;">
+                <a
+                  *ngIf="result.vtPermalink"
+                  [href]="result.vtPermalink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="phishing-vt-timeout-link"
+                >
                   Check on VirusTotal →
                 </a>
               </p>
             </div>
           </div>
-          <!-- ── End VirusTotal Panel ── -->
 
-          <!-- Forensic Data Points (heuristic reasons — unchanged) -->
-          <div style="margin-bottom: 40px;">
-            <h4 style="font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-              <span style="color: #1e6aff;">◆</span> Forensic Data Points
+          <div class="phishing-reasons">
+            <h4 class="phishing-reasons-title">
+              <span class="phishing-reasons-icon">◆</span> Forensic Data Points
             </h4>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-              <div *ngFor="let reason of result.reasons" 
-                   style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569;">
+            <div class="phishing-reasons-list">
+              <div *ngFor="let reason of result.reasons" class="phishing-reason-chip">
                 {{ reason }}
               </div>
             </div>
           </div>
 
-          <!-- Action buttons (unchanged) -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-            <button class="axis-btn" (click)="generateForensicReport()" style="--button-bg: #0f172a; --hover-bg: #1e293b; --glow-color: #94a3b8; width: 100%;">
+          <div class="phishing-actions">
+            <button class="axis-btn phishing-action-btn phishing-action-btn-dark" (click)="generateForensicReport()">
               <div class="axis-content">GENERATE PDF</div>
             </button>
 
-            <button class="axis-btn" (click)="reportUrl('phishing')" style="--button-bg: #450a0a; --hover-bg: #7f1d1d; --glow-color: #ef4444; width: 100%;">
-              <div class="axis-content" style="color: #fca5a5;">FLAG THREAT</div>
+            <button class="axis-btn phishing-action-btn phishing-action-btn-danger" (click)="reportUrl('phishing')">
+              <div class="axis-content phishing-action-content-danger">FLAG THREAT</div>
             </button>
 
-            <button class="axis-btn" (click)="reportUrl('safe')" style="--button-bg: #064e3b; --hover-bg: #065f46; --glow-color: #10b981; width: 100%;">
-              <div class="axis-content" style="color: #6ee7b7;">VOUCH SAFE</div>
+            <button class="axis-btn phishing-action-btn phishing-action-btn-success" (click)="reportUrl('safe')">
+              <div class="axis-content phishing-action-content-success">VOUCH SAFE</div>
             </button>
           </div>
         </div>
       </section>
     </div>
 
-    <!-- ── Educational section (completely unchanged) ── -->
-    <section style="margin-top: 120px; border-top: 1px solid #e2e8f0; padding-top: 100px;">
-      <div style="text-align: center; max-width: 800px; margin: 0 auto 70px;">
-        <h2 style="font-size: 48px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 20px;">
-          Anatomy of a <span style="color: #1e6aff;">Cyber Attack</span>
+    <section class="phishing-education">
+      <div class="phishing-education-header">
+        <h2 class="phishing-education-title">
+          Anatomy of a <span class="phishing-education-title-highlight">Cyber Attack</span>
         </h2>
-        <p style="color: #64748b; font-size: 18px; font-weight: 500;">SafeTech identifies patterns that the human eye often misses.</p>
+        <p class="phishing-education-copy">SafeTech identifies patterns that the human eye often misses.</p>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+      <div class="phishing-education-grid">
         <div class="info-card">
-          <div class="info-icon">🔍</div>
-          <h3 class="info-title">Homograph Attacks</h3>
-          <p class="info-text">Using look-alike characters (like replacing 'o' with '0') to mimic bank portals. Our Punycode detector isolates these instantly.</p>
+          <div class="phishing-info-icon">🔍</div>
+          <h3 class="phishing-info-title">Homograph Attacks</h3>
+          <p class="phishing-info-text">Using look-alike characters (like replacing 'o' with '0') to mimic bank portals. Our Punycode detector isolates these instantly.</p>
         </div>
         <div class="info-card">
-          <div class="info-icon">🏗️</div>
-          <h3 class="info-title">Subdomain Tunneling</h3>
-          <p class="info-text">Hiding malicious intent deep within nested subdomains (e.g., login.bank.com.secure-update.tk) to bypass simple filters.</p>
+          <div class="phishing-info-icon">🏗️</div>
+          <h3 class="phishing-info-title">Subdomain Tunneling</h3>
+          <p class="phishing-info-text">Hiding malicious intent deep within nested subdomains (e.g., login.bank.com.secure-update.tk) to bypass simple filters.</p>
         </div>
         <div class="info-card">
-          <div class="info-icon">⚡</div>
-          <h3 class="info-title">DGA Detection</h3>
-          <p class="info-text">Identifying Domain Generation Algorithms that create random-looking URLs to communicate with malware servers.</p>
+          <div class="phishing-info-icon">⚡</div>
+          <h3 class="phishing-info-title">DGA Detection</h3>
+          <p class="phishing-info-text">Identifying Domain Generation Algorithms that create random-looking URLs to communicate with malware servers.</p>
         </div>
       </div>
     </section>
-
   </div>
 </div>
-
-<style>
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.2); }
-  }
-  
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes zoomIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .dot-loader {
-    width: 8px;
-    height: 8px;
-    background: #1e6aff;
-    border-radius: 50%;
-    display: inline-block;
-    animation: pulse 1s infinite;
-  }
-
-  .info-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    padding: 50px 40px;
-    border-radius: 35px;
-    transition: all 0.4s ease;
-  }
-
-  .info-card:hover {
-    transform: translateY(-10px);
-    border-color: #1e6aff;
-    box-shadow: 0 20px 40px rgba(30,106,255,0.05);
-  }
-
-  .info-icon { font-size: 40px; margin-bottom: 25px; }
-  .info-title { font-weight: 900; font-size: 20px; margin-bottom: 15px; text-transform: uppercase; color: #0f172a; }
-  .info-text { color: #64748b; font-size: 15px; line-height: 1.7; font-weight: 500; margin: 0; }
-
-  .scan-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 110%;
-    height: 110%;
-    border: 2px solid #1e6aff;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    to { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-</style>

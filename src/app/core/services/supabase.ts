@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
 
+// ─── INTERFACES ────────────────────────────────────────────────────────────
+
 export interface UserReport {
   report_type: string;
   content: string;
@@ -93,49 +95,68 @@ export class SupabaseService {
     if (!this.supabase) {
       throw new Error('Supabase client unavailable');
     }
-
     return this.supabase;
   }
 
-  /* --- 1. PHISHING TOOLS (UPDATED FOR ZERO-TRUST) --- */
+  // ─── 1. PHISHING TOOLS (UPDATED) ──────────────────────────────────────────
+
   async checkPhishingUrl(url: string): Promise<{ isSafe: boolean; details: string } | null> {
-    // We strictly check for entries where the URL was already flagged as unsafe.
-    // .maybeSingle() is critical here to avoid the 406 error when a URL is clean/new.
-    const { data, error } = await this.supabase
-      ? await this.client
+    if (!this.supabase) return null;
+    const { data, error } = await this.client
       .from('phishing_logs')
       .select('is_safe, threat_details')
       .eq('scanned_url', url)
       .eq('is_safe', false)
       .limit(1)
-      .maybeSingle()
-      : { data: null, error: new Error('Supabase client unavailable') as any };
+      .maybeSingle();
 
     if (error || !data) return null; 
     return { isSafe: data.is_safe, details: data.threat_details || 'Flagged by community report' };
   }
 
   async logPhishingAudit(url: string, score: number, details: string, markers: string[], isSafe: boolean) {
-    // This logs the RAW results from your component (including VirusTotal detections)
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
 
     return await this.client.from('phishing_logs').insert([{
       scanned_url: url,
       risk_score: score,
       threat_details: details,
-      forensic_markers: markers, // This stores the raw detection count (e.g., "1/70 engines")
+      forensic_markers: markers,
       is_safe: isSafe
     }]);
   }
 
-  /* --- 2. CITIZEN REPORTING (NOT TOUCHED) --- */
-  async submitReport(report: UserReport) {
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
+  /**
+   * ADMIN ONLY: Finalizes a user's Flag/Vouch request.
+   * Updates report status and upserts the permanent URL database.
+   */
+  async resolvePhishingReport(reportId: string | number, url: string, isAdminVerifiedSafe: boolean, adminNotes: string) {
+    if (!this.supabase) return { error: new Error('Supabase unavailable') };
 
+    // 1. Mark report as resolved
+    const reportUpdate = await this.client
+      .from('citizen_reports')
+      .update({ status: 'resolved' })
+      .eq('id', reportId);
+
+    if (reportUpdate.error) return reportUpdate;
+
+    // 2. Overwrite/Update live DB score based on Admin Authority
+    return await this.client
+      .from('phishing_logs')
+      .upsert([{
+        scanned_url: url,
+        risk_score: isAdminVerifiedSafe ? 0 : 100,
+        threat_details: isAdminVerifiedSafe ? `Vouched Safe by Admin: ${adminNotes}` : `Flagged Malicious by Admin: ${adminNotes}`,
+        forensic_markers: ['Admin Reviewed', isAdminVerifiedSafe ? 'Verified Safe' : 'Verified Threat'],
+        is_safe: isAdminVerifiedSafe
+      }], { onConflict: 'scanned_url' });
+  }
+
+  // ─── 2. CITIZEN REPORTING ────────────────────────────────────────────────
+
+  async submitReport(report: UserReport) {
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client.from('citizen_reports').insert([{
       report_type: report.report_type,
       evidence_payload: report.content,
@@ -145,10 +166,7 @@ export class SupabaseService {
   }
 
   async getReportStatus(refId: string) {
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
-
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client
       .from('citizen_reports')
       .select('status, created_at')
@@ -156,24 +174,20 @@ export class SupabaseService {
       .maybeSingle();
   }
 
-  /* --- 3. SCAMS (NOT TOUCHED) --- */
-  async getScams() {
-    if (!this.supabase) {
-      return { data: [], error: new Error('Supabase client unavailable') };
-    }
+  // ─── 3. SCAMS ─────────────────────────────────────────────────────────────
 
+  async getScams() {
+    if (!this.supabase) return { data: [], error: new Error('Supabase client unavailable') };
     return await this.client
       .from('scams')
       .select('*')
       .order('created_at', { ascending: false });
   }
 
-  /* --- 4. ADMIN & CHAT LOGS (NOT TOUCHED) --- */
-  async saveChatLog(userMsg: string, botRes: string) {
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
+  // ─── 4. ADMIN & CHAT LOGS ─────────────────────────────────────────────────
 
+  async saveChatLog(userMsg: string, botRes: string) {
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client.from('chatbot_logs').insert([{
       user_message: userMsg,
       bot_response: botRes
@@ -181,184 +195,72 @@ export class SupabaseService {
   }
 
   async getChatLogs() {
-    if (!this.supabase) {
-      return { data: [], error: new Error('Supabase client unavailable') };
-    }
-
+    if (!this.supabase) return { data: [], error: new Error('Supabase client unavailable') };
     return await this.client
       .from('chatbot_logs')
       .select('*')
       .order('created_at', { ascending: false });
   }
 
+  // ─── 5. ADMIN DASHBOARD & TRAINING TOOLS ──────────────────────────────────
+
   async getAdminDashboardPrimaryData() {
     const [reports, bookings, trainers] = await Promise.all([
-      this.client
-        .from('citizen_reports')
-        .select('id, reference_id, report_type, evidence_payload, status, created_at')
-        .order('created_at', { ascending: false })
-        .limit(100),
-      this.client
-        .from('bookings')
-        .select('id, org_type, address, event_date, event_time, mode, phone, email, status, admin_message, created_at')
-        .order('created_at', { ascending: false })
-        .limit(50),
-      this.client
-        .from('trainers')
-        .select('id, name, age, location, education, phone, status, admin_message, created_at')
-        .order('created_at', { ascending: false })
-        .limit(50)
+      this.client.from('citizen_reports').select('id, reference_id, report_type, evidence_payload, status, created_at').order('created_at', { ascending: false }).limit(100),
+      this.client.from('bookings').select('id, org_type, address, event_date, event_time, mode, phone, email, status, admin_message, created_at').order('created_at', { ascending: false }).limit(50),
+      this.client.from('trainers').select('id, name, age, location, education, phone, status, admin_message, created_at').order('created_at', { ascending: false }).limit(50)
     ]);
-
-    return {
-      reports: reports.data || [],
-      bookings: bookings.data || [],
-      trainers: trainers.data || []
-    };
+    return { reports: reports.data || [], bookings: bookings.data || [], trainers: trainers.data || [] };
   }
 
   async getAdminDashboardSecondaryData() {
-    if (!this.supabase) {
-      return {
-        chatLogs: [],
-        trainingMessages: [],
-        trainingResources: []
-      };
-    }
-
+    if (!this.supabase) return { chatLogs: [], trainingMessages: [], trainingResources: [] };
     const [chats, trainingMessages, trainingResources] = await Promise.all([
-      this.client
-        .from('chatbot_logs')
-        .select('id, user_message, bot_response, created_at')
-        .order('created_at', { ascending: false })
-        .limit(50),
-      this.client
-        .from('training_messages')
-        .select('id, audience, subject, message, target_table, target_id, created_at')
-        .order('created_at', { ascending: false })
-        .limit(20),
-      this.client
-        .from('training_resources')
-        .select('id, title, description, resource_type, file_name, file_url, created_at')
-        .order('created_at', { ascending: false })
-        .limit(20)
+      this.client.from('chatbot_logs').select('id, user_message, bot_response, created_at').order('created_at', { ascending: false }).limit(50),
+      this.client.from('training_messages').select('id, audience, subject, message, target_table, target_id, created_at').order('created_at', { ascending: false }).limit(20),
+      this.client.from('training_resources').select('id, title, description, resource_type, file_name, file_url, created_at').order('created_at', { ascending: false }).limit(20)
     ]);
-
-    return {
-      chatLogs: chats.data || [],
-      trainingMessages: trainingMessages.data || [],
-      trainingResources: trainingResources.data || []
-    };
+    return { chatLogs: chats.data || [], trainingMessages: trainingMessages.data || [], trainingResources: trainingResources.data || [] };
   }
 
   async getAdminDashboardData() {
-    const [primary, secondary] = await Promise.all([
-      this.getAdminDashboardPrimaryData(),
-      this.getAdminDashboardSecondaryData()
-    ]);
-
-    return {
-      reports: primary.reports,
-      phishingLogs: [],
-      chatLogs: secondary.chatLogs,
-      bookings: primary.bookings,
-      trainers: primary.trainers,
-      trainingMessages: secondary.trainingMessages,
-      trainingResources: secondary.trainingResources
-    };
+    const [primary, secondary] = await Promise.all([this.getAdminDashboardPrimaryData(), this.getAdminDashboardSecondaryData()]);
+    return { reports: primary.reports, phishingLogs: [], chatLogs: secondary.chatLogs, bookings: primary.bookings, trainers: primary.trainers, trainingMessages: secondary.trainingMessages, trainingResources: secondary.trainingResources };
   }
 
   async getReports(sortField: keyof AdminReport = 'created_at', ascending = false, status?: string) {
-    if (!this.supabase) {
-      return { data: [], error: new Error('Supabase client unavailable') };
-    }
-
-    let query = this.client
-      .from('citizen_reports')
-      .select('*')
-      .order(sortField as string, { ascending });
-
-    if (status && status !== 'all') {
-      query = query.eq('status', status);
-    }
-
+    if (!this.supabase) return { data: [], error: new Error('Supabase client unavailable') };
+    let query = this.client.from('citizen_reports').select('*').order(sortField as string, { ascending });
+    if (status && status !== 'all') query = query.eq('status', status);
     return await query;
   }
 
   async updateReportStatus(reportId: string | number | undefined, referenceId: string | undefined, status: string) {
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
-
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     const query = this.client.from('citizen_reports').update({ status });
-
-    if (reportId !== undefined && reportId !== null) {
-      return await query.eq('id', reportId).select().single();
-    }
-
+    if (reportId !== undefined && reportId !== null) return await query.eq('id', reportId).select().single();
     return await query.eq('reference_id', referenceId).select().single();
   }
 
   async updateTrainingStatus(table: 'bookings' | 'trainers', rowId: string | number, status: string, adminMessage?: string) {
     const payload: { status: string; admin_message?: string } = { status };
-    if (adminMessage !== undefined) {
-      payload.admin_message = adminMessage;
-    }
-
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
-
-    return await this.client
-      .from(table)
-      .update(payload)
-      .eq('id', rowId)
-      .select()
-      .single();
+    if (adminMessage !== undefined) payload.admin_message = adminMessage;
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
+    return await this.client.from(table).update(payload).eq('id', rowId).select().single();
   }
 
   async createTrainingMessage(message: TrainingMessage) {
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
-
-    return await this.client
-      .from('training_messages')
-      .insert([message])
-      .select()
-      .single();
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
+    return await this.client.from('training_messages').insert([message]).select().single();
   }
 
   async uploadTrainingResource(file: File, resource: Pick<TrainingResource, 'title' | 'description' | 'resource_type'>) {
-    const fileExt = file.name.includes('.') ? file.name.split('.').pop() : 'bin';
+    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
     const filePath = `${resource.resource_type}/${Date.now()}-${safeName}`;
-
-    if (!this.supabase) {
-      return { data: null, error: new Error('Supabase client unavailable') };
-    }
-
-    const uploadResult = await this.client.storage
-      .from('training-assets')
-      .upload(filePath, file, { upsert: false });
-
-    if (uploadResult.error) {
-      return { data: null, error: uploadResult.error };
-    }
-
-    const { data: publicUrlData } = this.client.storage
-      .from('training-assets')
-      .getPublicUrl(filePath);
-
-    return await this.client
-      .from('training_resources')
-      .insert([{
-        ...resource,
-        file_name: safeName,
-        file_ext: fileExt,
-        file_url: publicUrlData.publicUrl
-      }])
-      .select()
-      .single();
+    const uploadResult = await this.client.storage.from('training-assets').upload(filePath, file, { upsert: false });
+    if (uploadResult.error) return { data: null, error: uploadResult.error };
+    const { data: publicUrlData } = this.client.storage.from('training-assets').getPublicUrl(filePath);
+    return await this.client.from('training_resources').insert([{ ...resource, file_name: safeName, file_url: publicUrlData.publicUrl }]).select().single();
   }
 }

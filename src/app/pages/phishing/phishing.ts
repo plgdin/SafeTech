@@ -5,7 +5,6 @@ import { SupabaseService, UserReport } from '../../core/services/supabase';
 import { showToast } from '../../core/utils/toast';
 import { environment } from '../../../environments/environment';
 
-// ─── VirusTotal proxy response shape ────────────────────────────────────────
 export interface VTResponse {
   isSafe: boolean | null;
   vtScore: number | null;
@@ -20,7 +19,6 @@ export interface VTResponse {
   engines: Array<{ name: string; result: string; category: string }>;
 }
 
-// ─── Unified scan result (heuristic + VT merged) ────────────────────────────
 export interface ScanResult {
   isSafe: boolean;
   details: string;
@@ -58,7 +56,6 @@ export class PhishingComponent {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
   }
 
-  // ─── HEURISTIC ENGINE (FIXED FOR SUBDOMAINS & PROTOCOLS) ──────────────────
   private analyzeUrlDynamically(url: string): { score: number; reasons: string[]; isVerified: boolean } {
     let score = 0;
     const reasons: string[] = [];
@@ -70,7 +67,6 @@ export class PhishingComponent {
       const urlObj = new URL(normalizedUrl);
       const hostname = urlObj.hostname;
 
-      // 1. Domain Normalization Check (The "www" fix)
       const officialDomains = [
         'google.com', 'google.co.in', 'youtube.com', 'facebook.com', 
         'apple.com', 'microsoft.com', 'amazon.in', 'amazon.com',
@@ -79,12 +75,8 @@ export class PhishingComponent {
       ];
 
       isVerified = officialDomains.some(d => hostname === d || hostname.endsWith('.' + d));
+      if (isVerified) return { score: 0, reasons: ['Verified Official Domain Authority.'], isVerified: true };
 
-      if (isVerified) {
-        return { score: 0, reasons: ['Verified Official Domain Authority.'], isVerified: true };
-      }
-
-      // 2. Brand Spoofing (Aggressive)
       const brands = ['google', 'youtube', 'sbi', 'paypal', 'amazon', 'facebook', 'netflix'];
       brands.forEach(brand => {
         if (hostname.includes(brand) && !isVerified) {
@@ -93,31 +85,23 @@ export class PhishingComponent {
         }
       });
 
-      // 3. Risky TLDs
       const riskyTLDs = ['.xyz', '.top', '.zip', '.icu', '.site', '.biz', '.tk', '.ga'];
       if (riskyTLDs.some(tld => hostname.endsWith(tld))) {
         score += 35;
         reasons.push('High-Risk TLD detected.');
       }
 
-      // 4. Insecure Protocol Check
       if (urlObj.protocol === 'http:') {
         score += 25;
         reasons.push('Insecure Protocol: No SSL/TLS (HTTP).');
       }
-
     } catch {
       return { score: 95, reasons: ['Malformed URL structure.'], isVerified: false };
     }
 
-    return { 
-      score: Math.min(score, 100), 
-      reasons: reasons.length > 0 ? reasons : ['Unverified source.'],
-      isVerified 
-    };
+    return { score: Math.min(score, 100), reasons, isVerified };
   }
 
-  // ─── SECURE PROXY CALL ───
   private async callVTProxy(url: string): Promise<VTResponse | null> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -140,7 +124,6 @@ export class PhishingComponent {
     }
   }
 
-  // ─── MAIN ORCHESTRATOR ───
   async onCheck() {
     const input = this.targetUrl.trim();
     if (!input || this.loading) return;
@@ -157,7 +140,7 @@ export class PhishingComponent {
 
     const heuristic = this.analyzeUrlDynamically(input);
 
-    const steps = ['DNS Validation...', 'Brand Audit...', 'Structural Analysis...', 'Threat Intelligence Sync...'];
+    const steps = ['DNS Validation...', 'Brand Audit...', 'Structural Analysis...', 'Intelligence Sync...'];
     for (let i = 0; i < steps.length; i++) {
       this.scanStatus = steps[i];
       this.scanProgress = (i + 1) * 25;
@@ -168,7 +151,6 @@ export class PhishingComponent {
     this.finalizeScan(input, heuristic, dbCheck, vtResponse);
   }
 
-  // ─── CONTEXT-AWARE MERGE LOGIC ───
   private finalizeScan(
     input: string, 
     heuristic: { score: number; reasons: string[]; isVerified: boolean }, 
@@ -181,29 +163,21 @@ export class PhishingComponent {
     let isSafe = true;
     let vtScore = 0;
 
-    // 1. Database Match (Highest Priority)
     if (dbCheck && !dbCheck.isSafe) {
       isSafe = false;
       vtScore = 100;
-    } 
-    // 2. Consensus Scoring (Stop 1-engine false positives on verified sites)
-    else if (maliciousCount > 0) {
+    } else if (maliciousCount > 0) {
       if (heuristic.isVerified && maliciousCount === 1) {
-        // Safe: Verified authority with only 1 engine flagging (False Positive)
         isSafe = true;
         vtScore = 15; 
       } else if (!heuristic.isVerified && maliciousCount === 1) {
-        // Suspicious: Unknown domain with 1 engine flagging
         isSafe = true; 
         vtScore = 40;
       } else {
-        // Malicious: Multiple engines flagging
         isSafe = false;
         vtScore = Math.min(100, 60 + (maliciousCount * 5));
       }
-    } 
-    // 3. Heuristic Overrides
-    else if (heuristic.score >= 60) {
+    } else if (heuristic.score >= 60) {
       isSafe = false;
     }
 
@@ -211,10 +185,7 @@ export class PhishingComponent {
       isSafe,
       details: isSafe ? (vtScore > 30 ? 'SUSPICIOUS (Low Risk)' : 'Verified Safe') : 'MALICIOUS VERDICT',
       score: Math.min(100, Math.max(heuristic.score, vtScore)),
-      reasons: [
-        ...heuristic.reasons,
-        `Vendor Detections: ${maliciousCount}/${totalEngines} engines flagged this URL.`
-      ],
+      reasons: [...heuristic.reasons, `Vendor Detections: ${maliciousCount}/${totalEngines} engines flagged this URL.`],
       vtVerified: !!vt,
       vtScore: vtScore,
       vtMalicious: maliciousCount,
@@ -232,32 +203,36 @@ export class PhishingComponent {
     this.cdr.detectChanges();
   }
 
-  // ─── UI ACTIONS ───
   openVTReport() {
-    if (this.result?.vtPermalink) {
-      window.open(this.result.vtPermalink, '_blank', 'noopener,noreferrer');
-    } else {
-      showToast('Report link unavailable.');
-    }
+    if (this.result?.vtPermalink) window.open(this.result.vtPermalink, '_blank', 'noopener,noreferrer');
+    else showToast('Report link unavailable.');
   }
 
-  generateForensicReport() {
-    if (!this.result) return;
-    this.scanStatus = 'Generating Forensic Audit...';
-    const auditID = `SF-${Math.floor(100000 + Math.random() * 900000)}`;
-    showToast(`Audit ${auditID} logged.`);
-  }
-
+  // --- VOUCH & FLAG BACKEND INTEGRATION ---
   async reportUrl(type: 'phishing' | 'safe') {
-    if (!this.targetUrl || !this.result) return;
-    const refId = `PH-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
+    if (!this.targetUrl || !this.result) {
+      showToast('No active scan to report.');
+      return;
+    }
+
+    const refId = `REV-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
     const report: UserReport = {
-      report_type: type === 'phishing' ? 'Phishing URL' : 'False Positive',
-      content: `URL: ${this.targetUrl} | Risk: ${this.result.score}%`,
+      report_type: type === 'phishing' ? 'USER_FLAG_MALICIOUS' : 'USER_VOUCH_SAFE',
+      content: JSON.stringify({
+        url: this.targetUrl,
+        risk_score: this.result.score,
+        detections: `${this.result.vtMalicious}/${this.result.vtEngines}`,
+        markers: this.result.reasons
+      }),
       status: 'pending',
       reference_id: refId,
     };
-    await this.supabaseService.submitReport(report);
-    showToast('Threat intelligence synced.');
+
+    const { error } = await this.supabaseService.submitReport(report);
+    if (!error) {
+      showToast(`Request ${refId} submitted for Admin approval.`);
+    } else {
+      showToast('Submission failed. Try again later.');
+    }
   }
 }

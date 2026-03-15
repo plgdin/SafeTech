@@ -369,6 +369,16 @@ input[type="radio"] {
   .custom-toast { min-width: 0; width: 100%; font-size: 13px; }
 }
 
+.module-card {
+  background-color: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 30px;
+  padding: 40px;
+  transition: 0.3s;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+}
+
 .module-card:hover {
   border-color: #1e6aff !important;
   transform: translateY(-8px);

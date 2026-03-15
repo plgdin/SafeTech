@@ -29,6 +29,7 @@ export class AdminComponent implements OnInit {
   isSecondaryLoading = true;
   feedbackMessage = '';
   feedbackTone: 'success' | 'error' | 'info' = 'info';
+  pendingReportUpdates: Record<string, boolean> = {};
 
   dashboardData: {
     reports: AdminReport[];
@@ -190,17 +191,30 @@ export class AdminComponent implements OnInit {
   }
 
   async updateReportStatus(report: AdminReport, selectedStatus?: string) {
-    const nextStatus = selectedStatus ?? this.reportStatusDrafts[this.getRowKey(report)];
-    const { error } = await this.supabase.updateReportStatus(report.id, report.reference_id, nextStatus);
+    const key = this.getRowKey(report);
+    const nextStatus = selectedStatus ?? this.reportStatusDrafts[key];
 
-    if (error) {
-      console.error(error);
-      this.setFeedback('Unable to update report status.', 'error');
+    if (!nextStatus || nextStatus === report.status) {
+      this.setFeedback(`Report ${report.reference_id || report.id} is already ${report.status}.`, 'info');
       return;
     }
 
+    const previousStatus = report.status;
+    this.pendingReportUpdates[key] = true;
     report.status = nextStatus;
+    this.reportStatusDrafts[key] = nextStatus;
     this.setFeedback(`Report ${report.reference_id || report.id} updated to ${nextStatus}.`, 'success');
+
+    const { error } = await this.supabase.updateReportStatus(report.id, report.reference_id, nextStatus);
+    this.pendingReportUpdates[key] = false;
+
+    if (error) {
+      console.error(error);
+      report.status = previousStatus;
+      this.reportStatusDrafts[key] = previousStatus;
+      this.setFeedback('Unable to update report status.', 'error');
+      return;
+    }
   }
 
   setReportStatusDraft(report: AdminReport, status: string) {
@@ -350,6 +364,10 @@ export class AdminComponent implements OnInit {
 
   statusClass(status: string | undefined) {
     return `status-${(status || 'pending').toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  }
+
+  isReportPending(report: AdminReport) {
+    return !!this.pendingReportUpdates[this.getRowKey(report)];
   }
 
   private setFeedback(message: string, tone: 'success' | 'error' | 'info') {

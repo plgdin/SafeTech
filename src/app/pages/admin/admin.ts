@@ -62,6 +62,7 @@ export class AdminComponent implements OnInit {
   trainerStatusDrafts: Record<string, string> = {};
   bookingMessageDrafts: Record<string, string> = {};
   trainerMessageDrafts: Record<string, string> = {};
+  pendingTrainingUpdates: Record<string, boolean> = {};
 
   messageForm = {
     audience: 'all-bookings',
@@ -255,17 +256,38 @@ export class AdminComponent implements OnInit {
       return;
     }
 
+    const pendingKey = `${type}-${key}`;
+    const previousStatus = row.status;
+    const previousMessage = row.admin_message;
+    this.pendingTrainingUpdates[pendingKey] = true;
+    row.status = nextStatus;
+    row.admin_message = adminMessage;
+    if (type === 'booking') {
+      this.bookingStatusDrafts[key] = nextStatus;
+      this.bookingMessageDrafts[key] = adminMessage || '';
+    } else {
+      this.trainerStatusDrafts[key] = nextStatus;
+      this.trainerMessageDrafts[key] = adminMessage || '';
+    }
+    this.setFeedback(`${type === 'booking' ? 'Training booking' : 'Trainer application'} updated.`, 'success');
+
     const { error } = await this.supabase.updateTrainingStatus(table, row.id, nextStatus, adminMessage);
+    this.pendingTrainingUpdates[pendingKey] = false;
 
     if (error) {
       console.error(error);
+      row.status = previousStatus;
+      row.admin_message = previousMessage;
+      if (type === 'booking') {
+        this.bookingStatusDrafts[key] = previousStatus || 'pending';
+        this.bookingMessageDrafts[key] = previousMessage || '';
+      } else {
+        this.trainerStatusDrafts[key] = previousStatus || 'pending';
+        this.trainerMessageDrafts[key] = previousMessage || '';
+      }
       this.setFeedback(`Unable to update ${type} entry.`, 'error');
       return;
     }
-
-    row.status = nextStatus;
-    row.admin_message = adminMessage;
-    this.setFeedback(`${type === 'booking' ? 'Training booking' : 'Trainer application'} updated.`, 'success');
   }
 
   async sendTrainingMessage() {

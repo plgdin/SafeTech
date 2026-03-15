@@ -120,6 +120,90 @@
   border-radius: 30px;
 }
 
+.resource-card {
+  background-color: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 40px;
+  padding: 50px;
+  transition: 0.3s;
+}
+
+.resource-card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 35px;
+}
+
+.resource-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 20px;
+}
+
+.resource-list-item {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.resource-list-divider {
+  border-bottom: 1px solid #f4f4f4;
+  padding-bottom: 15px;
+}
+
+.resource-emergency-list {
+  display: grid;
+  gap: 30px;
+}
+
+.resource-emergency-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resource-emergency-divider {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+}
+
+.resource-ai-btn {
+  width: 100%;
+  margin-top: 40px;
+  background: #1e6aff;
+  color: white;
+  border: none;
+  padding: 20px;
+  border-radius: 15px;
+  font-weight: 900;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.resources-dos-heading {
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.resources-dos-heading-do {
+  color: #10b981;
+}
+
+.resources-dos-heading-dont {
+  color: #ef4444;
+}
+
+.resources-dos-text {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .resource-card-hover:hover {
   border-color: #1e6aff !important;
   transform: translateY(-5px);

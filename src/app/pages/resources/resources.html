@@ -17,22 +17,22 @@
 
     <div class="resources-grid">
       
-      <section class="resource-card-hover" style="background-color: #ffffff; border: 1px solid #ebebeb; border-radius: 40px; padding: 50px; transition: 0.3s;">
-        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 35px;">
+      <section class="resource-card-hover resource-card">
+        <div class="resource-card-header">
           <div style="width: 44px; height: 44px; background: #f4f4f4; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🛡️</div>
           <h2 style="font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em;">Security Tips</h2>
         </div>
         
-        <ul style="list-style: none; padding: 0; display: grid; gap: 20px;">
-          <li style="display: flex; gap: 15px; align-items: flex-start; border-bottom: 1px solid #f4f4f4; padding-bottom: 15px;">
+        <ul class="resource-list">
+          <li class="resource-list-item resource-list-divider">
             <span style="color: #1e6aff; font-weight: 900;">01</span>
             <span style="font-weight: 600; color: #020202; font-size: 15px;">Enable Two-Factor Authentication (2FA) for all critical accounts.</span>
           </li>
-          <li style="display: flex; gap: 15px; align-items: flex-start; border-bottom: 1px solid #f4f4f4; padding-bottom: 15px;">
+          <li class="resource-list-item resource-list-divider">
             <span style="color: #1e6aff; font-weight: 900;">02</span>
             <span style="font-weight: 600; color: #020202; font-size: 15px;">Never share your OTP or passwords with anyone, including bank staff.</span>
           </li>
-          <li style="display: flex; gap: 15px; align-items: flex-start;">
+          <li class="resource-list-item">
             <span style="color: #1e6aff; font-weight: 900;">03</span>
             <span style="font-weight: 600; color: #020202; font-size: 15px;">Use unique, high-entropy passwords for every digital platform.</span>
           </li>
@@ -41,13 +41,13 @@
 
       <section class="resources-emergency">
         <div class="resources-emergency-content">
-          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 35px;">
+          <div class="resource-card-header">
             <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">📞</div>
             <h2 style="font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em;">Emergency</h2>
           </div>
 
-          <div style="display: grid; gap: 30px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
+          <div class="resource-emergency-list">
+            <div class="resource-emergency-item resource-emergency-divider">
               <div>
                 <div style="font-weight: 800; font-size: 16px;">National Cyber Crime</div>
                 <div style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; margin-top: 4px;">Official Portal Helpdesk</div>
@@ -55,7 +55,7 @@
               <div style="font-size: 42px; font-weight: 900; color: #1e6aff; letter-spacing: -2px;">1930</div>
             </div>
             
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="resource-emergency-item">
               <div>
                 <div style="font-weight: 800; font-size: 16px;">Police Emergency</div>
                 <div style="font-size: 11px; font-weight: 700; color: #666; text-transform: uppercase; margin-top: 4px;">Universal Support</div>
@@ -64,7 +64,7 @@
             </div>
           </div>
 
-          <button routerLink="/tech-buddy" class="resource-ai-btn" style="width: 100%; margin-top: 40px; background: #1e6aff; color: white; border: none; padding: 20px; border-radius: 15px; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: 0.3s;">
+          <button routerLink="/tech-buddy" class="resource-ai-btn">
             Contact via AI Buddy →
           </button>
         </div>
@@ -77,12 +77,12 @@
       <h2 class="resources-dos-title">Do's and Dont's</h2>
       <div class="resources-dos-grid">
         <div class="resources-dos-card">
-          <h3 style="color: #10b981; font-weight: 900; margin-bottom: 20px;">DO:</h3>
-          <p style="color: #666; font-size: 14px; line-height: 1.6;">Regularly update your software and use antivirus protection on all devices.</p>
+          <h3 class="resources-dos-heading resources-dos-heading-do">DO:</h3>
+          <p class="resources-dos-text">Regularly update your software and use antivirus protection on all devices.</p>
         </div>
         <div class="resources-dos-card">
-          <h3 style="color: #ef4444; font-weight: 900; margin-bottom: 20px;">DON'T:</h3>
-          <p style="color: #666; font-size: 14px; line-height: 1.6;">Never click on suspicious links in emails or SMS from unknown senders.</p>
+          <h3 class="resources-dos-heading resources-dos-heading-dont">DON'T:</h3>
+          <p class="resources-dos-text">Never click on suspicious links in emails or SMS from unknown senders.</p>
         </div>
       </div>
     </section>

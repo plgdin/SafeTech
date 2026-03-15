@@ -79,10 +79,22 @@ export interface TrainingResource {
   providedIn: 'root'
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient | null = null;
 
   constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+    if (environment.supabaseUrl && environment.supabaseKey) {
+      this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+    } else {
+      console.warn('Supabase config missing. Data-backed features are running in safe fallback mode.');
+    }
+  }
+
+  private get client(): SupabaseClient {
+    if (!this.supabase) {
+      throw new Error('Supabase client unavailable');
+    }
+
+    return this.supabase;
   }
 
   /* --- 1. PHISHING TOOLS (UPDATED FOR ZERO-TRUST) --- */
@@ -90,12 +102,14 @@ export class SupabaseService {
     // We strictly check for entries where the URL was already flagged as unsafe.
     // .maybeSingle() is critical here to avoid the 406 error when a URL is clean/new.
     const { data, error } = await this.supabase
+      ? await this.client
       .from('phishing_logs')
       .select('is_safe, threat_details')
       .eq('scanned_url', url)
       .eq('is_safe', false)
       .limit(1)
-      .maybeSingle(); 
+      .maybeSingle()
+      : { data: null, error: new Error('Supabase client unavailable') as any };
 
     if (error || !data) return null; 
     return { isSafe: data.is_safe, details: data.threat_details || 'Flagged by community report' };
@@ -103,7 +117,11 @@ export class SupabaseService {
 
   async logPhishingAudit(url: string, score: number, details: string, markers: string[], isSafe: boolean) {
     // This logs the RAW results from your component (including VirusTotal detections)
-    return await this.supabase.from('phishing_logs').insert([{
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client.from('phishing_logs').insert([{
       scanned_url: url,
       risk_score: score,
       threat_details: details,
@@ -114,7 +132,11 @@ export class SupabaseService {
 
   /* --- 2. CITIZEN REPORTING (NOT TOUCHED) --- */
   async submitReport(report: UserReport) {
-    return await this.supabase.from('citizen_reports').insert([{
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client.from('citizen_reports').insert([{
       report_type: report.report_type,
       evidence_payload: report.content,
       status: report.status,
@@ -123,7 +145,11 @@ export class SupabaseService {
   }
 
   async getReportStatus(refId: string) {
-    return await this.supabase
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client
       .from('citizen_reports')
       .select('status, created_at')
       .eq('reference_id', refId)
@@ -132,7 +158,11 @@ export class SupabaseService {
 
   /* --- 3. SCAMS (NOT TOUCHED) --- */
   async getScams() {
-    return await this.supabase
+    if (!this.supabase) {
+      return { data: [], error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client
       .from('scams')
       .select('*')
       .order('created_at', { ascending: false });
@@ -140,14 +170,22 @@ export class SupabaseService {
 
   /* --- 4. ADMIN & CHAT LOGS (NOT TOUCHED) --- */
   async saveChatLog(userMsg: string, botRes: string) {
-    return await this.supabase.from('chatbot_logs').insert([{
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client.from('chatbot_logs').insert([{
       user_message: userMsg,
       bot_response: botRes
     }]);
   }
 
   async getChatLogs() {
-    return await this.supabase
+    if (!this.supabase) {
+      return { data: [], error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client
       .from('chatbot_logs')
       .select('*')
       .order('created_at', { ascending: false });
@@ -155,17 +193,17 @@ export class SupabaseService {
 
   async getAdminDashboardPrimaryData() {
     const [reports, bookings, trainers] = await Promise.all([
-      this.supabase
+      this.client
         .from('citizen_reports')
         .select('id, reference_id, report_type, evidence_payload, status, created_at')
         .order('created_at', { ascending: false })
         .limit(100),
-      this.supabase
+      this.client
         .from('bookings')
         .select('id, org_type, address, event_date, event_time, mode, phone, email, status, admin_message, created_at')
         .order('created_at', { ascending: false })
         .limit(50),
-      this.supabase
+      this.client
         .from('trainers')
         .select('id, name, age, location, education, phone, status, admin_message, created_at')
         .order('created_at', { ascending: false })
@@ -180,18 +218,26 @@ export class SupabaseService {
   }
 
   async getAdminDashboardSecondaryData() {
+    if (!this.supabase) {
+      return {
+        chatLogs: [],
+        trainingMessages: [],
+        trainingResources: []
+      };
+    }
+
     const [chats, trainingMessages, trainingResources] = await Promise.all([
-      this.supabase
+      this.client
         .from('chatbot_logs')
         .select('id, user_message, bot_response, created_at')
         .order('created_at', { ascending: false })
         .limit(50),
-      this.supabase
+      this.client
         .from('training_messages')
         .select('id, audience, subject, message, target_table, target_id, created_at')
         .order('created_at', { ascending: false })
         .limit(20),
-      this.supabase
+      this.client
         .from('training_resources')
         .select('id, title, description, resource_type, file_name, file_url, created_at')
         .order('created_at', { ascending: false })
@@ -223,7 +269,11 @@ export class SupabaseService {
   }
 
   async getReports(sortField: keyof AdminReport = 'created_at', ascending = false, status?: string) {
-    let query = this.supabase
+    if (!this.supabase) {
+      return { data: [], error: new Error('Supabase client unavailable') };
+    }
+
+    let query = this.client
       .from('citizen_reports')
       .select('*')
       .order(sortField as string, { ascending });
@@ -236,7 +286,11 @@ export class SupabaseService {
   }
 
   async updateReportStatus(reportId: string | number | undefined, referenceId: string | undefined, status: string) {
-    const query = this.supabase.from('citizen_reports').update({ status });
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    const query = this.client.from('citizen_reports').update({ status });
 
     if (reportId !== undefined && reportId !== null) {
       return await query.eq('id', reportId).select().single();
@@ -251,7 +305,11 @@ export class SupabaseService {
       payload.admin_message = adminMessage;
     }
 
-    return await this.supabase
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client
       .from(table)
       .update(payload)
       .eq('id', rowId)
@@ -260,7 +318,11 @@ export class SupabaseService {
   }
 
   async createTrainingMessage(message: TrainingMessage) {
-    return await this.supabase
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    return await this.client
       .from('training_messages')
       .insert([message])
       .select()
@@ -272,7 +334,11 @@ export class SupabaseService {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
     const filePath = `${resource.resource_type}/${Date.now()}-${safeName}`;
 
-    const uploadResult = await this.supabase.storage
+    if (!this.supabase) {
+      return { data: null, error: new Error('Supabase client unavailable') };
+    }
+
+    const uploadResult = await this.client.storage
       .from('training-assets')
       .upload(filePath, file, { upsert: false });
 
@@ -280,11 +346,11 @@ export class SupabaseService {
       return { data: null, error: uploadResult.error };
     }
 
-    const { data: publicUrlData } = this.supabase.storage
+    const { data: publicUrlData } = this.client.storage
       .from('training-assets')
       .getPublicUrl(filePath);
 
-    return await this.supabase
+    return await this.client
       .from('training_resources')
       .insert([{
         ...resource,

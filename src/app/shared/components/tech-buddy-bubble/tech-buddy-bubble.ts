@@ -31,8 +31,6 @@ export class TechBuddyBubbleComponent implements AfterViewChecked {
     { text: "I am TechBuddy. How can I protect you today?", sender: 'bot' }
   ];
 
-  private genAI = new GoogleGenerativeAI(environment.geminiApiKey);
-
   private systemInstruction = `You are TechBuddy, an official cybersecurity AI assistant for the SafeTech government campaign in Kerala, India.
 
 CRITICAL RULES:
@@ -41,17 +39,24 @@ CRITICAL RULES:
 3. LANGUAGE: You are fluent in English, Malayalam, and Manglish (Malayalam written in English script). You must match the user's language.
 4. Keep responses helpful, authoritative, concise, and empathetic to victims of scams.`;
 
-  private chatModel = this.genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    systemInstruction: this.systemInstruction,
-  });
-
-  private chatSession = this.chatModel.startChat({ history: [] });
+  private chatSession: Awaited<ReturnType<ReturnType<GoogleGenerativeAI['getGenerativeModel']>['startChat']>> | null = null;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private supabaseService: SupabaseService
-  ) {}
+  ) {
+    if (environment.geminiApiKey) {
+      const genAI = new GoogleGenerativeAI(environment.geminiApiKey);
+      const chatModel = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        systemInstruction: this.systemInstruction,
+      });
+
+      this.chatSession = chatModel.startChat({ history: [] });
+    } else {
+      console.warn('Gemini API key missing. Tech Buddy will stay available with a fallback response.');
+    }
+  }
 
   ngAfterViewChecked() {
     this.scrollToBottom();
@@ -88,6 +93,9 @@ CRITICAL RULES:
     this.scrollToBottom();
 
     try {
+      if (!this.chatSession) {
+        throw new Error('Chat session unavailable');
+      }
 
       /* 1️⃣ Get response from Gemini */
       const aiResult = await this.chatSession.sendMessage(input);

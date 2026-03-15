@@ -16,7 +16,7 @@ const adminUsername = process.env.ADMIN_USERNAME || 'admin';
 const adminPassword = process.env.ADMIN_PASSWORD || 'SafeTech@2026';
 
 // Notice how we removed the single quotes and wrapped the variables in JSON.stringify()
-const envConfigFile = `export const environment = {
+const prodEnvConfigFile = `export const environment = {
   production: true,
   supabaseUrl: ${JSON.stringify(supabaseUrl)},
   supabaseKey: ${JSON.stringify(supabaseKey)},
@@ -27,8 +27,7 @@ const envConfigFile = `export const environment = {
   adminPassword: ${JSON.stringify(adminPassword)}
 };`;
 
-// Write to BOTH files 
-fs.writeFileSync(path.join(envDir, 'environment.ts'), envConfigFile);
-fs.writeFileSync(path.join(envDir, 'environment.development.ts'), envConfigFile);
+// Production builds should not overwrite the local development environment file.
+fs.writeFileSync(path.join(envDir, 'environment.ts'), prodEnvConfigFile);
 
 console.log('✅ Vercel Environment files generated successfully!');

@@ -28,8 +28,9 @@
             
             <div style="display: flex; gap: 10px;" *ngIf="!isPhoneVerified">
               <input type="tel" [ngModel]="phoneNumber" (ngModelChange)="onPhoneInput($event)" placeholder="+91 98765 43210" [disabled]="otpSent || isVerifying"
+                     class="audit-focus-field"
                      style="flex: 1; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; outline: none; transition: 0.3s;"
-                     onfocus="this.style.borderColor='#1e6aff'" onblur="this.style.borderColor='#ebebeb'">
+                     >
       
               <button *ngIf="!otpSent" (click)="requestOTP()" [disabled]="!phoneNumber || isVerifying"
                       style="background: #020202; color: white; border: none; padding: 0 30px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s;"
@@ -80,8 +81,9 @@
           <div style="display: grid; gap: 12px;" [style.opacity]="!isPhoneVerified ? '0.5' : '1'" [style.pointer-events]="!isPhoneVerified ? 'none' : 'auto'">
             <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.15em; color: #1e6aff;">Detailed Evidence</label>
             <textarea rows="5" [(ngModel)]="reportData.evidence" placeholder="Paste URLs, phone numbers, or message content..." 
+                      class="audit-focus-field"
                       style="width: 100%; padding: 22px; border-radius: 15px; border: 1px solid #ebebeb; background: #f9f9f9; font-weight: 500; outline: none; resize: none; font-size: 15px; min-height: 200px; font-family: 'Poppins', sans-serif; transition: all 0.3s ease;"
-                      onfocus="this.style.borderColor='#1e6aff'; this.style.boxShadow='0 0 0 4px rgba(30, 106, 255, 0.1)'" onblur="this.style.borderColor='#ebebeb'; this.style.boxShadow='none'"></textarea>
+                      ></textarea>
           </div>
 
           <div *ngIf="generatedRefId" style="background: #f0f7ff; border: 1px solid #1e6aff; border-radius: 20px; padding: 25px; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.4s ease-out;">
@@ -113,8 +115,9 @@
           
           <div style="display: flex; gap: 12px; margin-bottom: 40px;">
             <input type="text" [(ngModel)]="searchRefId" placeholder="SF-XXXX" 
+                   class="audit-focus-field"
                    style="flex: 1; padding: 20px; border-radius: 12px; border: 1px solid #ebebeb; outline: none; font-weight: 700; background: #f9f9f9; font-family: 'Poppins', sans-serif; transition: all 0.3s ease;"
-                   onfocus="this.style.borderColor='#1e6aff'; this.style.boxShadow='0 0 0 4px rgba(30, 106, 255, 0.1)'" onblur="this.style.borderColor='#ebebeb'; this.style.boxShadow='none'">
+                   >
             <button (click)="trackReport()" [disabled]="isTracking" style="background: #020202; color: white; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; min-width: 80px;">
               {{ isTracking ? '...' : 'GO' }}
             </button>

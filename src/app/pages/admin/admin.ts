@@ -189,8 +189,8 @@ export class AdminComponent implements OnInit {
     this.reportSortDirection = field === 'created_at' ? 'desc' : 'asc';
   }
 
-  async updateReportStatus(report: AdminReport) {
-    const nextStatus = this.reportStatusDrafts[this.getRowKey(report)];
+  async updateReportStatus(report: AdminReport, selectedStatus?: string) {
+    const nextStatus = selectedStatus ?? this.reportStatusDrafts[this.getRowKey(report)];
     const { error } = await this.supabase.updateReportStatus(report.id, report.reference_id, nextStatus);
 
     if (error) {
@@ -223,11 +223,18 @@ export class AdminComponent implements OnInit {
     this.trainerMessageDrafts[this.getRowKey(trainer)] = message;
   }
 
-  async updateTrainingEntry(type: 'booking' | 'trainer', row: TrainingBooking | TrainerApplication) {
+  async updateTrainingEntry(
+    type: 'booking' | 'trainer',
+    row: TrainingBooking | TrainerApplication,
+    selectedStatus?: string,
+    selectedMessage?: string
+  ) {
     const key = this.getRowKey(row);
     const table = type === 'booking' ? 'bookings' : 'trainers';
-    const nextStatus = type === 'booking' ? this.bookingStatusDrafts[key] : this.trainerStatusDrafts[key];
-    const adminMessage = type === 'booking' ? this.bookingMessageDrafts[key] : this.trainerMessageDrafts[key];
+    const nextStatus =
+      selectedStatus ?? (type === 'booking' ? this.bookingStatusDrafts[key] : this.trainerStatusDrafts[key]);
+    const adminMessage =
+      selectedMessage ?? (type === 'booking' ? this.bookingMessageDrafts[key] : this.trainerMessageDrafts[key]);
 
     if (!row.id) {
       this.setFeedback('This record is missing an id, so it cannot be updated.', 'error');

@@ -78,11 +78,12 @@
               <td>
                 <div class="row-actions">
                   <select
+                    #reportStatusSelect
                     [ngModel]="reportStatusDrafts[getRowKey(report)]"
                     (ngModelChange)="setReportStatusDraft(report, $event)">
                     <option *ngFor="let status of reportStatuses" [value]="status">{{ status }}</option>
                   </select>
-                  <button class="mini-btn" (click)="updateReportStatus(report)">Update</button>
+                  <button class="mini-btn" (click)="updateReportStatus(report, reportStatusSelect.value)">Update</button>
                 </div>
               </td>
             </tr>
@@ -151,6 +152,7 @@
               <td>{{ book.phone }}<br><small>{{ book.email }}</small></td>
               <td>
                 <select
+                  #bookingStatusSelect
                   [ngModel]="bookingStatusDrafts[getRowKey(book)]"
                   (ngModelChange)="setBookingStatusDraft(book, $event)">
                   <option *ngFor="let status of trainingStatuses" [value]="status">{{ status }}</option>
@@ -158,13 +160,16 @@
               </td>
               <td>
                 <textarea
+                  #bookingMessageInput
                   [ngModel]="bookingMessageDrafts[getRowKey(book)]"
                   (ngModelChange)="setBookingMessageDraft(book, $event)"
                   rows="2"
                   placeholder="Optional message to attach"></textarea>
               </td>
               <td>
-                <button class="mini-btn" (click)="updateTrainingEntry('booking', book)">Save</button>
+                <button
+                  class="mini-btn"
+                  (click)="updateTrainingEntry('booking', book, bookingStatusSelect.value, bookingMessageInput.value)">Save</button>
               </td>
             </tr>
           </tbody>
@@ -201,6 +206,7 @@
               <td>{{ trainer.phone }}</td>
               <td>
                 <select
+                  #trainerStatusSelect
                   [ngModel]="trainerStatusDrafts[getRowKey(trainer)]"
                   (ngModelChange)="setTrainerStatusDraft(trainer, $event)">
                   <option *ngFor="let status of trainingStatuses" [value]="status">{{ status }}</option>
@@ -208,13 +214,16 @@
               </td>
               <td>
                 <textarea
+                  #trainerMessageInput
                   [ngModel]="trainerMessageDrafts[getRowKey(trainer)]"
                   (ngModelChange)="setTrainerMessageDraft(trainer, $event)"
                   rows="2"
                   placeholder="Optional trainer note"></textarea>
               </td>
               <td>
-                <button class="mini-btn" (click)="updateTrainingEntry('trainer', trainer)">Save</button>
+                <button
+                  class="mini-btn"
+                  (click)="updateTrainingEntry('trainer', trainer, trainerStatusSelect.value, trainerMessageInput.value)">Save</button>
               </td>
             </tr>
           </tbody>

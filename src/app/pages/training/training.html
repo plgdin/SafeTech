@@ -4,13 +4,13 @@
     
     <header class="training-header">
       <div class="training-header-badge-row">
-        <span style="width: 8px; height: 8px; background-color: #1e6aff; border-radius: 50%; box-shadow: 0 0 12px #1e6aff;"></span>
-        <span style="color: #1e6aff; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-size: 11px;">Educational Programs</span>
+        <span class="training-header-dot"></span>
+        <span class="training-header-badge-text">Educational Programs</span>
       </div>
-      <h1 class="responsive-h1" style="font-size: 80px; font-weight: 900; line-height: 0.85; letter-spacing: -0.04em; margin: 0; text-transform: uppercase;">
-        CYBER <br> <span style="color: #1e6aff;">TRAINING</span>
+      <h1 class="responsive-h1 training-header-h1">
+        CYBER <br> <span class="training-header-h1-accent">TRAINING</span>
       </h1>
-      <p style="color: #666; font-size: 20px; font-weight: 500; margin-top: 35px; line-height: 1.6; max-width: 750px;">
+      <p class="training-header-intro">
         ഓൺലൈൻ ലോകത്തെ ചതിക്കുഴികളിൽ വീഴാതിരിക്കാൻ നിങ്ങളെ പ്രാപ്തരാക്കുന്ന പരിശീലന പരിപാടി.ലളിതമായ പാഠങ്ങളിലൂടെ സൈബർ ലോകത്തെ മിടുക്കരാകൂ.
       </p>
     </header>
@@ -18,29 +18,29 @@
     <div class="main-grid">
       
       <section class="training-content">
-        <h2 style="font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;">Learning Modules</h2>
+        <h2 class="training-section-h2">Learning Modules</h2>
         
         <div class="module-grid">
           <div class="module-card">
-            <div style="width: 50px; height: 50px; background: #f4f4f4; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
-              <span style="font-size: 24px;">📄</span>
+            <div class="module-card-icon">
+              <span class="training-module-card-emoji">📄</span>
             </div>
-            <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">Slides & PDFs</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.5;">Downloadable workshop guides and security checklists.</p>
+            <h3 class="training-module-card-title">Slides & PDFs</h3>
+            <p class="training-module-card-desc">Downloadable workshop guides and security checklists.</p>
           </div>
 
           <div class="module-card">
-            <div style="width: 50px; height: 50px; background: #f4f4f4; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
-              <span style="font-size: 24px;">🎥</span>
+            <div class="module-card-icon">
+              <span class="training-module-card-emoji">🎥</span>
             </div>
-            <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">Video Tutorials</h3>
-            <p style="color: #666; font-size: 14px; line-height: 1.5;">Step-by-step visual learning for digital self-defense.</p>
+            <h3 class="training-module-card-title">Video Tutorials</h3>
+            <p class="training-module-card-desc">Step-by-step visual learning for digital self-defense.</p>
           </div>
         </div>
 
         <div class="training-workshop-guides-box">
-          <h3 style="font-size: 22px; font-weight: 900; margin-bottom: 20px;">Workshop Guides</h3>
-          <p style="color: #666; font-size: 16px; line-height: 1.7;">
+          <h3>Workshop Guides</h3>
+          <p>
             Our structured training programs cover Phishing identification, OTP protection, and incident response protocols. 
             Join over 1200+ individuals who have certified through SafeTech.
           </p>
@@ -49,26 +49,26 @@
 
       <aside class="training-sidebar">
         <div class="training-sidebar-card-dark">
-          <div style="position: relative; z-index: 2;">
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
-              <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🏆</div>
-              <h2 style="font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em;">Master Trainer</h2>
+          <div class="training-sidebar-card-inner">
+            <div class="training-sidebar-card-title-row">
+              <div class="training-sidebar-icon-dark">🏆</div>
+              <h2 class="training-sidebar-card-h2">Master Trainer</h2>
             </div>
-            <p style="color: #a0a0a0; font-size: 15px; margin-bottom: 30px; line-height: 1.6;">Become a certified Master Trainer and lead security workshops in your community.</p>
-            <button (click)="openForm('register')" class="axis-btn" style="width: 100%;">
+            <p>Become a certified Master Trainer and lead security workshops in your community.</p>
+            <button (click)="openForm('register')" class="axis-btn full-width">
               <div class="axis-content">Apply Now →</div>
             </button>
           </div>
-          <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background-color: #1e6aff; filter: blur(80px); opacity: 0.2; border-radius: 50%;"></div>
+          <div class="training-sidebar-blur-orb"></div>
         </div>
 
         <div class="training-sidebar-card-light">
-          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 30px;">
-            <div style="width: 44px; height: 44px; background: #f0f7ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">📅</div>
-            <h2 style="font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em;">Book Session</h2>
+          <div class="training-sidebar-card-title-row">
+            <div class="training-sidebar-icon-light">📅</div>
+            <h2 class="training-sidebar-card-h2">Book Session</h2>
           </div>
-          <p style="color: #666; font-size: 15px; margin-bottom: 30px; line-height: 1.6;">Schedule a 3-hour expert-led workshop for your institution or organization.</p>
-          <button (click)="openForm('book')" class="axis-btn" style="width: 100%;">
+          <p>Schedule a 3-hour expert-led workshop for your institution or organization.</p>
+          <button (click)="openForm('book')" class="axis-btn full-width">
             <div class="axis-content">Check Slots →</div>
           </button>
         </div>
@@ -77,34 +77,34 @@
     </div>
   </div>
 
-  <div *ngIf="showModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;">
+  <div *ngIf="showModal" class="training-modal-backdrop">
     
-    <div class="modal-container" style="background: white; width: 100%; max-width: 650px; border-radius: 40px; padding: 50px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 40px 100px rgba(0,0,0,0.5);">
+    <div class="modal-container">
       
-      <button (click)="closeForm()" style="position: absolute; top: 30px; right: 30px; background: #f4f4f4; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center;">✕</button>
+      <button (click)="closeForm()" class="training-modal-close">✕</button>
 
-      <div style="display: flex; gap: 10px; background: #f0f0f0; padding: 6px; border-radius: 18px; margin-bottom: 35px;">
+      <div class="training-modal-tabs">
         <button (click)="activeTab = 'register'" 
+                class="training-modal-tab-btn"
                 [style.background]="activeTab === 'register' ? 'white' : 'transparent'"
-                [style.box-shadow]="activeTab === 'register' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none'"
-                style="flex: 1; border: none; padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; transition: 0.3s;">
+                [style.box-shadow]="activeTab === 'register' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none'">
           Trainer Apply
         </button>
         <button (click)="activeTab = 'book'" 
+                class="training-modal-tab-btn"
                 [style.background]="activeTab === 'book' ? 'white' : 'transparent'"
-                [style.box-shadow]="activeTab === 'book' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none'"
-                style="flex: 1; border: none; padding: 12px; border-radius: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 11px; transition: 0.3s;">
+                [style.box-shadow]="activeTab === 'book' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none'">
           Book Training
         </button>
       </div>
 
-      <div *ngIf="activeTab === 'register'" class="otp-container-anim" style="display: grid; gap: 20px;">
-        <h2 style="font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0;">Trainer Registration</h2>
+      <div *ngIf="activeTab === 'register'" class="otp-container-anim training-form-grid">
+        <h2 class="training-form-h2">Trainer Registration</h2>
         <div>
           <label class="input-label">Full Name</label>
           <input [(ngModel)]="applicationData.name" type="text" placeholder="Enter full name" class="custom-input">
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="training-form-two-col">
           <div>
             <label class="input-label">Age</label>
             <input [(ngModel)]="applicationData.age" type="number" placeholder="Years" class="custom-input">
@@ -123,8 +123,8 @@
         </div>
       </div>
 
-      <div *ngIf="activeTab === 'book'" class="otp-container-anim" style="display: grid; gap: 20px;">
-        <h2 style="font-size: 24px; font-weight: 900; text-transform: uppercase; margin: 0;">Book a Training Session</h2>
+      <div *ngIf="activeTab === 'book'" class="otp-container-anim training-form-grid">
+        <h2 class="training-form-h2">Book a Training Session</h2>
         <div>
           <label class="input-label">Institution / Entity Type</label>
           <select [(ngModel)]="bookingData.orgType" class="custom-input">
@@ -140,7 +140,7 @@
           <label class="input-label">Contact Address / Location</label>
           <input [(ngModel)]="bookingData.address" type="text" placeholder="Full physical address" class="custom-input">
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="training-form-two-col">
           <div>
             <label class="input-label">Preferred Date (Mon-Sat)</label>
             <input [(ngModel)]="bookingData.date" type="date" class="custom-input">
@@ -152,38 +152,37 @@
         </div>
         <div>
           <label class="input-label">Training Mode</label>
-          <div style="display: flex; gap: 30px; margin-top: 5px;">
-            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
-              <input type="radio" [(ngModel)]="bookingData.mode" value="Online" style="accent-color: #1e6aff; width: 18px; height: 18px;"> Online
+          <div class="training-form-mode-row">
+            <label class="training-form-radio-label">
+              <input type="radio" [(ngModel)]="bookingData.mode" value="Online"> Online
             </label>
-            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
-              <input type="radio" [(ngModel)]="bookingData.mode" value="Offline" style="accent-color: #1e6aff; width: 18px; height: 18px;"> Offline
+            <label class="training-form-radio-label">
+              <input type="radio" [(ngModel)]="bookingData.mode" value="Offline"> Offline
             </label>
           </div>
         </div>
       </div>
 
-      <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #eee;">
+      <div class="training-whatsapp-section">
         <label class="input-label">WhatsApp Number</label>
-        <div style="display: flex; gap: 10px;">
+        <div class="training-phone-row">
           <input [ngModel]="phoneNumber" (ngModelChange)="onPhoneInput($event)" [disabled]="isPhoneVerified" 
-                 type="tel" placeholder="+91" class="custom-input" style="flex: 1;">
+                 type="tel" placeholder="+91" class="custom-input training-phone-input-wrap">
           
           <button *ngIf="!isPhoneVerified && !otpSent" (click)="requestOTP()" [disabled]="isVerifying" class="axis-btn mini">
             <div class="axis-content">{{ isVerifying ? 'Wait...' : 'Verify' }}</div>
           </button>
           
-          <div *ngIf="isPhoneVerified" style="display: flex; align-items: center; color: #1e6aff; font-weight: 800; font-size: 12px; gap: 5px; padding-right: 10px;">
+          <div *ngIf="isPhoneVerified" class="training-verified-badge">
             ✓ VERIFIED
           </div>
         </div>
 
-        <div *ngIf="otpSent" class="otp-container-anim" style="margin-top: 25px; text-align: center;">
-          <label class="input-label" style="text-align: center; display: block; margin-bottom: 15px;">Enter 6-Digit OTP</label>
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            <input [(ngModel)]="otpCode" type="text" maxlength="6" placeholder="000000" 
-                   style="width: 180px; padding: 12px; border: 2px solid #1e6aff; border-radius: 12px; text-align: center; font-size: 24px; letter-spacing: 6px; font-weight: 900; outline: none; background: white;">
-            <button (click)="confirmOTP()" class="axis-btn mini" style="width: 100%;">
+        <div *ngIf="otpSent" class="otp-container-anim training-otp-block">
+          <label class="input-label training-otp-label">Enter 6-Digit OTP</label>
+          <div class="training-otp-inner">
+            <input [(ngModel)]="otpCode" type="text" maxlength="6" placeholder="000000" class="training-otp-input">
+            <button (click)="confirmOTP()" class="axis-btn mini full-width">
               <div class="axis-content">Confirm Code</div>
             </button>
           </div>
@@ -192,8 +191,7 @@
 
       <button (click)="submitData()" 
               [disabled]="!isPhoneVerified || isSubmitting"
-              class="axis-btn" 
-              style="width: 100%; margin-top: 30px;">
+              class="axis-btn training-submit-btn">
         <div class="axis-content">
           {{ isSubmitting ? 'Processing...' : (activeTab === 'register' ? 'Submit Application →' : 'Confirm Booking →') }}
         </div>

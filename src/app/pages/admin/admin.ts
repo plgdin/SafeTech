@@ -203,6 +203,26 @@ export class AdminComponent implements OnInit {
     this.setFeedback(`Report ${report.reference_id || report.id} updated to ${nextStatus}.`, 'success');
   }
 
+  setReportStatusDraft(report: AdminReport, status: string) {
+    this.reportStatusDrafts[this.getRowKey(report)] = status;
+  }
+
+  setBookingStatusDraft(booking: TrainingBooking, status: string) {
+    this.bookingStatusDrafts[this.getRowKey(booking)] = status;
+  }
+
+  setTrainerStatusDraft(trainer: TrainerApplication, status: string) {
+    this.trainerStatusDrafts[this.getRowKey(trainer)] = status;
+  }
+
+  setBookingMessageDraft(booking: TrainingBooking, message: string) {
+    this.bookingMessageDrafts[this.getRowKey(booking)] = message;
+  }
+
+  setTrainerMessageDraft(trainer: TrainerApplication, message: string) {
+    this.trainerMessageDrafts[this.getRowKey(trainer)] = message;
+  }
+
   async updateTrainingEntry(type: 'booking' | 'trainer', row: TrainingBooking | TrainerApplication) {
     const key = this.getRowKey(row);
     const table = type === 'booking' ? 'bookings' : 'trainers';

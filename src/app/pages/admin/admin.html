@@ -80,15 +80,13 @@
                   <select
                     #reportStatusSelect
                     [ngModel]="reportStatusDrafts[getRowKey(report)]"
-                    [disabled]="isReportPending(report)"
                     (ngModelChange)="setReportStatusDraft(report, $event)">
                     <option *ngFor="let status of reportStatuses" [value]="status">{{ status }}</option>
                   </select>
                   <button
                     class="mini-btn"
-                    [disabled]="isReportPending(report)"
                     (click)="updateReportStatus(report, reportStatusSelect.value)">
-                    {{ isReportPending(report) ? 'Updating...' : 'Update' }}
+                    Update
                   </button>
                 </div>
               </td>

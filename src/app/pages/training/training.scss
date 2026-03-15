@@ -53,6 +53,14 @@
   gap: 30px;
 }
 
+.training-workshop-guides-box {
+  background-color: #ffffff;
+  border-radius: 40px;
+  padding: 50px;
+  border: 1px solid #ebebeb;
+  border-left: 8px solid #1e6aff;
+}
+
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;

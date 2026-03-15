@@ -47,6 +47,12 @@
   align-items: start;
 }
 
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;

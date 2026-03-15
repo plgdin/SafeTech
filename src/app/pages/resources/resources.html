@@ -17,9 +17,7 @@
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px;">
       
-      <section style="background-color: #ffffff; border: 1px solid #ebebeb; border-radius: 40px; padding: 50px; transition: 0.3s;"
-               onmouseover="this.style.borderColor='#1e6aff'; this.style.transform='translateY(-5px)'"
-               onmouseout="this.style.borderColor='#ebebeb'; this.style.transform='translateY(0)'">
+      <section class="resource-card-hover" style="background-color: #ffffff; border: 1px solid #ebebeb; border-radius: 40px; padding: 50px; transition: 0.3s;">
         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 35px;">
           <div style="width: 44px; height: 44px; background: #f4f4f4; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🛡️</div>
           <h2 style="font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em;">Security Tips</h2>
@@ -66,8 +64,7 @@
             </div>
           </div>
 
-          <button routerLink="/tech-buddy" style="width: 100%; margin-top: 40px; background: #1e6aff; color: white; border: none; padding: 20px; border-radius: 15px; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: 0.3s;"
-                  onmouseover="this.style.backgroundColor='#ffffff'; this.style.color='#020202'">
+          <button routerLink="/tech-buddy" class="resource-ai-btn" style="width: 100%; margin-top: 40px; background: #1e6aff; color: white; border: none; padding: 20px; border-radius: 15px; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: 0.3s;">
             Contact via AI Buddy →
           </button>
         </div>

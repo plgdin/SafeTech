@@ -437,6 +437,14 @@
   }
 }
 
+.cta-submit-content {
+  transition: color 0.3s ease;
+}
+
+.axis-btn:hover .cta-submit-content {
+  color: #020202 !important;
+}
+
 @keyframes ping {
   75%, 100% { transform: scale(2); opacity: 0; }
 }

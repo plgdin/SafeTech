@@ -1,10 +1,10 @@
-<app-navbar></app-navbar>
+<app-navbar *ngIf="!isAdminShell"></app-navbar>
 
 <main style="min-height: 100vh;">
   <router-outlet></router-outlet>
 </main>
 
-<app-footer></app-footer>
+<app-footer *ngIf="!isAdminShell"></app-footer>
 
-<app-tech-buddy-bubble></app-tech-buddy-bubble>
-<app-accessibility-widget></app-accessibility-widget>
+<app-tech-buddy-bubble *ngIf="!isAdminShell"></app-tech-buddy-bubble>
+<app-accessibility-widget *ngIf="!isAdminShell"></app-accessibility-widget>

@@ -1,0 +1,25 @@
+<div class="admin-login-shell">
+  <div class="admin-login-card">
+    <p class="eyebrow">Protected Access</p>
+    <h1>Admin Login</h1>
+    <p class="subtitle">Sign in to manage reports, training operations, and uploaded learning resources.</p>
+
+    <form (ngSubmit)="submit()" class="login-form">
+      <label>
+        <span>Username</span>
+        <input [(ngModel)]="username" name="username" type="text" placeholder="Enter admin username">
+      </label>
+
+      <label>
+        <span>Password</span>
+        <input [(ngModel)]="password" name="password" type="password" placeholder="Enter password">
+      </label>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+
+      <button type="submit">Access Command Center</button>
+    </form>
+
+    <a routerLink="/" class="back-link">Return to public site</a>
+  </div>
+</div>

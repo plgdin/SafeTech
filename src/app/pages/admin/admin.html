@@ -1,102 +1,306 @@
 <div class="admin-container">
   <header class="admin-header">
     <div>
+      <p class="eyebrow">Protected Workspace</p>
       <h1>Command Center</h1>
-      <p>Administrative Oversight & Forensic Data Management</p>
+      <p>Administrative oversight, report operations, training coordination, and resource publishing.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="ghost-btn" (click)="loadDashboard()">Refresh</button>
+      <button class="download-btn" (click)="logout()">Logout</button>
     </div>
   </header>
 
-  <section class="admin-section">
-    <div class="section-header">
-      <h2>Forensic Incident Reports</h2>
-      <button class="download-btn" (click)="downloadPDF('CitizenReports', dashboardData.reports)">
-        Download PDF
-      </button>
-    </div>
-    <div class="table-wrapper">
-      <table *ngIf="dashboardData.reports?.length; else emptyReports">
-        <thead>
-          <tr>
-            <th>Ref ID</th>
-            <th>Incident Type</th>
-            <th>Evidence Snippet</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let report of dashboardData.reports">
-            <td><strong>{{ report.reference_id }}</strong></td>
-            <td>{{ report.report_type }}</td>
-            <td [title]="report.evidence_payload">{{ report.evidence_payload }}</td>
-            <td>
-              <span class="badge" [ngClass]="'status-' + report.status">
-                {{ report.status }}
-              </span>
-            </td>
-            <td>{{ report.created_at | date:'short' }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <ng-template #emptyReports><div class="empty-state">No forensic reports found.</div></ng-template>
-    </div>
+  <div *ngIf="feedbackMessage" class="feedback-banner" [ngClass]="feedbackTone">
+    {{ feedbackMessage }}
+  </div>
+
+  <section class="admin-section" *ngIf="isLoading">
+    <div class="empty-state">Loading admin dashboard...</div>
   </section>
 
-  <section class="admin-section">
-    <div class="section-header">
-      <h2>TechBuddy AI Transcripts</h2>
-      <button class="download-btn" (click)="downloadPDF('ChatLogs', dashboardData.chatLogs)">
-        Download PDF
-      </button>
-    </div>
-    <div class="table-wrapper">
-      <table *ngIf="dashboardData.chatLogs?.length; else emptyChats">
-        <thead>
-          <tr>
-            <th>User Query</th>
-            <th>AI Response</th>
-            <th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let chat of dashboardData.chatLogs">
-            <td>{{ chat.user_message }}</td>
-            <td>{{ chat.bot_response }}</td>
-            <td>{{ chat.created_at | date:'short' }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <ng-template #emptyChats><div class="empty-state">No chat logs recorded.</div></ng-template>
-    </div>
-  </section>
+  <ng-container *ngIf="!isLoading">
+    <section class="admin-section">
+      <div class="section-header">
+        <h2>Forensic Incident Reports</h2>
+        <button class="download-btn" (click)="downloadPDF('CitizenReports', dashboardData.reports)">
+          Download PDF
+        </button>
+      </div>
 
-  <section class="admin-section">
-    <div class="section-header">
-      <h2>Session Bookings</h2>
-      <button class="download-btn" (click)="downloadPDF('Bookings', dashboardData.bookings)">
-        Download PDF
-      </button>
-    </div>
-    <div class="table-wrapper">
-      <table *ngIf="dashboardData.bookings?.length; else emptyBookings">
-        <thead>
-          <tr>
-            <th>Organization</th>
-            <th>Date/Time</th>
-            <th>Mode</th>
-            <th>Contact</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let book of dashboardData.bookings">
-            <td>{{ book.org_type }} - {{ book.address }}</td>
-            <td>{{ book.event_date }} @ {{ book.event_time }}</td>
-            <td>{{ book.mode }}</td>
-            <td>{{ book.phone }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <ng-template #emptyBookings><div class="empty-state">No session bookings found.</div></ng-template>
-    </div>
-  </section>
+      <div class="control-grid">
+        <label class="control-field">
+          <span>Search reports</span>
+          <input [(ngModel)]="reportSearch" type="text" placeholder="Search ref ID, type, evidence, status">
+        </label>
+
+        <label class="control-field">
+          <span>Status filter</span>
+          <select [(ngModel)]="reportStatusFilter">
+            <option value="all">All statuses</option>
+            <option *ngFor="let status of reportStatuses" [value]="status">{{ status }}</option>
+          </select>
+        </label>
+
+        <div class="sort-actions">
+          <span>Sort by</span>
+          <button class="ghost-btn" (click)="sortReports('created_at')">Date</button>
+          <button class="ghost-btn" (click)="sortReports('status')">Status</button>
+          <button class="ghost-btn" (click)="sortReports('report_type')">Type</button>
+          <button class="ghost-btn" (click)="sortReports('reference_id')">Ref ID</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table *ngIf="filteredReports.length; else emptyReports">
+          <thead>
+            <tr>
+              <th>Ref ID</th>
+              <th>Incident Type</th>
+              <th>Evidence Snippet</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let report of filteredReports">
+              <td><strong>{{ report.reference_id }}</strong></td>
+              <td>{{ report.report_type }}</td>
+              <td [title]="report.evidence_payload">{{ report.evidence_payload }}</td>
+              <td>
+                <span class="badge" [ngClass]="statusClass(report.status)">
+                  {{ report.status }}
+                </span>
+              </td>
+              <td>{{ report.created_at | date:'short' }}</td>
+              <td>
+                <div class="row-actions">
+                  <select [(ngModel)]="reportStatusDrafts[getRowKey(report)]">
+                    <option *ngFor="let status of reportStatuses" [value]="status">{{ status }}</option>
+                  </select>
+                  <button class="mini-btn" (click)="updateReportStatus(report)">Update</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyReports><div class="empty-state">No forensic reports found.</div></ng-template>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <div class="section-header">
+        <h2>TechBuddy AI Transcripts</h2>
+        <button class="download-btn" (click)="downloadPDF('ChatLogs', dashboardData.chatLogs)">
+          Download PDF
+        </button>
+      </div>
+      <div class="table-wrapper">
+        <table *ngIf="dashboardData.chatLogs.length; else emptyChats">
+          <thead>
+            <tr>
+              <th>User Query</th>
+              <th>AI Response</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let chat of dashboardData.chatLogs">
+              <td>{{ chat.user_message }}</td>
+              <td>{{ chat.bot_response }}</td>
+              <td>{{ chat.created_at | date:'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyChats><div class="empty-state">No chat logs recorded.</div></ng-template>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <div class="section-header">
+        <h2>Session Bookings</h2>
+        <button class="download-btn" (click)="downloadPDF('Bookings', dashboardData.bookings)">
+          Download PDF
+        </button>
+      </div>
+      <div class="table-wrapper">
+        <table *ngIf="dashboardData.bookings.length; else emptyBookings">
+          <thead>
+            <tr>
+              <th>Organization</th>
+              <th>Date/Time</th>
+              <th>Mode</th>
+              <th>Contact</th>
+              <th>Status</th>
+              <th>Admin Message</th>
+              <th>Save</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let book of dashboardData.bookings">
+              <td>{{ book.org_type }} - {{ book.address }}</td>
+              <td>{{ book.event_date }} @ {{ book.event_time }}</td>
+              <td>{{ book.mode }}</td>
+              <td>{{ book.phone }}<br><small>{{ book.email }}</small></td>
+              <td>
+                <select [(ngModel)]="bookingStatusDrafts[getRowKey(book)]">
+                  <option *ngFor="let status of trainingStatuses" [value]="status">{{ status }}</option>
+                </select>
+              </td>
+              <td>
+                <textarea [(ngModel)]="bookingMessageDrafts[getRowKey(book)]" rows="2" placeholder="Optional message to attach"></textarea>
+              </td>
+              <td>
+                <button class="mini-btn" (click)="updateTrainingEntry('booking', book)">Save</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyBookings><div class="empty-state">No session bookings found.</div></ng-template>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <div class="section-header">
+        <h2>Trainer Applications</h2>
+        <button class="download-btn" (click)="downloadPDF('Trainers', dashboardData.trainers)">
+          Download PDF
+        </button>
+      </div>
+      <div class="table-wrapper">
+        <table *ngIf="dashboardData.trainers.length; else emptyTrainers">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Education</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Admin Message</th>
+              <th>Save</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let trainer of dashboardData.trainers">
+              <td>{{ trainer.name }}</td>
+              <td>{{ trainer.location }}</td>
+              <td>{{ trainer.education }}</td>
+              <td>{{ trainer.phone }}</td>
+              <td>
+                <select [(ngModel)]="trainerStatusDrafts[getRowKey(trainer)]">
+                  <option *ngFor="let status of trainingStatuses" [value]="status">{{ status }}</option>
+                </select>
+              </td>
+              <td>
+                <textarea [(ngModel)]="trainerMessageDrafts[getRowKey(trainer)]" rows="2" placeholder="Optional trainer note"></textarea>
+              </td>
+              <td>
+                <button class="mini-btn" (click)="updateTrainingEntry('trainer', trainer)">Save</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyTrainers><div class="empty-state">No trainer applications found.</div></ng-template>
+      </div>
+    </section>
+
+    <section class="admin-section split-section">
+      <div>
+        <div class="section-header">
+          <h2>Training Messages</h2>
+        </div>
+
+        <div class="stack-form">
+          <label class="control-field">
+            <span>Audience</span>
+            <select [(ngModel)]="messageForm.audience">
+              <option value="all-bookings">All bookings</option>
+              <option value="all-trainers">All trainers</option>
+              <option value="all-training-users">All training users</option>
+            </select>
+          </label>
+
+          <label class="control-field">
+            <span>Subject</span>
+            <input [(ngModel)]="messageForm.subject" type="text" placeholder="Message subject">
+          </label>
+
+          <label class="control-field">
+            <span>Message</span>
+            <textarea [(ngModel)]="messageForm.message" rows="5" placeholder="Write the message you want to send or store"></textarea>
+          </label>
+
+          <button class="download-btn" (click)="sendTrainingMessage()">Save Message</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-header">
+          <h2>Recent Messages</h2>
+        </div>
+
+        <div class="card-list" *ngIf="dashboardData.trainingMessages.length; else emptyMessages">
+          <article class="info-card" *ngFor="let item of dashboardData.trainingMessages">
+            <p class="card-meta">{{ item.audience }} · {{ item.created_at | date:'short' }}</p>
+            <h3>{{ item.subject }}</h3>
+            <p>{{ item.message }}</p>
+          </article>
+        </div>
+        <ng-template #emptyMessages><div class="empty-state">No training messages saved yet.</div></ng-template>
+      </div>
+    </section>
+
+    <section class="admin-section split-section">
+      <div>
+        <div class="section-header">
+          <h2>Upload Training Resources</h2>
+        </div>
+
+        <div class="stack-form">
+          <label class="control-field">
+            <span>Resource title</span>
+            <input [(ngModel)]="resourceForm.title" type="text" placeholder="Awareness session notes">
+          </label>
+
+          <label class="control-field">
+            <span>Resource type</span>
+            <select [(ngModel)]="resourceForm.resource_type">
+              <option value="video">Video</option>
+              <option value="notes">Notes</option>
+            </select>
+          </label>
+
+          <label class="control-field">
+            <span>Description</span>
+            <textarea [(ngModel)]="resourceForm.description" rows="4" placeholder="Short description for admins"></textarea>
+          </label>
+
+          <label class="control-field">
+            <span>File</span>
+            <input type="file" (change)="onResourceSelected($event)" [attr.accept]="resourceForm.resource_type === 'video' ? 'video/*' : '.pdf,.doc,.docx,.ppt,.pptx,.txt'">
+          </label>
+
+          <button class="download-btn" (click)="uploadResource()">Upload Resource</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-header">
+          <h2>Uploaded Resources</h2>
+        </div>
+
+        <div class="card-list" *ngIf="dashboardData.trainingResources.length; else emptyResources">
+          <article class="info-card" *ngFor="let resource of dashboardData.trainingResources">
+            <p class="card-meta">{{ resource.resource_type }} · {{ resource.created_at | date:'short' }}</p>
+            <h3>{{ resource.title }}</h3>
+            <p>{{ resource.description || 'No description provided.' }}</p>
+            <a *ngIf="resource.file_url" [href]="resource.file_url" target="_blank" rel="noreferrer">Open file</a>
+          </article>
+        </div>
+        <ng-template #emptyResources><div class="empty-state">No training resources uploaded yet.</div></ng-template>
+      </div>
+    </section>
+  </ng-container>
 </div>

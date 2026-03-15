@@ -1,5 +1,12 @@
 # SafeTech
 
+## Handover
+
+Before production handover, review:
+
+- [HANDOVER.md](/d:/Website/SafeTech/HANDOVER.md)
+- [.env.example](/d:/Website/SafeTech/.env.example)
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
 
 ## Development server

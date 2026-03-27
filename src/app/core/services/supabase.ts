@@ -52,6 +52,7 @@ export interface TrainerApplication {
   location?: string;
   education?: string;
   phone?: string;
+  email?: string;
   status?: string;
   admin_message?: string;
   created_at?: string;
@@ -86,19 +87,42 @@ export class SupabaseService {
   constructor() {
     if (environment.supabaseUrl && environment.supabaseKey) {
       this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
-    } else {
-      console.warn('Supabase config missing. Data-backed features are running in safe fallback mode.');
     }
   }
 
   private get client(): SupabaseClient {
-    if (!this.supabase) {
-      throw new Error('Supabase client unavailable');
-    }
+    if (!this.supabase) throw new Error('Supabase client unavailable');
     return this.supabase;
   }
 
-  // ─── 1. PHISHING TOOLS (UPDATED) ──────────────────────────────────────────
+  // --- AUTH & UMS CORE METHODS ---
+
+  /**
+   * Triggers the Supabase Magic Link / OTP flow for account setup.
+   */
+  async sendSetupEmail(email: string) {
+    if (!this.supabase) return { error: new Error('Supabase unavailable') };
+    return await this.client.auth.signInWithOtp({
+      email: email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/training/dashboard`
+      }
+    });
+  }
+
+  /**
+   * Core verification method for UID-based logins.
+   */
+  async getTrainerByUid(uid: string) {
+    if (!this.supabase) return { data: null, error: new Error('Supabase unavailable') };
+    return await this.client
+      .from('trainers')
+      .select('*')
+      .eq('id', uid)
+      .single();
+  }
+
+  // --- EXISTING FUNCTIONAL METHODS ---
 
   async checkPhishingUrl(url: string): Promise<{ isSafe: boolean; details: string } | null> {
     if (!this.supabase) return null;
@@ -115,8 +139,6 @@ export class SupabaseService {
   }
 
   async logPhishingAudit(url: string, score: number, details: string, markers: string[], isSafe: boolean) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
-
     return await this.client.from('phishing_logs').insert([{
       scanned_url: url,
       risk_score: score,
@@ -126,14 +148,7 @@ export class SupabaseService {
     }]);
   }
 
-  /**
-   * ADMIN ONLY: Finalizes a user's Flag/Vouch request.
-   * Updates report status and upserts the permanent URL database.
-   */
   async resolvePhishingReport(reportId: string | number, url: string, isAdminVerifiedSafe: boolean, adminNotes: string) {
-    if (!this.supabase) return { error: new Error('Supabase unavailable') };
-
-    // 1. Mark report as resolved
     const reportUpdate = await this.client
       .from('citizen_reports')
       .update({ status: 'resolved' })
@@ -141,7 +156,6 @@ export class SupabaseService {
 
     if (reportUpdate.error) return reportUpdate;
 
-    // 2. Overwrite/Update live DB score based on Admin Authority
     return await this.client
       .from('phishing_logs')
       .upsert([{
@@ -153,10 +167,7 @@ export class SupabaseService {
       }], { onConflict: 'scanned_url' });
   }
 
-  // ─── 2. CITIZEN REPORTING ────────────────────────────────────────────────
-
   async submitReport(report: UserReport) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client.from('citizen_reports').insert([{
       report_type: report.report_type,
       evidence_payload: report.content,
@@ -166,7 +177,6 @@ export class SupabaseService {
   }
 
   async getReportStatus(refId: string) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client
       .from('citizen_reports')
       .select('status, created_at')
@@ -174,20 +184,14 @@ export class SupabaseService {
       .maybeSingle();
   }
 
-  // ─── 3. SCAMS ─────────────────────────────────────────────────────────────
-
   async getScams() {
-    if (!this.supabase) return { data: [], error: new Error('Supabase client unavailable') };
     return await this.client
       .from('scams')
       .select('*')
       .order('created_at', { ascending: false });
   }
 
-  // ─── 4. ADMIN & CHAT LOGS ─────────────────────────────────────────────────
-
   async saveChatLog(userMsg: string, botRes: string) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client.from('chatbot_logs').insert([{
       user_message: userMsg,
       bot_response: botRes
@@ -195,14 +199,11 @@ export class SupabaseService {
   }
 
   async getChatLogs() {
-    if (!this.supabase) return { data: [], error: new Error('Supabase client unavailable') };
     return await this.client
       .from('chatbot_logs')
       .select('*')
       .order('created_at', { ascending: false });
   }
-
-  // ─── 5. ADMIN DASHBOARD & TRAINING TOOLS ──────────────────────────────────
 
   async getAdminDashboardPrimaryData() {
     const [reports, bookings, trainers] = await Promise.all([
@@ -214,7 +215,6 @@ export class SupabaseService {
   }
 
   async getAdminDashboardSecondaryData() {
-    if (!this.supabase) return { chatLogs: [], trainingMessages: [], trainingResources: [] };
     const [chats, trainingMessages, trainingResources] = await Promise.all([
       this.client.from('chatbot_logs').select('id, user_message, bot_response, created_at').order('created_at', { ascending: false }).limit(50),
       this.client.from('training_messages').select('id, audience, subject, message, target_table, target_id, created_at').order('created_at', { ascending: false }).limit(20),
@@ -223,20 +223,7 @@ export class SupabaseService {
     return { chatLogs: chats.data || [], trainingMessages: trainingMessages.data || [], trainingResources: trainingResources.data || [] };
   }
 
-  async getAdminDashboardData() {
-    const [primary, secondary] = await Promise.all([this.getAdminDashboardPrimaryData(), this.getAdminDashboardSecondaryData()]);
-    return { reports: primary.reports, phishingLogs: [], chatLogs: secondary.chatLogs, bookings: primary.bookings, trainers: primary.trainers, trainingMessages: secondary.trainingMessages, trainingResources: secondary.trainingResources };
-  }
-
-  async getReports(sortField: keyof AdminReport = 'created_at', ascending = false, status?: string) {
-    if (!this.supabase) return { data: [], error: new Error('Supabase client unavailable') };
-    let query = this.client.from('citizen_reports').select('*').order(sortField as string, { ascending });
-    if (status && status !== 'all') query = query.eq('status', status);
-    return await query;
-  }
-
   async updateReportStatus(reportId: string | number | undefined, referenceId: string | undefined, status: string) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     const query = this.client.from('citizen_reports').update({ status });
     if (reportId !== undefined && reportId !== null) return await query.eq('id', reportId).select().single();
     return await query.eq('reference_id', referenceId).select().single();
@@ -245,17 +232,14 @@ export class SupabaseService {
   async updateTrainingStatus(table: 'bookings' | 'trainers', rowId: string | number, status: string, adminMessage?: string) {
     const payload: { status: string; admin_message?: string } = { status };
     if (adminMessage !== undefined) payload.admin_message = adminMessage;
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client.from(table).update(payload).eq('id', rowId).select().single();
   }
 
   async createTrainingMessage(message: TrainingMessage) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     return await this.client.from('training_messages').insert([message]).select().single();
   }
 
   async uploadTrainingResource(file: File, resource: Pick<TrainingResource, 'title' | 'description' | 'resource_type'>) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase client unavailable') };
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
     const filePath = `${resource.resource_type}/${Date.now()}-${safeName}`;
     const uploadResult = await this.client.storage.from('training-assets').upload(filePath, file, { upsert: false });

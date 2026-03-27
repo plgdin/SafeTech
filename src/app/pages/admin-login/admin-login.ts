@@ -29,7 +29,8 @@ export class AdminLoginComponent {
       return;
     }
 
-    if (!this.authService.login(this.username, this.password)) {
+    // UPDATE: Changed .login() to .adminLogin() to match the new AuthService
+    if (!this.authService.adminLogin(this.username, this.password)) {
       this.error = 'Invalid admin credentials.';
       return;
     }

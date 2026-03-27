@@ -1,0 +1,34 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="logo-area">
+      <img src="assets/images/safetech.png" alt="SafeTech Logo">
+      <h2>Secure Access</h2>
+    </div>
+    
+    <p class="instruction">Enter your Unique ID (UID) provided during registration to access your dashboard.</p>
+
+    <div class="form-group">
+      <label for="uid">Unique ID</label>
+      <input 
+        type="text" 
+        id="uid" 
+        [(ngModel)]="uid" 
+        placeholder="e.g. 550e8400-e29b..."
+        [disabled]="isLoading"
+        (keyup.enter)="handleLogin()">
+    </div>
+
+    <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button 
+      class="login-button" 
+      (click)="handleLogin()" 
+      [disabled]="isLoading">
+      {{ isLoading ? 'Verifying...' : 'Access Dashboard' }}
+    </button>
+
+    <div class="footer-links">
+      <a routerLink="/training">Need a UID? Register here</a>
+    </div>
+  </div>
+</div>

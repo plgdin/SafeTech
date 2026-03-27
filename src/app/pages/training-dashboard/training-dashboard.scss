@@ -1,0 +1,66 @@
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+
+  .sidebar {
+    width: 260px;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+
+    .user-profile {
+      text-align: center;
+      margin-bottom: 2rem;
+      .avatar {
+        width: 60px; height: 60px;
+        background: #1e6aff; color: white;
+        border-radius: 50%; display: flex;
+        align-items: center; justify-content: center;
+        margin: 0 auto 1rem; font-size: 1.5rem; font-weight: bold;
+      }
+      h3 { font-size: 1.1rem; color: #1e293b; margin: 0; }
+      .role-badge { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+    }
+
+    .nav-btn {
+      width: 100%; padding: 0.75rem 1rem;
+      border: none; background: transparent;
+      text-align: left; border-radius: 8px;
+      margin-bottom: 0.5rem; cursor: pointer;
+      color: #64748b; transition: 0.2s;
+      &.active { background: #eff6ff; color: #1e6aff; font-weight: 600; }
+      &.logout { margin-top: auto; color: #ef4444; &:hover { background: #fef2f2; } }
+    }
+  }
+
+  .main-content {
+    flex: 1; padding: 2.5rem;
+    .content-header { margin-bottom: 2rem; h1 { margin: 0; color: #0f172a; } }
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem; margin-bottom: 1.5rem;
+  }
+
+  .dash-card {
+    background: white; border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+    &.full-width { grid-column: 1 / -1; }
+    .card-header { padding: 1.25rem; border-bottom: 1px solid #f1f5f9; h2 { font-size: 1rem; margin: 0; } }
+    .card-body { padding: 1.25rem; }
+  }
+
+  .upload-form {
+    display: flex; flex-direction: column; gap: 1rem;
+    input, textarea, select { padding: 0.625rem; border: 1px solid #e2e8f0; border-radius: 6px; }
+    .submit-btn { background: #1e6aff; color: white; border: none; padding: 0.75rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+  }
+
+  table { width: 100%; border-collapse: collapse; th { text-align: left; padding: 1rem; color: #64748b; } td { padding: 1rem; border-top: 1px solid #f1f5f9; } }
+}

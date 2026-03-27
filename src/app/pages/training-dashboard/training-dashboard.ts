@@ -18,14 +18,6 @@ export class TrainingDashboardComponent implements OnInit {
   resources: TrainingResource[] = [];
   isLoading = true;
 
-  // CMS Form State
-  newResource = {
-    title: '',
-    description: '',
-    type: 'notes' as 'video' | 'notes',
-    file: null as File | null
-  };
-
   constructor(
     private auth: AuthService,
     private supabase: SupabaseService,
@@ -33,6 +25,7 @@ export class TrainingDashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    // Retrieves the ST-XXXXXX data from local storage
     this.trainerData = this.auth.getTrainerData();
     
     if (!this.trainerData) {
@@ -40,24 +33,24 @@ export class TrainingDashboardComponent implements OnInit {
       return;
     }
 
-    await this.loadContent();
+    await this.loadTrainerContent();
   }
 
-  async loadContent() {
+  async loadTrainerContent() {
     this.isLoading = true;
     try {
-      // Fetch messages targeted to this trainer's UID or 'all-trainers'
+      // Fetch notifications sent by Admin to this specific UID
       const { data: msgData } = await this.supabase['client']
         .from('training_messages')
         .select('*')
         .or(`audience.eq.all-trainers,target_id.eq.${this.trainerData.id}`)
         .order('created_at', { ascending: false });
 
-      // Fetch resources uploaded by this trainer
+      // Fetch resources linked to this trainer
       const { data: resData } = await this.supabase['client']
         .from('training_resources')
         .select('*')
-        .eq('uploader_id', this.trainerData.id)
+        .eq('file_name', this.trainerData.id) 
         .order('created_at', { ascending: false });
 
       this.messages = msgData || [];
@@ -67,33 +60,6 @@ export class TrainingDashboardComponent implements OnInit {
     } finally {
       this.isLoading = false;
     }
-  }
-
-  onFileSelected(event: any) {
-    this.newResource.file = event.target.files[0];
-  }
-
-  async handleUpload() {
-    if (!this.newResource.file || !this.newResource.title) return;
-
-    const { data, error } = await this.supabase.uploadTrainingResource(
-      this.newResource.file,
-      {
-        title: this.newResource.title,
-        description: this.newResource.description,
-        resource_type: this.newResource.type
-      }
-    );
-
-    if (data) {
-      // Logic to link uploader_id if table supports it
-      this.resources.unshift(data);
-      this.resetForm();
-    }
-  }
-
-  resetForm() {
-    this.newResource = { title: '', description: '', type: 'notes', file: null };
   }
 
   logout() {

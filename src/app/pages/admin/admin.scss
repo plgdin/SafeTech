@@ -223,6 +223,15 @@ table {
   small {
     color: #64748b;
   }
+
+  code {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+  }
 }
 
 .row-actions {
@@ -300,6 +309,14 @@ table {
 .mini-btn {
   padding: 10px 14px;
   white-space: nowrap;
+}
+
+.success-btn {
+  background: #0f766e;
+
+  &:hover {
+    background: #0b5f59;
+  }
 }
 
 .ghost-btn {

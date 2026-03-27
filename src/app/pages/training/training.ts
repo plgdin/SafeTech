@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { SupabaseService } from '../../core/services/supabase';
 
 @Component({
   selector: 'app-training',
@@ -23,7 +24,8 @@ export class TrainingComponent {
     name: '',
     age: null as number | null,
     location: '',
-    education: ''
+    education: '',
+    email: '' // Added email to application data
   };
 
   // Form 2: Book a Session
@@ -43,7 +45,10 @@ export class TrainingComponent {
   educationLevels = ['10th Pass', '12th Pass / Diploma', 'Undergraduate / Degree', 'Post Graduate'];
   orgTypes = ['Institution', 'College', 'School', 'Office', 'Organization', 'Individual'];
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private supabase: SupabaseService // Injected service
+  ) {}
 
   // --- Utility: Toast System ---
   private triggerToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
@@ -71,7 +76,7 @@ export class TrainingComponent {
     setTimeout(() => {
       toast.classList.add('toast-out');
       setTimeout(() => container.remove(), 400);
-    }, 4000);
+    }, 6000); // Increased time so user can copy the UID
   }
 
   // --- Date & Time Validation ---
@@ -144,7 +149,6 @@ export class TrainingComponent {
       this.otpSent = true; 
       this.cdr.detectChanges();
 
-      // Note: Keeping Google Script ONLY for the WhatsApp Trigger logic
       await fetch(environment.googleScriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
@@ -182,21 +186,36 @@ export class TrainingComponent {
       return;
     }
 
-    if (this.activeTab === 'book') {
-      const dateVal = this.validateSessionDateTime(this.bookingData.date, this.bookingData.startTime);
-      if (!dateVal.valid) {
-        this.triggerToast(dateVal.error!, "error");
-        return;
-      }
-    }
-
     this.isSubmitting = true;
-    const tableName = this.activeTab === 'register' ? 'trainers' : 'bookings';
-    
-    // Clean up payload for Supabase
-    const payload = this.activeTab === 'register' 
-      ? { ...this.applicationData, phone: this.phoneNumber } 
-      : { 
+
+    try {
+      if (this.activeTab === 'register') {
+        const payload = {
+          name: this.applicationData.name,
+          age: this.applicationData.age,
+          location: this.applicationData.location,
+          education: this.applicationData.education,
+          email: this.applicationData.email,
+          phone: this.phoneNumber
+        };
+
+        const { error, customUid } = await this.supabase.registerTrainer(payload);
+
+        if (error) throw error;
+
+        this.triggerToast(`Application Submitted! YOUR LOGIN UID: ${customUid}`, "success");
+        await this.supabase.sendRegistrationEmail(this.applicationData.email, customUid);
+
+      } else {
+        // Handle Booking
+        const dateVal = this.validateSessionDateTime(this.bookingData.date, this.bookingData.startTime);
+        if (!dateVal.valid) {
+          this.triggerToast(dateVal.error!, "error");
+          this.isSubmitting = false;
+          return;
+        }
+
+        const payload = { 
           org_type: this.bookingData.orgType,
           address: this.bookingData.address,
           event_date: this.bookingData.date,
@@ -206,24 +225,15 @@ export class TrainingComponent {
           phone: this.phoneNumber 
         };
 
-    try {
-      const response = await fetch(`${environment.supabaseUrl}/rest/v1/${tableName}`, {
-        method: 'POST',
-        headers: {
-          'apikey': environment.supabaseKey,
-          'Authorization': `Bearer ${environment.supabaseKey}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify(payload)
-      });
+        const { error } = await this.supabase['client']
+          .from('bookings')
+          .insert([payload]);
 
-      if (!response.ok) throw new Error('Supabase insertion failed');
+        if (error) throw error;
 
-      this.triggerToast(
-        this.activeTab === 'register' ? "Application Submitted Successfully!" : "Training Session Booked!", 
-        "success"
-      );
+        this.triggerToast("Training Session Booked!", "success");
+      }
+
       this.closeForm();
     } catch (e) {
       console.error(e);
@@ -235,7 +245,7 @@ export class TrainingComponent {
   }
 
   resetForm() {
-    this.applicationData = { name: '', age: null, location: '', education: '' };
+    this.applicationData = { name: '', age: null, location: '', education: '', email: '' };
     this.bookingData = { orgType: '', address: '', date: '', startTime: '', email: '', mode: 'Online' };
     this.phoneNumber = '';
     this.isPhoneVerified = false;

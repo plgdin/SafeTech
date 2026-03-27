@@ -46,7 +46,7 @@ export interface TrainingBooking {
 }
 
 export interface TrainerApplication {
-  id?: string | number;
+  id?: string; // Changed to string for custom UID
   name?: string;
   age?: number;
   location?: string;
@@ -95,26 +95,50 @@ export class SupabaseService {
     return this.supabase;
   }
 
-  // --- AUTH & UMS CORE METHODS ---
+  // --- CUSTOM UID GENERATION ---
 
   /**
-   * Triggers the Supabase Magic Link / OTP flow for account setup.
+   * Generates an 8-character UID: "ST-" followed by 5 random digits.
    */
-  async sendSetupEmail(email: string) {
-    if (!this.supabase) return { error: new Error('Supabase unavailable') };
+  private generateSafeTechUid(): string {
+    const randomDigits = Math.floor(10000 + Math.random() * 90000);
+    return `ST-${randomDigits}`;
+  }
+
+  // --- AUTH & UMS CORE METHODS ---
+
+  async registerTrainer(trainerData: any) {
+    const customUid = this.generateSafeTechUid();
+    
+    // Use select() to return the data so we can confirm the UID
+    const { data, error } = await this.client
+      .from('trainers')
+      .insert([{
+        ...trainerData,
+        id: customUid,
+        status: 'pending'
+      }])
+      .select()
+      .single();
+
+    return { data, error, customUid };
+  }
+
+  async sendRegistrationEmail(email: string, uid: string) {
     return await this.client.auth.signInWithOtp({
       email: email,
       options: {
+        data: { custom_uid: uid },
         emailRedirectTo: `${window.location.origin}/training/dashboard`
       }
     });
   }
 
-  /**
-   * Core verification method for UID-based logins.
-   */
+  async sendSetupEmail(email: string, uid?: string) {
+    return await this.sendRegistrationEmail(email, uid ?? '');
+  }
+
   async getTrainerByUid(uid: string) {
-    if (!this.supabase) return { data: null, error: new Error('Supabase unavailable') };
     return await this.client
       .from('trainers')
       .select('*')
@@ -209,7 +233,7 @@ export class SupabaseService {
     const [reports, bookings, trainers] = await Promise.all([
       this.client.from('citizen_reports').select('id, reference_id, report_type, evidence_payload, status, created_at').order('created_at', { ascending: false }).limit(100),
       this.client.from('bookings').select('id, org_type, address, event_date, event_time, mode, phone, email, status, admin_message, created_at').order('created_at', { ascending: false }).limit(50),
-      this.client.from('trainers').select('id, name, age, location, education, phone, status, admin_message, created_at').order('created_at', { ascending: false }).limit(50)
+      this.client.from('trainers').select('id, name, age, location, education, phone, email, status, admin_message, created_at').order('created_at', { ascending: false }).limit(50)
     ]);
     return { reports: reports.data || [], bookings: bookings.data || [], trainers: trainers.data || [] };
   }

@@ -32,6 +32,7 @@ export class AdminComponent implements OnInit {
   feedbackMessage = '';
   feedbackTone: 'success' | 'error' | 'info' = 'info';
   pendingReportUpdates: Record<string, boolean> = {};
+  pendingTrainerApprovals: Record<string, boolean> = {};
 
   dashboardData: {
     reports: AdminReport[];
@@ -408,6 +409,38 @@ export class AdminComponent implements OnInit {
     }
   }
 
+  async approveTrainer(trainer: TrainerApplication) {
+    if (!trainer.id || !trainer.email) {
+      this.setFeedback('Trainer record is missing a UID or email address.', 'error');
+      return;
+    }
+
+    const key = this.getRowKey(trainer);
+    this.pendingTrainerApprovals[key] = true;
+
+    try {
+      const { error: updateError } = await this.supabase.updateTrainingStatus('trainers', trainer.id, 'approved');
+      if (updateError) {
+        throw updateError;
+      }
+
+      const { error: emailError } = await this.supabase.sendRegistrationEmail(trainer.email, trainer.id);
+      if (emailError) {
+        throw emailError;
+      }
+
+      trainer.status = 'approved';
+      this.trainerStatusDrafts[key] = 'approved';
+      this.setFeedback(`Trainer ${trainer.name || trainer.id} approved and UID sent to ${trainer.email}.`, 'success');
+      await this.loadDashboard();
+    } catch (error) {
+      console.error(error);
+      this.setFeedback('Unable to approve trainer and send UID email.', 'error');
+    } finally {
+      this.pendingTrainerApprovals[key] = false;
+    }
+  }
+
   async sendTrainingMessage() {
     if (!this.messageForm.subject.trim() || !this.messageForm.message.trim()) {
       this.setFeedback('Enter both a subject and message before sending.', 'error');
@@ -434,6 +467,11 @@ export class AdminComponent implements OnInit {
 
     this.messageForm = { audience: 'all-bookings', subject: '', message: '' };
     this.setFeedback('Training message saved successfully.', 'success');
+  }
+
+  async broadcastMessage() {
+    this.messageForm.audience = 'all-trainers';
+    await this.sendTrainingMessage();
   }
 
   onResourceSelected(event: Event) {
@@ -508,6 +546,10 @@ export class AdminComponent implements OnInit {
 
   isReportPending(report: AdminReport) {
     return !!this.pendingReportUpdates[this.getRowKey(report)];
+  }
+
+  isTrainerApprovalPending(trainer: TrainerApplication) {
+    return !!this.pendingTrainerApprovals[this.getRowKey(trainer)];
   }
 
   private setFeedback(message: string, tone: 'success' | 'error' | 'info') {

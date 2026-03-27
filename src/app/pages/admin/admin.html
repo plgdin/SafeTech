@@ -220,22 +220,29 @@
         <table *ngIf="dashboardData.trainers.length; else emptyTrainers">
           <thead>
             <tr>
+              <th>UID</th>
               <th>Name</th>
+              <th>Email</th>
               <th>Location</th>
               <th>Education</th>
               <th>Phone</th>
               <th>Status</th>
               <th>Admin Message</th>
-              <th>Save</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let trainer of dashboardData.trainers">
+              <td><code>{{ trainer.id }}</code></td>
               <td>{{ trainer.name }}</td>
+              <td>{{ trainer.email || 'No email' }}</td>
               <td>{{ trainer.location }}</td>
               <td>{{ trainer.education }}</td>
               <td>{{ trainer.phone }}</td>
               <td>
+                <span class="badge" [ngClass]="statusClass(trainer.status)">
+                  {{ trainer.status }}
+                </span>
                 <select
                   #trainerStatusSelect
                   [ngModel]="trainerStatusDrafts[getRowKey(trainer)]"
@@ -252,9 +259,20 @@
                   placeholder="Optional trainer note"></textarea>
               </td>
               <td>
-                <button
-                  class="mini-btn"
-                  (click)="updateTrainingEntry('trainer', trainer, trainerStatusSelect.value, trainerMessageInput.value)">Save</button>
+                <div class="row-actions">
+                  <button
+                    *ngIf="trainer.status === 'pending'"
+                    class="mini-btn success-btn"
+                    [disabled]="isTrainerApprovalPending(trainer)"
+                    (click)="approveTrainer(trainer)">
+                    Approve & Send UID
+                  </button>
+                  <button
+                    class="mini-btn"
+                    (click)="updateTrainingEntry('trainer', trainer, trainerStatusSelect.value, trainerMessageInput.value)">
+                    Save
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -265,7 +283,7 @@
 
     <section class="admin-section split-section">
       <div>
-        <div class="section-header"><h2>Training Messages</h2></div>
+        <div class="section-header"><h2>Send Global Notification (Broadcast)</h2></div>
         <div class="stack-form">
           <label class="control-field">
             <span>Audience</span>
@@ -283,7 +301,7 @@
             <span>Message</span>
             <textarea [(ngModel)]="messageForm.message" rows="5" placeholder="Write message..."></textarea>
           </label>
-          <button class="download-btn" (click)="sendTrainingMessage()">Save Message</button>
+          <button class="download-btn" (click)="broadcastMessage()">Send to All Trainers</button>
         </div>
       </div>
 

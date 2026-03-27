@@ -1,73 +1,49 @@
-<div class="dashboard-wrapper">
-  <aside class="sidebar">
-    <div class="profile-section">
-      <div class="avatar">{{ trainerData?.name?.charAt(0) }}</div>
+<div class="dashboard-layout">
+  <aside class="dash-sidebar">
+    <div class="profile-header">
+      <div class="user-icon">{{ trainerData?.name?.charAt(0) }}</div>
       <h3>{{ trainerData?.name }}</h3>
-      <span class="status-badge">{{ trainerData?.status }}</span>
+      <span class="status-pill">{{ trainerData?.status | titlecase }}</span>
     </div>
-    <nav>
-      <button class="nav-item active">Overview</button>
-      <button class="nav-item">My Resources</button>
-      <button class="nav-item" (click)="logout()">Logout</button>
+    <nav class="dash-nav">
+      <a class="nav-link active">Overview</a>
+      <a class="nav-link" (click)="logout()">Sign Out</a>
     </nav>
   </aside>
 
-  <main class="content">
-    <header>
-      <h1>Trainer Dashboard</h1>
-      <p>UID: <code>{{ trainerData?.id }}</code></p>
+  <main class="dash-main">
+    <header class="dash-header">
+      <h1>Trainer Portal</h1>
+      <div class="uid-box">
+        <label>Your Unique ID:</label>
+        <span class="uid-value">{{ trainerData?.id }}</span>
+      </div>
     </header>
 
-    <div class="grid">
-      <section class="card">
-        <h2>Admin Notifications</h2>
-        <div class="msg-list" *ngIf="messages.length > 0; else noMsgs">
-          <div class="msg-item" *ngFor="let msg of messages">
-            <span class="date">{{ msg.created_at | date:'shortDate' }}</span>
+    <div class="dash-grid">
+      <section class="dash-card">
+        <h2>Admin Messages</h2>
+        <div class="message-container" *ngIf="messages.length > 0; else noMsgs">
+          <div class="message-card" *ngFor="let msg of messages">
+            <small>{{ msg.created_at | date }}</small>
             <h4>{{ msg.subject }}</h4>
             <p>{{ msg.message }}</p>
           </div>
         </div>
-        <ng-template #noMsgs><p class="empty">No new messages from admin.</p></ng-template>
+        <ng-template #noMsgs><p class="empty-txt">No active notifications.</p></ng-template>
       </section>
 
-      <section class="card">
-        <h2>Content Management</h2>
-        <form (submit)="$event.preventDefault(); handleUpload()">
-          <input type="text" [(ngModel)]="newResource.title" name="title" placeholder="Resource Title" required>
-          <textarea [(ngModel)]="newResource.description" name="desc" placeholder="Brief description"></textarea>
-          
-          <select [(ngModel)]="newResource.type" name="type">
-            <option value="notes">Notes (PDF/Doc)</option>
-            <option value="video">Training Video</option>
-          </select>
-
-          <input type="file" (change)="onFileSelected($event)" accept="video/*,.pdf,.doc,.docx">
-          <button type="submit" class="btn-primary">Upload to SafeTech</button>
-        </form>
+      <section class="dash-card">
+        <h2>Your Training Material</h2>
+        <div class="resource-list" *ngIf="resources.length > 0; else noRes">
+          <div class="resource-row" *ngFor="let res of resources">
+            <span class="res-type">{{ res.resource_type }}</span>
+            <span class="res-title">{{ res.title }}</span>
+            <a [href]="res.file_url" target="_blank" class="res-btn">View</a>
+          </div>
+        </div>
+        <ng-template #noRes><p class="empty-txt">Your teammate is verifying your content.</p></ng-template>
       </section>
     </div>
-
-    <section class="card full-width">
-      <h2>My Uploaded Content</h2>
-      <table *ngIf="resources.length > 0">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Uploaded</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let res of resources">
-            <td><span class="type-icon" [attr.data-type]="res.resource_type"></span></td>
-            <td>{{ res.title }}</td>
-            <td>{{ res.created_at | date }}</td>
-            <td><a [href]="res.file_url" target="_blank" class="view-link">View File</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
   </main>
 </div>

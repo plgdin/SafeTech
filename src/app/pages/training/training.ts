@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import jsPDF from 'jspdf';
 import { SupabaseService } from '../../core/services/supabase';
 
 @Component({
@@ -185,25 +186,11 @@ export class TrainingComponent implements OnInit {
           ? `Your UID is being sent to ${this.applicationData.email}.`
           : 'No email address was provided, so please save this UID now.';
         this.triggerToast("Application submitted successfully.", "success");
+        this.isSubmitting = false;
+        this.cdr.detectChanges();
 
         if (this.applicationData.email) {
-          try {
-            const { error: emailError } = await this.supabase.sendRegistrationEmail(
-              this.applicationData.email,
-              generatedUid,
-              this.applicationData.name
-            );
-
-            if (emailError) {
-              throw emailError;
-            }
-
-            this.registrationEmailStatus = `Your UID has been sent to ${this.applicationData.email}.`;
-          } catch (emailError) {
-            console.error(emailError);
-            this.registrationEmailStatus = 'Application saved, but the email could not be sent. Please save this UID now.';
-            this.triggerToast("UID email could not be sent. Save the UID shown on screen.", "info");
-          }
+          void this.sendRegistrationEmailInBackground(generatedUid);
         }
 
       } else {
@@ -268,5 +255,67 @@ export class TrainingComponent implements OnInit {
   continueToTrainingLogin() {
     this.closeForm();
     this.router.navigate(['/training/login']);
+  }
+
+  private async sendRegistrationEmailInBackground(uid: string) {
+    try {
+      const { error: emailError } = await this.supabase.sendRegistrationEmail(
+        this.applicationData.email,
+        uid,
+        this.applicationData.name
+      );
+
+      if (emailError) {
+        throw emailError;
+      }
+
+      this.registrationEmailStatus = `Your UID has been sent to ${this.applicationData.email}.`;
+    } catch (emailError) {
+      console.error(emailError);
+      this.registrationEmailStatus = 'Application saved, but the email could not be sent. Please save this UID now.';
+      this.triggerToast("UID email could not be sent. Save the UID shown on screen.", "info");
+    } finally {
+      this.cdr.detectChanges();
+    }
+  }
+
+  downloadUidPdf() {
+    if (!this.registeredUid) {
+      this.triggerToast('No UID available to download.', 'error');
+      return;
+    }
+
+    const doc = new jsPDF();
+    const applicantName = this.applicationData.name?.trim() || 'Trainer Applicant';
+    const email = this.applicationData.email?.trim() || 'Not provided';
+    const generatedOn = new Date().toLocaleString();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.text('SafeTech Trainer UID', 20, 25);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.text(`Name: ${applicantName}`, 20, 42);
+    doc.text(`Email: ${email}`, 20, 50);
+    doc.text(`Generated on: ${generatedOn}`, 20, 58);
+
+    doc.setDrawColor(30, 106, 255);
+    doc.setLineWidth(0.8);
+    doc.roundedRect(20, 72, 170, 34, 6, 6);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text('LOGIN UID', 28, 84);
+
+    doc.setFontSize(30);
+    doc.text(this.registeredUid, 28, 98);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text('Keep this PDF safe. You will need the UID to access the training dashboard.', 20, 122);
+
+    const safeName = applicantName.replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'trainer';
+    doc.save(`safetech-uid-${safeName}.pdf`);
   }
 }

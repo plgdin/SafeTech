@@ -115,6 +115,9 @@
         </div>
         <p class="training-success-note">{{ registrationEmailStatus }}</p>
         <div class="training-success-actions">
+          <button type="button" class="axis-btn full-width" (click)="downloadUidPdf()">
+            <div class="axis-content">Download UID PDF</div>
+          </button>
           <button type="button" class="axis-btn full-width" (click)="continueToTrainingLogin()">
             <div class="axis-content">Go To Sign In</div>
           </button>

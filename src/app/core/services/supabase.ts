@@ -110,14 +110,47 @@ export class SupabaseService {
     return { data, error, generatedUid: data?.id ?? null };
   }
 
-  async sendRegistrationEmail(email: string, uid: string) {
-    return await this.client.auth.signInWithOtp({
-      email: email,
-      options: {
-        data: { custom_uid: uid },
-        emailRedirectTo: `${window.location.origin}/training/dashboard`
+  async sendRegistrationEmail(email: string, uid: string, name?: string) {
+    if (!environment.googleScriptUrl) {
+      return { data: null, error: new Error('Google Script URL is not configured.') };
+    }
+
+    try {
+      const response = await fetch(environment.googleScriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'sendTrainerUidEmail',
+          email,
+          uid,
+          name: name || ''
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Email request failed with status ${response.status}.`);
       }
-    });
+
+      const raw = await response.text();
+      let parsed: any = null;
+
+      try {
+        parsed = raw ? JSON.parse(raw) : null;
+      } catch {
+        parsed = raw;
+      }
+
+      if (parsed && typeof parsed === 'object' && parsed.success === false) {
+        throw new Error(parsed.message || 'UID email could not be sent.');
+      }
+
+      return { data: parsed, error: null };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error : new Error('UID email request failed.')
+      };
+    }
   }
 
   async sendSetupEmail(email: string, uid?: string) {

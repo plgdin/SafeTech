@@ -182,13 +182,23 @@ export class TrainingComponent implements OnInit {
         this.registeredUid = generatedUid;
         this.showRegistrationSuccess = true;
         this.registrationEmailStatus = this.applicationData.email
-          ? `A login copy has also been sent to ${this.applicationData.email}.`
+          ? `Your UID is being sent to ${this.applicationData.email}.`
           : 'No email address was provided, so please save this UID now.';
         this.triggerToast("Application submitted successfully.", "success");
 
         if (this.applicationData.email) {
           try {
-            await this.supabase.sendRegistrationEmail(this.applicationData.email, generatedUid);
+            const { error: emailError } = await this.supabase.sendRegistrationEmail(
+              this.applicationData.email,
+              generatedUid,
+              this.applicationData.name
+            );
+
+            if (emailError) {
+              throw emailError;
+            }
+
+            this.registrationEmailStatus = `Your UID has been sent to ${this.applicationData.email}.`;
           } catch (emailError) {
             console.error(emailError);
             this.registrationEmailStatus = 'Application saved, but the email could not be sent. Please save this UID now.';
@@ -226,7 +236,19 @@ export class TrainingComponent implements OnInit {
       }
     } catch (e) {
       console.error(e);
-      this.triggerToast("Submission failed. Try again.", "error");
+      const message =
+        typeof e === 'object' && e !== null && 'message' in e
+          ? String((e as { message?: unknown }).message ?? '')
+          : String(e);
+
+      if (
+        message.toLowerCase().includes('null value in column "id"') ||
+        message.toLowerCase().includes('trainer uid was not returned by supabase')
+      ) {
+        this.triggerToast("Supabase is not generating trainer UIDs yet. Run the SQL in trainer_uid_supabase.sql in your Supabase SQL editor first.", "error");
+      } else {
+        this.triggerToast(message ? `Submission failed: ${message}` : "Submission failed. Try again.", "error");
+      }
     } finally {
       this.isSubmitting = false;
       this.cdr.detectChanges();

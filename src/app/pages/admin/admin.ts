@@ -424,7 +424,7 @@ export class AdminComponent implements OnInit {
         throw updateError;
       }
 
-      const { error: emailError } = await this.supabase.sendRegistrationEmail(trainer.email, trainer.id);
+      const { error: emailError } = await this.supabase.sendRegistrationEmail(trainer.email, trainer.id, trainer.name);
       if (emailError) {
         throw emailError;
       }

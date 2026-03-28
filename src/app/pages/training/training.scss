@@ -389,6 +389,67 @@
   margin-top: 30px;
 }
 
+.training-success-panel {
+  display: grid;
+  gap: 18px;
+  background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+  border: 1px solid #dbe9ff;
+  border-radius: 28px;
+  padding: 32px;
+}
+
+.training-success-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #eaf2ff;
+  color: #1e6aff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.training-success-copy,
+.training-success-note {
+  margin: 0;
+  color: #5f6673;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.training-uid-card {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+  border-radius: 22px;
+  background: #020202;
+  color: #ffffff;
+  box-shadow: 0 20px 40px rgba(2, 2, 2, 0.14);
+}
+
+.training-uid-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.training-uid-value {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  word-break: break-word;
+}
+
+.training-success-actions {
+  margin-top: 8px;
+}
+
 @property --bg-angle {
   syntax: "<angle>";
   inherits: false;

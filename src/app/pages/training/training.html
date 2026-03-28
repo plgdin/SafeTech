@@ -103,7 +103,25 @@
         </button>
       </div>
 
-      <div *ngIf="activeTab === 'register'" class="otp-container-anim training-form-grid">
+      <div *ngIf="showRegistrationSuccess" class="training-success-panel">
+        <div class="training-success-badge">Registration Complete</div>
+        <h2 class="training-form-h2">Your Login UID</h2>
+        <p class="training-success-copy">
+          Save this UID carefully. You will use it to sign in to the training dashboard.
+        </p>
+        <div class="training-uid-card">
+          <span class="training-uid-label">SafeTech UID</span>
+          <div class="training-uid-value">{{ registeredUid }}</div>
+        </div>
+        <p class="training-success-note">{{ registrationEmailStatus }}</p>
+        <div class="training-success-actions">
+          <button type="button" class="axis-btn full-width" (click)="continueToTrainingLogin()">
+            <div class="axis-content">Go To Sign In</div>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="!showRegistrationSuccess && activeTab === 'register'" class="otp-container-anim training-form-grid">
         <h2 class="training-form-h2">Trainer Registration</h2>
         <div>
           <label class="input-label">Full Name</label>
@@ -126,9 +144,13 @@
             <option *ngFor="let level of educationLevels" [value]="level">{{level}}</option>
           </select>
         </div>
+        <div>
+          <label class="input-label">Email Address</label>
+          <input [(ngModel)]="applicationData.email" type="email" placeholder="email@example.com" class="custom-input">
+        </div>
       </div>
 
-      <div *ngIf="activeTab === 'book'" class="otp-container-anim training-form-grid">
+      <div *ngIf="!showRegistrationSuccess && activeTab === 'book'" class="otp-container-anim training-form-grid">
         <h2 class="training-form-h2">Book a Training Session</h2>
         <div>
           <label class="input-label">Institution / Entity Type</label>
@@ -168,7 +190,7 @@
         </div>
       </div>
 
-      <div class="training-whatsapp-section">
+      <div *ngIf="!showRegistrationSuccess" class="training-whatsapp-section">
         <label class="input-label">WhatsApp Number</label>
         <div class="training-phone-row">
           <input [ngModel]="phoneNumber" (ngModelChange)="onPhoneInput($event)" [disabled]="isPhoneVerified" 
@@ -194,7 +216,7 @@
         </div>
       </div>
 
-      <button (click)="submitData()" 
+      <button *ngIf="!showRegistrationSuccess" (click)="submitData()" 
               [disabled]="!isPhoneVerified || isSubmitting"
               class="axis-btn training-submit-btn">
         <div class="axis-content">

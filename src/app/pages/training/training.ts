@@ -19,6 +19,9 @@ export class TrainingComponent implements OnInit {
   isVerifying = false;
   otpSent = false;
   isPhoneVerified = false;
+  showRegistrationSuccess = false;
+  registeredUid = '';
+  registrationEmailStatus = '';
 
   // Form 1: Become a Trainer
   applicationData = {
@@ -129,6 +132,9 @@ export class TrainingComponent implements OnInit {
 
   // --- UI Handlers ---
   openForm(tab: 'register' | 'book' = 'register') {
+    this.showRegistrationSuccess = false;
+    this.registeredUid = '';
+    this.registrationEmailStatus = '';
     this.activeTab = tab;
     this.showModal = true;
   }
@@ -219,8 +225,22 @@ export class TrainingComponent implements OnInit {
 
         if (error) throw error;
 
-        this.triggerToast(`Application Submitted! YOUR LOGIN UID: ${customUid}`, "success");
-        await this.supabase.sendRegistrationEmail(this.applicationData.email, customUid);
+        this.registeredUid = customUid;
+        this.showRegistrationSuccess = true;
+        this.registrationEmailStatus = this.applicationData.email
+          ? `A login copy has also been sent to ${this.applicationData.email}.`
+          : 'No email address was provided, so please save this UID now.';
+        this.triggerToast("Application submitted successfully.", "success");
+
+        if (this.applicationData.email) {
+          try {
+            await this.supabase.sendRegistrationEmail(this.applicationData.email, customUid);
+          } catch (emailError) {
+            console.error(emailError);
+            this.registrationEmailStatus = 'Application saved, but the email could not be sent. Please save this UID now.';
+            this.triggerToast("UID email could not be sent. Save the UID shown on screen.", "info");
+          }
+        }
 
       } else {
         // Handle Booking
@@ -248,9 +268,8 @@ export class TrainingComponent implements OnInit {
         if (error) throw error;
 
         this.triggerToast("Training Session Booked!", "success");
+        this.closeForm();
       }
-
-      this.closeForm();
     } catch (e) {
       console.error(e);
       this.triggerToast("Submission failed. Try again.", "error");
@@ -268,5 +287,13 @@ export class TrainingComponent implements OnInit {
     this.otpSent = false;
     this.otpCode = '';
     this.generatedOtp = '';
+    this.showRegistrationSuccess = false;
+    this.registeredUid = '';
+    this.registrationEmailStatus = '';
+  }
+
+  continueToTrainingLogin() {
+    this.closeForm();
+    this.router.navigate(['/training/login']);
   }
 }

@@ -2,7 +2,6 @@ import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { environment } from '../../../environments/environment';
 import { SupabaseService } from '../../core/services/supabase';
 
 @Component({
@@ -16,9 +15,6 @@ export class TrainingComponent implements OnInit {
   showModal = false;
   activeTab: 'register' | 'book' = 'register';
   isSubmitting = false;
-  isVerifying = false;
-  otpSent = false;
-  isPhoneVerified = false;
   showRegistrationSuccess = false;
   registeredUid = '';
   registrationEmailStatus = '';
@@ -43,8 +39,7 @@ export class TrainingComponent implements OnInit {
   };
 
   phoneNumber: string = '';
-  otpCode: string = '';
-  generatedOtp: string = '';
+  otpCode = '';
 
   educationLevels = ['10th Pass', '12th Pass / Diploma', 'Undergraduate / Degree', 'Post Graduate'];
   orgTypes = ['Institution', 'College', 'School', 'Office', 'Organization', 'Individual'];
@@ -157,61 +152,19 @@ export class TrainingComponent implements OnInit {
     this.phoneNumber = formatted;
   }
 
-  async requestOTP() {
-    const cleanPhone = this.phoneNumber.replace(/[^0-9]/g, '');
-    if (cleanPhone.length < 12) {
-      this.triggerToast("Enter a valid 10-digit WhatsApp number", "error");
-      return;
-    }
-
-    this.isVerifying = true;
-    this.generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    try {
-      this.otpSent = true; 
-      this.cdr.detectChanges();
-
-      await fetch(environment.googleScriptUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          action: 'sendOtp',
-          phone: cleanPhone,
-          otp: this.generatedOtp
-        })
-      });
-
-      this.triggerToast("OTP sent to WhatsApp", "success");
-    } catch (error) {
-      this.triggerToast("Failed to send OTP", "error");
-      this.otpSent = false;
-    } finally {
-      this.isVerifying = false;
-      this.cdr.detectChanges();
-    }
-  }
-
-  confirmOTP() {
-    if (this.otpCode === this.generatedOtp && this.otpCode !== '') {
-      this.isPhoneVerified = true;
-      this.otpSent = false;
-      this.triggerToast("Phone Verified", "success");
-    } else {
-      this.triggerToast("Invalid OTP", "error");
-    }
-    this.cdr.detectChanges();
-  }
+  confirmOTP() {}
 
   async submitData() {
-    if (!this.isPhoneVerified) {
-      this.triggerToast("Please verify phone first", "error");
-      return;
-    }
-
     this.isSubmitting = true;
 
     try {
       if (this.activeTab === 'register') {
+        if (!this.applicationData.email.trim()) {
+          this.triggerToast("Enter an email address to receive your UID.", "error");
+          this.isSubmitting = false;
+          return;
+        }
+
         const payload = {
           name: this.applicationData.name,
           age: this.applicationData.age,
@@ -221,11 +174,12 @@ export class TrainingComponent implements OnInit {
           phone: this.phoneNumber
         };
 
-        const { error, customUid } = await this.supabase.registerTrainer(payload);
+        const { error, generatedUid } = await this.supabase.registerTrainer(payload);
 
         if (error) throw error;
+        if (!generatedUid) throw new Error('Trainer UID was not returned by Supabase.');
 
-        this.registeredUid = customUid;
+        this.registeredUid = generatedUid;
         this.showRegistrationSuccess = true;
         this.registrationEmailStatus = this.applicationData.email
           ? `A login copy has also been sent to ${this.applicationData.email}.`
@@ -234,7 +188,7 @@ export class TrainingComponent implements OnInit {
 
         if (this.applicationData.email) {
           try {
-            await this.supabase.sendRegistrationEmail(this.applicationData.email, customUid);
+            await this.supabase.sendRegistrationEmail(this.applicationData.email, generatedUid);
           } catch (emailError) {
             console.error(emailError);
             this.registrationEmailStatus = 'Application saved, but the email could not be sent. Please save this UID now.';
@@ -283,10 +237,7 @@ export class TrainingComponent implements OnInit {
     this.applicationData = { name: '', age: null, location: '', education: '', email: '' };
     this.bookingData = { orgType: '', address: '', date: '', startTime: '', email: '', mode: 'Online' };
     this.phoneNumber = '';
-    this.isPhoneVerified = false;
-    this.otpSent = false;
     this.otpCode = '';
-    this.generatedOtp = '';
     this.showRegistrationSuccess = false;
     this.registeredUid = '';
     this.registrationEmailStatus = '';

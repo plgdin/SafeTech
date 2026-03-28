@@ -193,19 +193,16 @@
       <div *ngIf="!showRegistrationSuccess" class="training-whatsapp-section">
         <label class="input-label">WhatsApp Number</label>
         <div class="training-phone-row">
-          <input [ngModel]="phoneNumber" (ngModelChange)="onPhoneInput($event)" [disabled]="isPhoneVerified" 
-                 type="tel" placeholder="+91" class="custom-input training-phone-input-wrap">
+          <input [ngModel]="phoneNumber" (ngModelChange)="onPhoneInput($event)"
+                 type="tel" placeholder="+91 98765 43210" class="custom-input">
           
-          <button *ngIf="!isPhoneVerified && !otpSent" (click)="requestOTP()" [disabled]="isVerifying" class="axis-btn mini">
-            <div class="axis-content">{{ isVerifying ? 'Wait...' : 'Verify' }}</div>
-          </button>
           
-          <div *ngIf="isPhoneVerified" class="training-verified-badge">
+          <div *ngIf="false" class="training-verified-badge">
             ✓ VERIFIED
           </div>
         </div>
 
-        <div *ngIf="otpSent" class="otp-container-anim training-otp-block">
+        <div *ngIf="false" class="otp-container-anim training-otp-block">
           <label class="input-label training-otp-label">Enter 6-Digit OTP</label>
           <div class="training-otp-inner">
             <input [(ngModel)]="otpCode" type="text" maxlength="6" placeholder="000000" class="training-otp-input">
@@ -217,7 +214,7 @@
       </div>
 
       <button *ngIf="!showRegistrationSuccess" (click)="submitData()" 
-              [disabled]="!isPhoneVerified || isSubmitting"
+              [disabled]="isSubmitting"
               class="axis-btn training-submit-btn">
         <div class="axis-content">
           {{ isSubmitting ? 'Processing...' : (activeTab === 'register' ? 'Submit Application →' : 'Confirm Booking →') }}

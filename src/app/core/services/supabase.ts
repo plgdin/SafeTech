@@ -95,33 +95,19 @@ export class SupabaseService {
     return this.supabase;
   }
 
-  // --- CUSTOM UID GENERATION ---
-
-  /**
-   * Generates an 8-character UID: "ST-" followed by 5 random digits.
-   */
-  private generateSafeTechUid(): string {
-    const randomDigits = Math.floor(10000 + Math.random() * 90000);
-    return `ST-${randomDigits}`;
-  }
-
   // --- AUTH & UMS CORE METHODS ---
 
   async registerTrainer(trainerData: any) {
-    const customUid = this.generateSafeTechUid();
-    
-    // Use select() to return the data so we can confirm the UID
     const { data, error } = await this.client
       .from('trainers')
       .insert([{
         ...trainerData,
-        id: customUid,
         status: 'pending'
       }])
       .select()
       .single();
 
-    return { data, error, customUid };
+    return { data, error, generatedUid: data?.id ?? null };
   }
 
   async sendRegistrationEmail(email: string, uid: string) {

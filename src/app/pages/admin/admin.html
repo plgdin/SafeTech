@@ -16,12 +16,23 @@
     {{ feedbackMessage }}
   </div>
 
+  <nav class="admin-page-nav" *ngIf="!isLoading">
+    <button
+      *ngFor="let section of adminSections"
+      type="button"
+      class="admin-page-nav-btn"
+      [class.active]="isSectionActive(section.id)"
+      (click)="setActiveSection(section.id)">
+      {{ section.label }}
+    </button>
+  </nav>
+
   <section class="admin-section" *ngIf="isLoading">
     <div class="empty-state">Loading admin dashboard...</div>
   </section>
 
   <ng-container *ngIf="!isLoading">
-    <section class="admin-section">
+    <section class="admin-section" *ngIf="isSectionActive('reports')">
       <div class="section-header">
         <h2>Forensic Incident Reports</h2>
         <button class="download-btn" (click)="downloadPDF('CitizenReports', dashboardData.reports)">
@@ -124,7 +135,7 @@
       </div>
     </section>
 
-    <section class="admin-section">
+    <section class="admin-section" *ngIf="isSectionActive('chats')">
       <div class="section-header">
         <h2>TechBuddy AI Transcripts</h2>
         <button class="download-btn" (click)="downloadPDF('ChatLogs', dashboardData.chatLogs)">
@@ -155,7 +166,7 @@
       </div>
     </section>
 
-    <section class="admin-section">
+    <section class="admin-section" *ngIf="isSectionActive('bookings')">
       <div class="section-header">
         <h2>Session Bookings</h2>
         <button class="download-btn" (click)="downloadPDF('Bookings', dashboardData.bookings)">
@@ -209,7 +220,7 @@
       </div>
     </section>
 
-    <section class="admin-section">
+    <section class="admin-section" *ngIf="isSectionActive('trainers')">
       <div class="section-header">
         <h2>Trainer Applications</h2>
         <button class="download-btn" (click)="downloadPDF('Trainers', dashboardData.trainers)">
@@ -281,7 +292,7 @@
       </div>
     </section>
 
-    <section class="admin-section split-section">
+    <section class="admin-section split-section" *ngIf="isSectionActive('messages')">
       <div>
         <div class="section-header"><h2>Send Global Notification (Broadcast)</h2></div>
         <div class="stack-form">
@@ -319,7 +330,7 @@
       </div>
     </section>
 
-    <section class="admin-section split-section">
+    <section class="admin-section split-section" *ngIf="isSectionActive('resources')">
       <div>
         <div class="section-header"><h2>Upload Training Resources</h2></div>
         <div class="stack-form">

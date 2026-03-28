@@ -16,6 +16,13 @@ import { AuthService } from '../../core/services/auth';
 
 type ReportSortField = 'created_at' | 'status' | 'report_type' | 'reference_id';
 type SortDirection = 'asc' | 'desc';
+type AdminSectionId =
+  | 'reports'
+  | 'chats'
+  | 'bookings'
+  | 'trainers'
+  | 'messages'
+  | 'resources';
 
 @Component({
   selector: 'app-admin',
@@ -33,6 +40,15 @@ export class AdminComponent implements OnInit {
   feedbackTone: 'success' | 'error' | 'info' = 'info';
   pendingReportUpdates: Record<string, boolean> = {};
   pendingTrainerApprovals: Record<string, boolean> = {};
+  activeSection: AdminSectionId = 'reports';
+  adminSections: Array<{ id: AdminSectionId; label: string }> = [
+    { id: 'reports', label: 'Forensic Incident Reports' },
+    { id: 'chats', label: 'TechBuddy AI Transcripts' },
+    { id: 'bookings', label: 'Session Bookings' },
+    { id: 'trainers', label: 'Trainer Applications' },
+    { id: 'messages', label: 'Global Notifications' },
+    { id: 'resources', label: 'Training Resources' }
+  ];
 
   dashboardData: {
     reports: AdminReport[];
@@ -508,6 +524,14 @@ export class AdminComponent implements OnInit {
       file: null
     };
     this.setFeedback('Training resource uploaded successfully.', 'success');
+  }
+
+  setActiveSection(section: AdminSectionId) {
+    this.activeSection = section;
+  }
+
+  isSectionActive(section: AdminSectionId) {
+    return this.activeSection === section;
   }
 
   logout() {

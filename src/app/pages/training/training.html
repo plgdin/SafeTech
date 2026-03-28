@@ -55,9 +55,14 @@
               <h2 class="training-sidebar-card-h2">Master Trainer</h2>
             </div>
             <p>Become a certified Master Trainer and lead security workshops in your community.</p>
-            <button (click)="openForm('register')" class="axis-btn full-width">
+            <div class="training-sidebar-button-stack">
+              <button (click)="openForm('register')" class="axis-btn full-width">
               <div class="axis-content">Apply Now →</div>
-            </button>
+              </button>
+              <button type="button" class="axis-btn full-width" routerLink="/training/login">
+                <div class="axis-content">Sign In -></div>
+              </button>
+            </div>
           </div>
           <div class="training-sidebar-blur-orb"></div>
         </div>

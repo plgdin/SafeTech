@@ -1,17 +1,18 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { SupabaseService } from '../../core/services/supabase';
 
 @Component({
   selector: 'app-training',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './training.html',
   styleUrl: './training.scss'
 })
-export class TrainingComponent {
+export class TrainingComponent implements OnInit {
   showModal = false;
   activeTab: 'register' | 'book' = 'register';
   isSubmitting = false;
@@ -47,8 +48,23 @@ export class TrainingComponent {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private supabase: SupabaseService // Injected service
+    private supabase: SupabaseService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
+
+  ngOnInit() {
+    const requestedTab = this.route.snapshot.queryParamMap.get('tab');
+
+    if (requestedTab === 'register' || requestedTab === 'book') {
+      this.openForm(requestedTab);
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {},
+        replaceUrl: true
+      });
+    }
+  }
 
   // --- Utility: Toast System ---
   private triggerToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
